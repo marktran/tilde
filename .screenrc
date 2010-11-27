@@ -1,0 +1,9 @@
+autodetach on
+defscrollback 4096
+startup_message off
+vbell on
+
+hardstatus alwayslastline
+hardstatus string "%{= d9}%w %="
+
+escape ^Zz
