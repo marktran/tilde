@@ -1,0 +1,19 @@
+# .rtorrent.rc : Mark Tran <mark@nirv.net>
+
+upload_rate = 60
+download_rate = 1500
+
+port_range = 44040-44040
+
+encryption = allow_incoming,try_outgoing,enable_retry
+
+directory = ~/Downloads/torrents
+session = ~/tmp/torrents
+check_hash=no
+
+schedule = watch_directory,10,10,"load_start=~/tmp/torrents/*.torrent,d.set_custom2=1"
+on_erase = rm_files,"branch=d.get_custom2=1,\"execute={rm,-rf,--,$d.get_base_path=}\""
+
+hash_read_ahead = 8
+hash_interval = 10
+hash_max_tries = 5

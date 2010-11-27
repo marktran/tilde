@@ -1,0 +1,30 @@
+[user]
+    name = Mark Tran
+    email = mark.tran@gmail.com
+[alias]
+    br = "branch"
+    ci = "commit"
+    co = "checkout"
+    di = "diff"
+    l = "log --name-status"
+    lol = "log --pretty=oneline --abbrev-commit --graph --decorate"
+    pl = "pull"
+    pom = push origin master
+    pu = "push"
+    st = "status --branch --short"
+    sta = "stash"
+    unstage = "reset HEAD"
+
+    spull = svn rebase
+    spush = svn dcommit
+    sfetch = svn fetch
+[color]
+    ui = true
+[github]
+    user = marktran
+[difftool "Kaleidoscope"]
+    cmd = ksdiff-wrapper git \"$LOCAL\" \"$REMOTE\"
+[difftool]
+    prompt = false
+[diff]
+    tool = Kaleidoscope
