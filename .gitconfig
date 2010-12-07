@@ -2,6 +2,7 @@
     name = Mark Tran
     email = mark.tran@gmail.com
 [alias]
+    a = "add"
     br = "branch"
     ci = "commit"
     co = "checkout"
