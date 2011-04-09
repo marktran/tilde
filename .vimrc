@@ -1,6 +1,5 @@
 " .vimrc : Mark Tran <mark@nirv.net>
 
-set t_Co=256
 syntax on
 
 set nocompatible
@@ -42,12 +41,14 @@ filetype on
 autocmd BufRead,BufNewFile /tmp/mutt-* set tw=72|set nocindent
 inoremap kj <Esc>
 
-hi LineNr ctermfg=black
-hi Comment ctermfg=darkred
+hi LineNr ctermfg=darkmagenta
+hi Comment ctermfg=darkgreen
+hi Special ctermfg=darkred
+hi Constant ctermfg=darkgreen
 hi Identifier ctermfg=black
 hi MatchParen ctermbg=white ctermfg=black
 hi NonText ctermfg=black
-hi PreProc ctermfg=black
-hi Type ctermfg=black
-hi Statement ctermfg=black
+hi PreProc ctermfg=none
+hi Type ctermfg=yellow
+hi Statement ctermfg=darkmagenta
 hi Visual ctermbg=black ctermfg=white
