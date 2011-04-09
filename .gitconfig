@@ -7,8 +7,8 @@
     ci = "commit"
     co = "checkout"
     di = "diff"
+    hist = "log --pretty=format:'%Cred%h%Creset%C(yellow)%d%Creset (%Cgreen%cr%Creset) %s [%Cblue%an%Creset]' --graph --abbrev-commit --date=relative"
     l = "log --name-status"
-    lol = "log --pretty=oneline --abbrev-commit --graph --decorate"
     pl = "pull"
     pom = push origin master
     pu = "push"
