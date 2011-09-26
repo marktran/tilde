@@ -31,3 +31,4 @@
     tool = Kaleidoscope
 [core]
     quotepath = false
+    excludesfile = /Users/mark/.gitignore
