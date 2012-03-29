@@ -1,7 +1,4 @@
-" .vimrc : Mark Tran <mark@nirv.net>
-
-syntax on
-
+" .vimrc : Mark Tran <mark.tran@gmail.com>
 set nocompatible
 set incsearch
 set showmode
@@ -27,7 +24,7 @@ set ignorecase
 set smartcase
 set notitle
 set nolist
-set number
+set nonumber
 
 set matchpairs+=<:>
 set complete=.,w,b,i,t,u
@@ -35,20 +32,19 @@ set backspace=indent,eol,start
 set formatoptions=tcrqn
 set comments=b:#,ex:/*,f://,mb:*,s1:/*
 
-filetype plugin on
-filetype on
+set noswapfile
+set nobackup
 
-autocmd BufRead,BufNewFile /tmp/mutt-* set tw=72|set nocindent
-inoremap kj <Esc>
+let mapleader = ","
 
-hi LineNr ctermfg=darkmagenta
-hi Comment ctermfg=darkgreen
-hi Special ctermfg=darkred
-hi Constant ctermfg=darkgreen
-hi Identifier ctermfg=black
-hi MatchParen ctermbg=white ctermfg=black
-hi NonText ctermfg=black
-hi PreProc ctermfg=none
-hi Type ctermfg=yellow
-hi Statement ctermfg=darkmagenta
-hi Visual ctermbg=black ctermfg=white
+filetype off
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+Bundle 'gmarik/vundle'
+Bundle 'kien/ctrlp.vim'
+Bundle 'scrooloose/nerdcommenter'
+Bundle 'kchmck/vim-coffee-script'
+Bundle 'sickill/vim-pasta'
+
+filetype plugin indent on
