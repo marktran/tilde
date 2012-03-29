@@ -32,3 +32,5 @@
 [core]
     quotepath = false
     excludesfile = /Users/mark/.gitignore
+[push]
+	default = current
