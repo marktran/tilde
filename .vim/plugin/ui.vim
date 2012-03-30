@@ -1,1 +1,2 @@
 color jellybeans
+syntax on

@@ -319,9 +319,9 @@ call s:X("LineNr","605958","151515","none",s:termBlack,"")
 call s:X("Comment","888888","","italic","Grey","")
 call s:X("Todo","808080","","bold","White",s:termBlack)
 
-call s:X("StatusLine","000000","dddddd","italic","","White")
-call s:X("StatusLineNC","ffffff","403c41","italic","White","Black")
-call s:X("VertSplit","777777","403c41","",s:termBlack,s:termBlack)
+call s:X("StatusLine","ffffff","","italic","","White")
+call s:X("StatusLineNC","151515","","italic","White","Black")
+call s:X("VertSplit","151515","403c41","",s:termBlack,s:termBlack)
 call s:X("WildMenu","f0a0c0","302028","","Magenta","")
 
 call s:X("Folded","a0a8b0","384048","italic",s:termBlack,"")
@@ -461,22 +461,6 @@ call s:X("IndentGuidesEven","","1c1c1c","","","")
 
 hi! link TagListFileName Directory
 call s:X("PreciseJumpTarget","B9ED67","405026","","White","Green")
-
-" Manual overrides for 256-color terminals. Dark colors auto-map badly.
-if !s:low_color
-  hi StatusLineNC ctermbg=235
-  hi Folded ctermbg=236
-  hi FoldColumn ctermbg=234
-  hi SignColumn ctermbg=236
-  hi CursorColumn ctermbg=234
-  hi CursorLine ctermbg=234
-  hi SpecialKey ctermbg=234
-  hi NonText ctermbg=233
-  hi LineNr ctermbg=233
-  hi DiffText ctermfg=81
-  hi Normal ctermbg=233
-  hi DbgBreakPt ctermbg=53
-endif
 
 " delete functions {{{
 delf s:X
