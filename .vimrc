@@ -46,5 +46,6 @@ Bundle 'kien/ctrlp.vim'
 Bundle 'scrooloose/nerdcommenter'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'sickill/vim-pasta'
+Bundle 'kana/vim-smartinput'
 
 filetype plugin indent on
