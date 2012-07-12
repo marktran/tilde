@@ -1,5 +1,8 @@
 --color
+--type-set=eco=.eco
 --type-set=haml=.haml
+--type-set=jbuilder=.jbuilder
+--type-set=less=.less
 --type-set=sass=.sass
 --ignore-dir=coverage
 --ignore-dir=vendor
