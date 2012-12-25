@@ -2,6 +2,10 @@
     name = Mark Tran
     email = mark.tran@gmail.com
 [alias]
+    browse = !hub browse
+    w = !hub browse
+    compare = !hub compare
+
     a = "add"
     br = "branch"
     ci = "commit"
@@ -9,22 +13,10 @@
     di = "diff"
     hist = "log --pretty=format:'%Cred%h%Creset%C(yellow)%d%Creset (%Cgreen%cr%Creset) %s [%Cblue%an%Creset]' --graph --abbrev-commit --date=relative"
     l = "log --name-status"
-    pl = "pull"
-    pom = push origin master
-    pu = "push"
     st = "status --branch --short"
     sta = "stash"
-    unstage = "reset HEAD"
-
-    spull = svn rebase
-    spush = svn dcommit
-    sfetch = svn fetch
 [color]
-    ui = true
-[github]
-    user = marktran
-[difftool "Kaleidoscope"]
-    cmd = ksdiff-wrapper git \"$LOCAL\" \"$REMOTE\"
+    ui = auto
 [difftool]
     prompt = false
 [diff]
@@ -34,3 +26,9 @@
     excludesfile = /Users/mark/.gitignore
 [push]
     default = current
+[difftool "Kaleidoscope"]
+    cmd = ksdiff-wrapper git \"$LOCAL\" \"$REMOTE\"
+[github]
+    user = marktran
+[hub]
+    http-clone = true
