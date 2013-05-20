@@ -1,3 +1,4 @@
+alias browse 'hub browse'
 alias c 'calc -d'
 alias e 'emacsclient -nw -c'
 alias g 'git'
