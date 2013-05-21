@@ -1,6 +1,9 @@
 set -x ALTERNATE_EDITOR ""
 set -Ux LSCOLORS 'cxfxcxdxbxegedabagacad'
 
-set -x PATH "$HOME/bin" $PATH
-set -x PATH "/usr/local/bin" $PATH
-set -x PATH "/usr/local/share/npm/bin" $PATH
+prepend_to_path "$HOME/bin"
+prepend_to_path "/usr/local/bin"
+prepend_to_path "/usr/local/share/npm/bin"
+prepend_to_path "$HOME/.rbenv/shims"
+
+rbenv rehash >/dev/null ^&1
