@@ -1,3 +1,3 @@
 function ls
-  command ls -FG $argv
+  command ls -F $argv
 end
