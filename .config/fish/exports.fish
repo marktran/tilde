@@ -7,3 +7,4 @@ prepend_to_path "$HOME/bin"
 prepend_to_path "/usr/local/bin"
 prepend_to_path "/usr/local/share/npm/bin"
 prepend_to_path "$HOME/.rbenv/shims"
+deduplicate PATH
