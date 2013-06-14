@@ -1,4 +1,8 @@
 " .vimrc : Mark Tran <mark.tran@gmail.com>
+
+" vim expects a POSIX-compatible underlying shell
+set shell=/bin/sh
+
 set nocompatible
 set incsearch
 set showmode
