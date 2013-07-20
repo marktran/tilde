@@ -15,8 +15,8 @@ set visualbell
 autocmd VimEnter * set vb t_vb=
 
 set expandtab
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=2
+set tabstop=2
 set cindent
 set cinkeys=0{,0},0),:,!^F,o,O
 set cinoptions=(0t0c
