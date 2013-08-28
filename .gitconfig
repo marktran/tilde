@@ -23,7 +23,7 @@
     tool = Kaleidoscope
 [core]
     quotepath = false
-    excludesfile = /Users/mark/.gitignore
+    excludesfile = ~/.gitignore
 [push]
     default = current
 [difftool "Kaleidoscope"]
