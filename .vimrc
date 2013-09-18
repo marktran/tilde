@@ -42,14 +42,4 @@ set nobackup
 let mapleader = ","
 
 filetype off
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-
-Bundle 'gmarik/vundle'
-Bundle 'kien/ctrlp.vim'
-Bundle 'scrooloose/nerdcommenter'
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'sickill/vim-pasta'
-Bundle 'kana/vim-smartinput'
-
 filetype plugin indent on
