@@ -1,5 +1,7 @@
 .#*
+.dir-locals.el
 .DS_Store
 .rbenv-version
 projectile.cache
 TAGS
+TAGS.*
