@@ -2,4 +2,4 @@
 . "$HOME/.config/fish/aliases.fish"
 . "$HOME/.config/fish/colors.fish"
 
-. /usr/local/etc/autojump.fish
+. /usr/local/share/autojump/autojump.fish

@@ -10,3 +10,5 @@ alias ll 'ls -l'
 alias m 'mplayer'
 alias s 'ssh'
 alias t 'tree'
+
+alias rtorrent "ssh mack -t 'screen -r rtorrent'"
