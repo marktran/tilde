@@ -9,6 +9,7 @@ set showmode
 set nowrap
 set textwidth=79
 set viminfo='50,\"1000,:100,n~/.vim/viminfo
+set noeol
 
 set noerrorbells
 set visualbell
