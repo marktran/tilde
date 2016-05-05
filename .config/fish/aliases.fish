@@ -11,4 +11,5 @@ alias m 'mplayer'
 alias s 'ssh'
 alias t 'tree'
 
-alias rtorrent "ssh mack -t 'screen -r rtorrent'"
+alias irssi "ssh mack -t 'screen -r irssi'"
+alias rtorrent "ssh east -t 'screen -r rtorrent'"
