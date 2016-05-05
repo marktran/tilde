@@ -1,6 +1,8 @@
 .#*
 .dir-locals.el
 .DS_Store
+.floo
+.flooignore
 .projectile
 .rbenv-version
 projectile.cache
