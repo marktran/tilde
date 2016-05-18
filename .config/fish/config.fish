@@ -3,3 +3,5 @@
 . "$HOME/.config/fish/colors.fish"
 
 . /usr/local/share/autojump/autojump.fish
+
+status --is-interactive; and . (rbenv init -|psub)
