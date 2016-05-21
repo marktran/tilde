@@ -1,7 +1,6 @@
-. "$HOME/.config/fish/exports.fish"
-. "$HOME/.config/fish/aliases.fish"
-. "$HOME/.config/fish/colors.fish"
+source "$HOME/.config/fish/exports.fish"
+source "$HOME/.config/fish/aliases.fish"
 
-. /usr/local/share/autojump/autojump.fish
+[ -f /usr/local/share/autojump/autojump.fish ]; and source /usr/local/share/autojump/autojump.fish
 
 status --is-interactive; and . (rbenv init -|psub)
