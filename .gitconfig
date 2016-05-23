@@ -24,6 +24,7 @@
 [core]
     quotepath = false
     excludesfile = ~/.gitignore
+    pager = `test \"$TERM\" = \"dumb\" && echo cat || echo less`
 [push]
     default = current
 [difftool "Kaleidoscope"]
