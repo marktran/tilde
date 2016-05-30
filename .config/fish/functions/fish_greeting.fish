@@ -1,7 +1,7 @@
 function fish_greeting
   echo
 
-  if command -s fortune > /dev/null 2>&1
+  if type -q fortune
     fortune
   else
     /usr/games/fortune
