@@ -10,5 +10,5 @@ alias ll 'ls -l'
 abbr -a s ssh
 alias t 'tree'
 
-alias irssi "ssh mack -t 'screen -r irssi'"
-alias rtorrent "ssh east -t 'screen -r rtorrent'"
+not type -q irssi; and alias irssi "ssh mack -t 'screen -r irssi'"
+not type -q rtorrent; and alias rtorrent "ssh east -t 'screen -r rtorrent'"
