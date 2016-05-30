@@ -1,4 +1,9 @@
 function fish_greeting
   echo
-  fortune
+
+  if command -s fortune > /dev/null 2>&1
+    fortune
+  else
+    /usr/games/fortune
+  end
 end
