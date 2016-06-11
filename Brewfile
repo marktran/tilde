@@ -32,6 +32,7 @@ brew 'tmux'
 brew 'tree'
 brew 'unrar'
 brew 'wget'
+brew 'wifi-password'
 
 cask 'aerial'
 cask 'bartender'
