@@ -21,6 +21,7 @@
     prompt = false
 [diff]
     tool = Kaleidoscope
+    compactionHeuristic = 1
 [core]
     quotepath = false
     excludesfile = ~/.gitignore
