@@ -32,7 +32,7 @@ function $fisher_cmd_name -d "fish plugin manager"
             return 1
     end
 
-    set -g fisher_version "2.7.9"
+    set -g fisher_version "2.10.0"
     set -g fisher_spinners ⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏
     set -g __fisher_stdout /dev/stdout
     set -g __fisher_stderr /dev/stderr
@@ -70,8 +70,12 @@ function $fisher_cmd_name -d "fish plugin manager"
         set -g fisher_cache "$cache_home/fisherman"
     end
 
+    if test -z "$fish_path"
+        set -g fish_path "$fish_config"
+    end
+
     if test -z "$fisher_file"
-        set -g fisher_file "$fish_config/fishfile"
+        set -g fisher_file "$fish_path/fishfile"
     end
 
     switch "$argv[1]"
@@ -88,18 +92,8 @@ function $fisher_cmd_name -d "fish plugin manager"
             return
     end
 
-    if not command mkdir -p "$fish_config/"{conf.d,functions,completions} "$fisher_config" "$fisher_cache"
-        __fisher_log error "
-            I couldn't create the fisherman configuration.
-            You need write permissions in these directories:
-
-            $fish_config
-            $fisher_config
-            $fisher_cache
-        " > /dev/stderr
-
-        return 1
-    end
+    command mkdir -p {"$fish_path","$fish_config"}/{conf.d,functions,completions} "$fisher_config" "$fisher_cache"
+    or return 1
 
     set -l completions "$fish_config/completions/$fisher_cmd_name.fish"
 
@@ -485,7 +479,7 @@ function __fisher_plugin_fetch_items
                 end
 
             case \*
-                printf "%s\n" "$i" | sed 's/[@:]\(.*\)/ \1/' | read i branch
+                printf "%s\n" "$i" | sed 's/[@]\(.*\)/ \1/' | read i branch
                 set names (__fisher_plugin_get_names "$i")
         end
 
@@ -576,7 +570,6 @@ function __fisher_plugin_url_clone_async -a url name branch
     set -l nc (set_color normal)
     set -l error (set_color $fish_color_error)
     set -l okay (set_color $fish_color_match)
-
     set -l hm_url (printf "%s\n" "$url" | command sed 's|^https://||')
 
     if test ! -z "$branch"
@@ -759,10 +752,10 @@ function __fisher_plugin_enable -a path
             set base "$plugin_name.$base"
         end
 
-        set -l target "$fish_config/$dir/$base"
+        set -l target "$fish_path/$dir/$base"
 
         if test -e "$target" -a ! -L "$target"
-            set -l backup_target "$fish_config/$dir/copy-$base"
+            set -l backup_target "$fish_path/$dir/copy-$base"
 
             __fisher_log info "Backup &$base&" "$__fisher_stderr"
 
@@ -774,8 +767,8 @@ function __fisher_plugin_enable -a path
         builtin source "$target" ^ /dev/null
 
         if test "$base" = "set_color_custom.fish"
-            if test ! -s "$fish_config/fish_colors"
-                __fisher_print_fish_colors > "$fish_config/fish_colors"
+            if test ! -s "$fish_path/fish_colors"
+                __fisher_print_fish_colors > "$fish_path/fish_colors"
             end
 
             set_color_custom
@@ -784,17 +777,17 @@ function __fisher_plugin_enable -a path
 
     for file in $path/{functions/,}*.{py,awk}
         set -l base (basename "$file")
-        command ln -sf "$file" "$fish_config/functions/$base"
+        command ln -sf "$file" "$fish_path/functions/$base"
     end
 
     for file in $path/conf.d/*.{py,awk}
         set -l base (basename "$file")
-        command ln -sf "$file" "$fish_config/conf.d/$base"
+        command ln -sf "$file" "$fish_path/conf.d/$base"
     end
 
     for file in $path/conf.d/*.fish
         set -l base (basename "$file")
-        set -l target "$fish_config/conf.d/$base"
+        set -l target "$fish_path/conf.d/$base"
 
         command ln -sf "$file" "$target"
         builtin source "$target" ^ /dev/null
@@ -802,7 +795,7 @@ function __fisher_plugin_enable -a path
 
     for file in $path/completions/*.fish
         set -l base (basename "$file")
-        set -l target "$fish_config/completions/$base"
+        set -l target "$fish_path/completions/$base"
 
         command ln -sf "$file" "$target"
         builtin source "$target" ^ /dev/null
@@ -815,12 +808,18 @@ end
 function __fisher_plugin_disable -a path
     set -l plugin_name (basename $path)
 
+    for i in "$path/functions/uninstall.fish" "$path/uninstall.fish"
+        if test -s "$i"
+            builtin source "$i" ^ /dev/null
+            break
+        end
+    end
+
     for file in $path/{functions/*,}*.fish
         set -l name (basename "$file" .fish)
         set -l base "$name.fish"
 
         if test "$base" = "uninstall.fish"
-            builtin source "$file" ^ /dev/null
             continue
         end
 
@@ -837,13 +836,13 @@ function __fisher_plugin_disable -a path
             set base "$plugin_name.$base"
         end
 
-        set -l target "$fish_config/$dir/$base"
+        set -l target "$fish_path/$dir/$base"
 
         command rm -f "$target"
 
         functions -e "$name"
 
-        set -l backup_source "$fish_config/$dir/copy-$base"
+        set -l backup_source "$fish_path/$dir/copy-$base"
 
         if test -e "$backup_source"
             command mv "$backup_source" "$target"
@@ -851,7 +850,7 @@ function __fisher_plugin_disable -a path
         end
 
         if test "$base" = "set_color_custom.fish"
-            set -l fish_colors_config "$fish_config/fish_colors"
+            set -l fish_colors_config "$fish_path/fish_colors"
 
             if test ! -f "$fish_colors_config"
                 __fisher_reset_default_fish_colors
@@ -866,24 +865,24 @@ function __fisher_plugin_disable -a path
 
     for file in $path/conf.d/*.{py,awk}
         set -l base (basename "$file")
-        command rm -f "$fish_config/conf.d/$base"
+        command rm -f "$fish_path/conf.d/$base"
     end
 
     for file in $path/{functions/,}*.{py,awk}
         set -l base (basename "$file")
-        command rm -f "$fish_config/functions/$base"
+        command rm -f "$fish_path/functions/$base"
     end
 
     for file in $path/conf.d/*.fish
         set -l base (basename "$file")
-        command rm -f "$fish_config/conf.d/$base"
+        command rm -f "$fish_path/conf.d/$base"
     end
 
     for file in $path/completions/*.fish
         set -l name (basename "$file" .fish)
         set -l base "$name.fish"
 
-        command rm -f "$fish_config/completions/$base"
+        command rm -f "$fish_path/completions/$base"
         complete -c "$name" --erase
     end
 
@@ -937,10 +936,6 @@ function __fisher_remove
 
     for i in $orphans
         __fisher_remove "$i" > /dev/stderr
-    end
-
-    for i in $removed
-        __fisher_log info "Remove &$i&" "$__fisher_stderr"
     end
 end
 
@@ -1231,7 +1226,7 @@ function __fisher_list_remote -a format
             gsub(/%url/, url, fmt)
             gsub(/%info/, info, fmt)
 
-            printf(fmt)
+            printf("%s", fmt)
         }
 
         BEGIN {
@@ -1465,7 +1460,7 @@ end
 
 
 function __fisher_key_bindings_remove -a plugin_name
-    set -l user_key_bindings "$fish_config/functions/fish_user_key_bindings.fish"
+    set -l user_key_bindings "$fish_path/functions/fish_user_key_bindings.fish"
 
     if test ! -f "$user_key_bindings"
         return
@@ -1502,7 +1497,7 @@ end
 
 
 function __fisher_key_bindings_append -a plugin_name file
-    set -l user_key_bindings "$fish_config/functions/fish_user_key_bindings.fish"
+    set -l user_key_bindings "$fish_path/functions/fish_user_key_bindings.fish"
 
     command mkdir -p (dirname "$user_key_bindings")
     command touch "$user_key_bindings"
@@ -1611,7 +1606,7 @@ function __fisher_plugin_get_names
         {
             sub(/\/$/, "")
             n = split($0, s, "/")
-            sub(/^(omf|omf-theme|omf-plugin|plugin|theme|fish|fisher)-/, "", s[n])
+            sub(/^(omf|omf-theme|omf-plugin|plugin|theme|fish|fisher|fish-plugin|fish-theme)-/, "", s[n])
 
             printf("%s\n%s\n", s[n], s[n - 1])
         }
@@ -1913,8 +1908,8 @@ function __fisher_complete
 
     if test ! -s "$fisher_cache/.index"
         if test ! -z "$config"
-            complete -xc $fisher_cmd_name -n "__fish_seen_subcommand_from l ls list u up update r rm remove" -a "$config"
-            complete -xc $fisher_cmd_name -n "__fish_seen_subcommand_from l ls list u up update r rm remove" -a "$fisher_active_prompt" -d "Prompt"
+            complete -xc $fisher_cmd_name -n "__fish_seen_subcommand_from l ls list u up update r rm remove h help" -a "$config"
+            complete -xc $fisher_cmd_name -n "__fish_seen_subcommand_from l ls list u up update r rm remove h help" -a "$fisher_active_prompt" -d "Prompt"
         end
         return
     end
@@ -1925,7 +1920,7 @@ function __fisher_complete
         set -l path (command readlink "$name")
         set -l name (command basename "$name" | sed "s|$real_home|~|")
 
-        complete -xc $fisher_cmd_name -n "__fish_seen_subcommand_from l ls list u up update r rm remove" -a "$name" -d "$path"
+        complete -xc $fisher_cmd_name -n "__fish_seen_subcommand_from l ls list u up update r rm remove h help" -a "$name" -d "$path"
     end
 
     set -l IFS \t
@@ -1946,7 +1941,7 @@ function __fisher_complete
         complete -xc $fisher_cmd_name -n "__fish_seen_subcommand_from info ls-remote" -a "$name" -d "$info"
 
         if contains -- "$name" $config
-            complete -xc $fisher_cmd_name -n "__fish_seen_subcommand_from l ls list u up update r rm remove" -a "$name" -d "$info"
+            complete -xc $fisher_cmd_name -n "__fish_seen_subcommand_from l ls list u up update r rm remove h help" -a "$name" -d "$info"
         else
             complete -xc $fisher_cmd_name -n "__fish_seen_subcommand_from i in install" -a "$name" -d "$info"
         end
@@ -1958,7 +1953,7 @@ function __fisher_complete
                 case fisherman\*
                 case \*
                     set -l name (__fisher_plugin_get_names "$i")[1]
-                    complete -xc $fisher_cmd_name -n "__fish_seen_subcommand_from l ls list u up update r rm remove" -a "$name" -d "$i"
+                    complete -xc $fisher_cmd_name -n "__fish_seen_subcommand_from l ls list u up update r rm remove h help" -a "$name" -d "$i"
             end
         end
     end
@@ -1966,7 +1961,7 @@ end
 
 
 function __fisher_humanize_duration
-    awk '
+    command awk '
         function hmTime(time,   stamp) {
             split("h:m:s:ms", units, ":")
 
@@ -1992,12 +1987,9 @@ end
 
 function __fisher_get_key
     stty -icanon -echo ^ /dev/null
-
     printf "$argv" > /dev/stderr
-
     while true
         dd bs=1 count=1 ^ /dev/null | read -p "" -l yn
-
         switch "$yn"
             case y Y n N
                 printf "\n" > /dev/stderr
@@ -2005,7 +1997,6 @@ function __fisher_get_key
                 break
         end
     end
-
     stty icanon echo > /dev/stderr ^ /dev/null
 end
 
@@ -2029,7 +2020,6 @@ switch (command uname)
             if test -z "$elapsed"
                 set elapsed 0
             end
-
             math (command date "+%s%3N") - $elapsed
         end
 end
@@ -2038,13 +2028,11 @@ end
 function __fisher_parse_column_output
     command awk -v FS=\t '
         {
-
             for (i = 1; i <= NF; i++) {
                 if ($i != "") {
                     print $i
                 }
             }
-
         }
     '
 end
@@ -2070,7 +2058,7 @@ function __fisher_usage
     echo "      "$u"i"$nc"nstall (default)"
     echo "      "$u"u"$nc"pdate"
     echo "      "$u"r"$nc"m"
-    echo "      "$u"l"$nc"s (or ls-remote [--format FMT])"
+    echo "      "$u"l"$nc"s (or ls-remote [--format=FORMAT])"
     echo "      "$u"h"$nc"elp"
 end
 
@@ -2097,7 +2085,6 @@ function __fisher_help -a cmd number
         end
 
         man -P "$pager" -- "$page"
-
         command rm -f "$page"
 
     else
@@ -2126,12 +2113,6 @@ end
 
 function __fisher_self_uninstall -a yn
     set -l file (status --current-filename)
-
-    if test -z "$fish_config" -o -z "$fisher_cache" -o -z "$fisher_config" -o -L "$fisher_cache" -o -L "$fisher_config" -o "$file" != "$fish_config/functions/$fisher_cmd_name.fish"
-        __fisher_log info "Use your package manager to uninstall fisherman."
-        return 1
-    end
-
     set -l u (set_color -u)
     set -l nc (set_color normal)
 
@@ -2149,7 +2130,7 @@ function __fisher_self_uninstall -a yn
 
             " /dev/stderr
 
-            echo -sn "Shall we to continue? [Y/n] " > /dev/stderr
+            echo -sn "Continue? [Y/n] " > /dev/stderr
 
             __fisher_get_key | read -l yn
 
@@ -2178,6 +2159,7 @@ function __fisher_self_uninstall -a yn
     command rm -f "$fish_config"/{functions,completions}/$fisher_cmd_name.fish "$fisher_file"
 
     set -e fish_config
+    set -e fish_path
     set -e fisher_active_prompt
     set -e fisher_cache
     set -e fisher_config
@@ -2201,7 +2183,7 @@ function __fisher_man_page_write
 \fBfisherman\fR \- fish plugin manager
 .
 .SH "SYNOPSIS"
-'"$fisher_cmd_name"' [(\-q | \-\-quiet)] [(\fBi\fRnstall | \fBu\fRpdate | \fBl\fRs[\-remote] | \fBr\fRm | \fBh\fRelp) PLUGINS]
+'"$fisher_cmd_name"' [(\fBi\fRnstall | \fBu\fRpdate | \fBl\fRs[\-remote] | \fBr\fRm | \fBh\fRelp) PLUGINS]
 .
 .br
 .
@@ -2228,14 +2210,14 @@ Install a plugin\.
 .
 .nf
 
-'"$fisher_cmd_name"' sol
+'"$fisher_cmd_name"' mono
 .
 .fi
 .
 .IP "" 0
 .
 .P
-Install plugins from multiple sources\.
+Install some plugins\.
 .
 .IP "" 4
 .
@@ -2261,20 +2243,20 @@ Install a gist\.
 .IP "" 0
 .
 .P
-Install a local directory as a plugin\.
+Install a local directory\.
 .
 .IP "" 4
 .
 .nf
 
-'"$fisher_cmd_name"' ~/plugin
+'"$fisher_cmd_name"' ~/my/plugin
 .
 .fi
 .
 .IP "" 0
 .
 .P
-Edit your \fIfishfile\fR and run \fB'"$fisher_cmd_name"'\fR to satisfy changes\.
+Edit your \fIfishfile\fR and run \fB'"$fisher_cmd_name"'\fR to commit changes\.
 .
 .IP "" 4
 .
@@ -2288,7 +2270,7 @@ $EDITOR ~/\.config/fish/fishfile
 .IP "" 0
 .
 .P
-List what you\'ve installed\.
+Show everything you\'ve installed\.
 .
 .IP "" 4
 .
@@ -2296,10 +2278,10 @@ List what you\'ve installed\.
 
 '"$fisher_cmd_name"' ls
 @ plugin     # a local directory
-* sol        # the current prompt
+* mono       # the current prompt
   bass
   fzf
-  tab
+  thefuck
   z
 .
 .fi
@@ -2307,7 +2289,7 @@ List what you\'ve installed\.
 .IP "" 0
 .
 .P
-List everything that\'s available\.
+Show everything that\'s available\.
 .
 .IP "" 4
 .
@@ -2384,19 +2366,6 @@ Get help\.
 .
 .IP "" 0
 .
-.P
-Uninstall fisherman\.
-.
-.IP "" 4
-.
-.nf
-
-'"$fisher_cmd_name"' self\-uninstall
-.
-.fi
-.
-.IP "" 0
-.
 .SH "FAQ"
 .
 .SS "What is the required fish version?"
@@ -2427,10 +2396,10 @@ The cache and configuration go in \fI~/\.cache/fisherman\fR and \fI~/\.config/fi
 The fishfile is saved to \fI~/\.config/fish/fishfile\fR\.
 .
 .SS "What is a fishfile and how do I use it?"
-The fishfile lists all the installed plugins\.
+The fishfile \fI~/\.config/fish/fishfile\fR lists what plugins you\'ve installed\.
 .
 .P
-You can let fisherman take care of this file for you automatically, or write in the plugins you want and run \fBfisher\fR to satisfy the changes\.
+This file is updated automatically as you install / remove plugins. You can also edit this file and run \fBfisher\fR to commit changes\.
 .
 .P
 This mechanism only installs plugins and missing dependencies\. To remove plugins, use \fBfisher rm\fR\.
@@ -2450,5 +2419,5 @@ a snippet, i\.e, one or more \fI\.fish\fR files inside a directory named \fIconf
 .IP "" 0
 .
 .SS "How can I list plugins as dependencies to my plugin?"
-Create a new \fIfishfile\fR file at the root level of your project and write in your plugin dependencies\.'
+Create a new \fIfishfile\fR file at the root level of your project and write in the plugins\.'
 end
