@@ -5,6 +5,7 @@
 .flooignore
 .projectile
 .rbenv-version
+.vscode/
 projectile.cache
 TAGS
 TAGS.*
