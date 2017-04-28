@@ -4,3 +4,4 @@ source "$HOME/.config/fish/colors.fish"
 
 test -f /usr/local/share/autojump/autojump.fish; and source /usr/local/share/autojump/autojump.fish
 type -q rbenv; and source (rbenv init -|psub)
+type -q direnv; and eval (direnv hook fish)

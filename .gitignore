@@ -1,8 +1,7 @@
 .#*
 .dir-locals.el
 .DS_Store
-.floo
-.flooignore
+.envrc
 .projectile
 .rbenv-version
 .vscode/
