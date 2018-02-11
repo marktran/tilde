@@ -11,7 +11,8 @@ alias l. 'ls -d .*'
 alias ll 'ls -l'
 abbr -a s ssh
 alias t 'tree'
+abbr -a tf 'terraform'
 
-type -q gcal; and alias cal 'gcal'
-not type -q irssi; and alias irssi "ssh mack -t 'screen -r irssi'"
+type -q gcal; and alias cal gcal
+not type -q irssi; and alias irssi "ssh east -t 'screen -r irssi'"
 not type -q rtorrent; and alias rtorrent "ssh east -t 'screen -r rtorrent'"
