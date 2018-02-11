@@ -34,3 +34,5 @@
     user = marktran
 [hub]
     http-clone = true
+[magit]
+    hideCampaign = true
