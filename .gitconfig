@@ -19,20 +19,17 @@
     ui = auto
 [difftool]
     prompt = false
-[diff]
-    tool = Kaleidoscope
-    compactionHeuristic = 1
 [core]
     quotepath = false
     excludesfile = ~/.gitignore
     pager = `test \"$TERM\" = \"dumb\" && echo cat || echo less`
 [push]
     default = current
-[difftool "Kaleidoscope"]
-    cmd = ksdiff-wrapper git \"$LOCAL\" \"$REMOTE\"
 [github]
     user = marktran
 [hub]
     http-clone = true
 [magit]
     hideCampaign = true
+[fetch]
+    prune = true
