@@ -10,3 +10,5 @@ type -q rbenv; and source (rbenv init -|psub)
 
 # do this after initializing rbenv
 set -x PATH ./bin $PATH
+
+set -gx nvm_prefix /usr/local/Cellar/nvm/0.34.0
