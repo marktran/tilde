@@ -5,10 +5,8 @@ source "$HOME/.config/fish/colors.fish"
 test -e local.fish; and source local.fish
 
 [ -f /usr/local/share/autojump/autojump.fish ]; and source /usr/local/share/autojump/autojump.fish
+[ -f /usr/local/opt/asdf/asdf.fish ]; and source /usr/local/opt/asdf/asdf.fish
 type -q direnv; and eval (direnv hook fish)
-type -q rbenv; and source (rbenv init -|psub)
 
 # do this after initializing rbenv
 set -x PATH ./bin $PATH
-
-set -gx nvm_prefix /usr/local/Cellar/nvm/0.34.0
