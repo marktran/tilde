@@ -13,6 +13,7 @@ abbr -a s ssh
 alias t 'tree'
 abbr -a tf terraform
 abbr -a mux tmuxinator
+abbr -a y yarn
 
 type -q gcal; and alias cal gcal
 not type -q irssi; and alias irssi "ssh east -t 'screen -r irssi'"
