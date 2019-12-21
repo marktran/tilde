@@ -41,6 +41,7 @@ brew 'wifi-password'
 
 cask 'aerial'
 cask 'charles'
+cask 'choosy'
 cask 'dash'
 cask 'google-chrome-beta'
 cask 'hazel'
