@@ -1,4 +1,6 @@
 .#*
+.config/pgcli/history
+.config/pgcli/log
 .dir-locals.el
 .DS_Store
 .envrc
@@ -9,3 +11,6 @@
 projectile.cache
 TAGS
 TAGS.*
+
+Choosy/.key
+Choosy/.version
