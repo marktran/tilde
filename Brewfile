@@ -2,6 +2,7 @@ cask_args appdir: '/Applications'
 
 tap 'heroku/brew'
 
+brew 'asdf'
 brew 'autoconf'
 brew 'autojump'
 brew 'automake'
