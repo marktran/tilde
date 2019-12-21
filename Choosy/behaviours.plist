@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Default</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "reddit.com"</string>
+		<key>title</key>
+		<string>reddit</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Default</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "news.ycombinator.com"</string>
+		<key>title</key>
+		<string>Hacker News</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Profile 1</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "github.com"</string>
+		<key>title</key>
+		<string>GitHub</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Default</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "twitter.com" OR URL CONTAINS "t.co"</string>
+		<key>title</key>
+		<string>Twitter</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Profile 1</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "workos.quip.com"</string>
+		<key>title</key>
+		<string>Quip</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Profile 1</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "calendar.google.com" OR URL CONTAINS "google.com/calendar/event"</string>
+		<key>title</key>
+		<string>Google Calendar</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Profile 1</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "workos.semaphoreci.com"</string>
+		<key>title</key>
+		<string>Semaphore</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Profile 1</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "app.clubhouse.io"</string>
+		<key>title</key>
+		<string>Clubhouse</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Profile 1</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "workos.slab.com"</string>
+		<key>title</key>
+		<string>Slab</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Profile 1</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "zoom.us"</string>
+		<key>title</key>
+		<string>Zoom</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Profile 1</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "sentry.io/organizations/workos"</string>
+		<key>title</key>
+		<string>Sentry</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Profile 1</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "hire.lever.co"</string>
+		<key>title</key>
+		<string>Lever</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Profile 1</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "figma.com"</string>
+		<key>title</key>
+		<string>Figma</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Profile 1</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "zeit.co/workos"</string>
+		<key>title</key>
+		<string>Zeit</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Profile 1</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "my.papertrailapp.com"</string>
+		<key>title</key>
+		<string>Papertrail</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Profile 1</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "work-os.slack.com"</string>
+		<key>title</key>
+		<string>WorkOS Slack</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>6</integer>
+		<key>behaviourArgument</key>
+		<dict>
+			<key>path</key>
+			<string>/Applications/Google Chrome.app</string>
+			<key>profileName</key>
+			<string>Profile 1</string>
+			<key>type</key>
+			<string>ChoosyChromeProfileMode</string>
+		</dict>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "dashboard.workos.com"</string>
+		<key>title</key>
+		<string>WorkOS</string>
+	</dict>
+	<dict>
+		<key>behaviour</key>
+		<integer>0</integer>
+		<key>behaviourArgument</key>
+		<string></string>
+		<key>enabled</key>
+		<true/>
+		<key>predicate</key>
+		<string>URL CONTAINS "threads.com"</string>
+		<key>title</key>
+		<string>Threads</string>
+	</dict>
+</array>
+</plist>
