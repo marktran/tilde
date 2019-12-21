@@ -3,7 +3,6 @@
 code --install-extension apollographql.vscode-apollo
 code --install-extension arcticicestudio.nord-visual-studio-code
 code --install-extension christian-kohler.npm-intellisense
-code --install-extension CoenraadS.bracket-pair-colorizer
 code --install-extension EditorConfig.EditorConfig
 code --install-extension eg2.vscode-npm-script
 code --install-extension esbenp.prettier-vscode
