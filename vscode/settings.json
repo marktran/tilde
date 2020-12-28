@@ -1,7 +1,7 @@
 {
   "diffEditor.renderSideBySide": false,
   "editor.cursorStyle": "block",
-  "editor.fontFamily": "SF Mono",
+  "editor.fontFamily": "Operator Mono",
   "editor.fontLigatures": true,
   "editor.lineNumbers": "on",
   "editor.minimap.enabled": false,
