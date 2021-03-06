@@ -11,6 +11,5 @@ type -q direnv; and eval (direnv hook fish)
 # do this after initializing rbenv
 set -x PATH ./bin $PATH
 
-
 set -gx VOLTA_HOME "$HOME/.volta"
 set -gx PATH "$VOLTA_HOME/bin" $PATH
