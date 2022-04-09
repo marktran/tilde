@@ -23,3 +23,5 @@ function cd {
 . /usr/local/opt/asdf/etc/bash_completion.d/asdf.bash
 
 eval "$(rbenv init -)"
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"

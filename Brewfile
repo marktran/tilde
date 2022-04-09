@@ -26,6 +26,7 @@ brew 'pgcli'
 brew 'ripgrep'
 brew 'tmux'
 brew 'tree'
+brew 'volta'
 brew 'wget'
 brew 'wifi-password'
 
