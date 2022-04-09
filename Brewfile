@@ -28,6 +28,7 @@ brew 'tree'
 brew 'volta'
 brew 'wget'
 brew 'wifi-password'
+brew 'zoxide'
 
 cask 'aerial'
 cask 'charles'

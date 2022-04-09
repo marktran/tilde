@@ -4,7 +4,7 @@ source "$HOME/.config/fish/colors.fish"
 
 test -e local.fish; and source local.fish
 
-zoxide init fish | source
+zoxide init --cmd j fish | source
 source (brew --prefix asdf)/asdf.fish
 type -q direnv; and eval (direnv hook fish)
 
