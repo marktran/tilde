@@ -4,6 +4,7 @@ source "$HOME/.config/fish/colors.fish"
 
 test -e local.fish; and source local.fish
 
+zoxide init fish | source
 source (brew --prefix autojump)/share/autojump/autojump.fish
 source (brew --prefix asdf)/asdf.fish
 type -q direnv; and eval (direnv hook fish)
