@@ -16,5 +16,3 @@ abbr -a mux tmuxinator
 abbr -a y yarn
 
 type -q gcal; and alias cal gcal
-not type -q irssi; and alias irssi "ssh east -t 'screen -r irssi'"
-not type -q rtorrent; and alias rtorrent "ssh east -t 'screen -r rtorrent'"
