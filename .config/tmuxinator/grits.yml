@@ -45,6 +45,3 @@ startup_pane: 1
 windows:
   - editor: emacs -nw
   - server:
-      panes:
-        - echo "webpack"
-        - echo "server"
