@@ -4,7 +4,6 @@ tap 'heroku/brew'
 
 brew 'asdf'
 brew 'autoconf'
-brew 'autojump'
 brew 'automake'
 brew 'bash'
 brew 'calc'
