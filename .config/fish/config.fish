@@ -5,7 +5,7 @@ source "$HOME/.config/fish/colors.fish"
 test -e local.fish; and source local.fish
 
 zoxide init --cmd j fish | source
-source (brew --prefix asdf)/libexec/asdf.fish
+source (brew --prefix mise)/share/fish/vendor_conf.d/mise-activate.fish
 type -q direnv; and eval (direnv hook fish)
 
 # do this after initializing rbenv
