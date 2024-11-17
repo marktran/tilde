@@ -7,7 +7,6 @@ abbr -a g git
 abbr -a h heroku
 alias ip 'dig +short myip.opendns.com @resolver1.opendns.com'
 alias l 'ls'
-alias l. 'ls -d .*'
 alias ll 'ls -l'
 alias q 'llm -s "Answer in as few words as possible. Use a brief style with short replies." -m llama3.1:8b'
 abbr -a s ssh
