@@ -1,6 +1,7 @@
 [user]
     name = Mark Tran
     email = mark.tran@gmail.com
+    signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILw1m9kUxgh4fZir5b3g7Ei/DMQlawjRnx/sTRJdgD8h
 [alias]
     browse = !hub browse
     w = !hub browse
@@ -15,6 +16,8 @@
     l = "log --name-status"
     st = "status --branch --short"
     sta = "stash"
+[commit]
+	gpgsign = true
 [color]
     ui = auto
 [difftool]
@@ -23,14 +26,6 @@
     quotepath = false
     excludesfile = ~/.gitignore
     pager = `test \"$TERM\" = \"dumb\" && echo cat || echo less`
-[push]
-    default = current
-[github]
-    user = marktran
-[hub]
-    http-clone = true
-[magit]
-    hideCampaign = true
 [fetch]
     prune = true
 [filter "lfs"]
@@ -38,3 +33,15 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+[push]
+    default = current
+[github]
+    user = marktran
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+[hub]
+    http-clone = true
+[magit]
+    hideCampaign = true
