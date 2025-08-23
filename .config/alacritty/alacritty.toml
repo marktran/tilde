@@ -1,0 +1,25 @@
+general.import = [ "~/.config/omarchy/current/theme/alacritty.toml" ]
+
+[env]
+TERM = "xterm-256color"
+
+[font]
+normal = { family = "Berkeley Mono", style = "Regular" }
+bold = { family = "Berkeley Mono", style = "Bold" }
+italic = { family = "Berkeley Mono", style = "Italic" }
+size = 10
+
+[window]
+padding.x = 14
+padding.y = 14
+decorations = "None"
+opacity = 1.0
+
+[keyboard]
+bindings = [
+{ key = "F11", action = "ToggleFullscreen" }
+]
+
+[terminal.shell]
+program = "/usr/bin/fish"
+args = ["-l"]
