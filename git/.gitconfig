@@ -1,0 +1,44 @@
+[user]
+    name = Mark Tran
+    email = mark.tran@gmail.com
+    signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK6j5pkvHqP1YRODd00yh5FM7YGuozykifYWYYuQeMuu
+[github]
+    user = marktran
+
+[core]
+    quotepath = false
+    excludesfile = ~/.gitignore
+    pager = less
+[alias]
+    browse = !gh repo view --web
+    w = !gh repo view --web
+    compare = !gh compare
+
+    a = add
+    br = branch
+    ci = commit
+    co = checkout
+    di = diff
+    hist = log --pretty=format:'%Cred%h%Creset%C(yellow)%d%Creset (%Cgreen%cr%Creset) %s [%Cblue%an%Creset]' --graph --abbrev-commit --date=relative
+    l = log --name-status
+    st = status --branch --short
+    sta = stash
+[color]
+    ui = auto
+[difftool]
+    prompt = false
+[fetch]
+    prune = true
+[push]
+    default = current
+
+[commit]
+	gpgsign = true
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = op-ssh-sign-wrapper
+[hub]
+    http-clone = true
+[magit]
+    hideCampaign = true

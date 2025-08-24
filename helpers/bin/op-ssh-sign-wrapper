@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  exec "/Applications/1Password.app/Contents/MacOS/op-ssh-sign" "$@"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  exec "/opt/1Password/op-ssh-sign" "$@"
+else
+  echo "Unsupported OS: $OSTYPE" >&2
+  exit 1
+fi
