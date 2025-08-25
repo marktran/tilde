@@ -14,4 +14,5 @@ brew 'wifi-password'
 brew 'zoxide'
 
 cask 'hazel'
+cask 'karabiner-elements'
 cask 'popclip'
