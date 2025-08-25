@@ -5,12 +5,8 @@
 .DS_Store
 .envrc
 .projectile
-.rbenv-version
 .vim/.netrwhist
 .vscode/
-projectile.cache
-TAGS
-TAGS.*
 
 Choosy/.key
 Choosy/.version
