@@ -1,0 +1,13 @@
+theme = iTerm2 Pastel Dark Background
+
+font-family = "Berkeley Mono"
+font-size = 12.0
+
+mouse-hide-while-typing = true
+cursor-style-blink = true
+cursor-style = block
+
+window-theme = system
+
+shell-integration = fish
+shell-integration-features = no-cursor
