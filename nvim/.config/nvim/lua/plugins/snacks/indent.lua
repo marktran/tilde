@@ -1,34 +1,23 @@
 return {
-  indent = {
-    priority = 1,
-    enabled = true,
-    char = "│",
-    only_scope = false,
-    only_current = false,
-    hl = "SnacksIndent",
-  },
+  enabled = true,
+  priority = 1,
+  char = "│",
+  only_scope = true,
+  only_current = true,
+  hl = "SnacksIndent",
 
   animate = {
-    enabled = vim.fn.has("nvim-0.10") == 1,
-    style = "out",
-    easing = "linear",
-    duration = {
-      step = 20,
-      total = 500,
-    },
+    enabled = false
   },
 
   scope = {
     enabled = true,
     priority = 200,
-    char = "│",
     underline = false,
-    only_current = false,
     hl = "SnacksIndentScope",
   },
   chunk = {
     enabled = false,
-    only_current = false,
     priority = 200,
     hl = "SnacksIndentChunk",
     char = {
@@ -40,7 +29,10 @@ return {
     },
   },
 
+  -- Filter for buffers to enable guides
   filter = function(buf)
-    return vim.g.snacks_indent ~= false and vim.b[buf].snacks_indent ~= false and vim.bo[buf].buftype == ""
+    return vim.g.snacks_indent ~= false
+    and vim.b[buf].snacks_indent ~= false
+    and vim.bo[buf].buftype == ""
   end,
 }
