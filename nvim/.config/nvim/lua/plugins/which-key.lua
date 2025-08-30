@@ -15,6 +15,7 @@ return {
       { "<leader><leader>", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
 
       { "<leader>b", group = "Buffer" },
+      { "<leader>bd", "<cmd>Delete!<cr>", desc = "Delete File" },
       { "<leader>bk", "<cmd>bd<cr>", desc = "Kill Buffer" },
 
       { "<leader>g", group = "Git" },
