@@ -8,8 +8,9 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 vim.opt.clipboard:append("unnamedplus")
-vim.opt.swapfile = false
 vim.opt.fillchars:append({ eob = " " })
+vim.opt.relativenumber = true
+vim.opt.swapfile = false
 
 -- Navigate vim panes better
 vim.keymap.set("n", "<c-k>", ":wincmd k<CR>")
