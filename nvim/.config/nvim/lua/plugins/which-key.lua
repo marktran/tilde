@@ -17,6 +17,9 @@ return {
       { "<leader>b", group = "Buffer" },
       { "<leader>bk", "<cmd>bd<cr>", desc = "Kill Buffer" },
 
+      { "<leader>g", group = "Git" },
+      { "<leader>gs", "<cmd>Neogit<cr>", desc = "Git Status" },
+
       { "<leader>h", "<cmd>Telescope help_tags<cr>", desc = "Help" },
 
       { "<leader>s", group = "Search" },
