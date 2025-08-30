@@ -10,11 +10,18 @@ return {
       },
 
       sections = {
-        lualine_a = {'mode'},
+        lualine_a = {
+          {
+            "mode",
+            fmt = function(mode)
+              return mode:sub(1, 1)
+            end,
+          }
+       },
         lualine_b = {'branch', 'diagnostics'},
         lualine_c = {'filename'},
         lualine_x = {},
-        lualine_y = {'progress'},
+        lualine_y = {},
         lualine_z = {'location'}
       },
 
