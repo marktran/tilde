@@ -10,8 +10,8 @@ italic = { family = "Berkeley Mono", style = "Italic" }
 size = 10
 
 [window]
-padding.x = 14
-padding.y = 14
+padding.x = 7
+padding.y = 7
 decorations = "None"
 opacity = 1.0
 
