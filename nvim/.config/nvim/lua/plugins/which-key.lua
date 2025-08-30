@@ -32,10 +32,8 @@ return {
       { "<leader>s", group = "Search" },
       { "<leader>sg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
 
-      { "<leader>N", group = "Session" },
-      { "<leader>NQ", "<cmd>qa!<cr>", desc = "Quit All" },
-      { "<leader>Nw", "<cmd>w<cr>", desc = "Save" },
-      { "<leader>Nx", "<cmd>x<cr>", desc = "Save & Quit" },
+      { "<leader>E", group = "Neovim" },
+      { "<leader>Eq", "<cmd>wqa<cr>", desc = "Quit All" },
     })
   end,
 }
