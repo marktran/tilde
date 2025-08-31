@@ -4,7 +4,7 @@ local map = function(mode, l, r, opts)
   vim.keymap.set(mode, l, r, opts)
 end
 
--- Navigate panes better
+-- Navigate between windows and Tmux panes
 map("n", "<M-k>", "<cmd>TmuxNavigateUp<CR>")
 map("n", "<M-j>", "<cmd>TmuxNavigateDown<CR>")
 map("n", "<M-h>", "<cmd>TmuxNavigateLeft<CR>")
