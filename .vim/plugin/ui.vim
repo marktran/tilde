@@ -1,2 +1,0 @@
-color jellybeans
-syntax on
