@@ -11,7 +11,7 @@ return {
 
   config = function(_, opts)
     Snacks.setup(opts)
-    Snacks.toggle.indent():map("<leader>bi")
-    Snacks.toggle.line_number():map("<leader>bl")
+    Snacks.toggle.indent():map("<leader>ti")
+    Snacks.toggle.line_number():map("<leader>tl")
   end,
 }

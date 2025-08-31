@@ -34,6 +34,8 @@ wk.add({
   { "<leader>s", group = "Search" },
   { "<leader>sg", Snacks.picker.grep, desc = "Live Grep" },
 
+  { "<leader>t", group = "Toggles" },
+
   { "<leader>E", group = "Neovim" },
   { "<leader>Eq", "<cmd>wqa<cr>", desc = "Quit All" },
 })
