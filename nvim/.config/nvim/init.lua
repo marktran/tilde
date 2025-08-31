@@ -7,6 +7,6 @@ require("config.settings")
 require("config.lazy")
 
 -- Not loaded by lazy.nvim
-require("config.autocmds")
+require("autocmds")
 require("config.keymaps")
 require("config.theme")
