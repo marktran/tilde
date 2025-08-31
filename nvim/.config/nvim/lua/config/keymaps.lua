@@ -5,10 +5,10 @@ local map = function(mode, l, r, opts)
 end
 
 -- Navigate panes better
-map("n", "<c-k>", ":wincmd k<CR>")
-map("n", "<c-j>", ":wincmd j<CR>")
-map("n", "<c-h>", ":wincmd h<CR>")
-map("n", "<c-l>", ":wincmd l<CR>")
+map("n", "<c-k>", "<cmd>TmuxNavigateUp<CR>")
+map("n", "<c-j>", "<cmd>TmuxNavigateDown<CR>")
+map("n", "<c-h>", "<cmd>TmuxNavigateLeft<CR>")
+map("n", "<c-l>", "<cmd>TmuxNavigateRight<CR>")
 
 local wk = require("which-key")
 
