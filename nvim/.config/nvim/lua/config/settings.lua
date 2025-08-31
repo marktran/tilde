@@ -4,7 +4,9 @@ local diagnostic = vim.diagnostic
 
 opt.expandtab = true
 opt.relativenumber = true
+opt.ruler = false
 opt.shiftwidth = 2
+opt.showcmd = false
 opt.smarttab = true
 opt.showtabline = 0
 opt.softtabstop = 2
