@@ -1,6 +1,4 @@
 local opt = vim.opt
-local cmd = vim.api.nvim_command
-local diagnostic = vim.diagnostic
 
 opt.expandtab = true
 opt.relativenumber = true
