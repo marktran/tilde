@@ -6,5 +6,12 @@ return {
     dashboard = require("plugins.snacks.dashboard"),
     indent = require("plugins.snacks.indent"),
     picker = require("plugins.snacks.picker"),
-  }
+    toggle = require("plugins.snacks.toggle"),
+  },
+
+  config = function(_, opts)
+    Snacks.setup(opts)
+    Snacks.toggle.indent():map("<leader>bi")
+    Snacks.toggle.line_number():map("<leader>bl")
+  end,
 }
