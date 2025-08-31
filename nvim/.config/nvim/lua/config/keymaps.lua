@@ -21,6 +21,7 @@ wk.add({
   { "<leader>b", group = "Buffer" },
   { "<leader>bd", "<cmd>Delete!<cr>", desc = "Delete File" },
   { "<leader>bk", Snacks.bufdelete.delete, desc = "Kill Buffer" },
+  { "<leader>br", Snacks.rename.rename_file, desc = "Rename File" },
 
   { "<leader>g", group = "Git" },
   { "<leader>gs", "<cmd>Neogit<cr>", desc = "Git Status" },
