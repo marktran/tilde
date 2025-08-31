@@ -28,6 +28,7 @@ wk.add({
   { "<leader>gb", Snacks.picker.git_branches, desc = "Git Branches" },
   { "<leader>gl", Snacks.picker.git_log, desc = "Git Log" },
   { "<leader>gL", Snacks.picker.git_log_file, desc = "Git Log [for file]" },
+  { "<leader>go", Snacks.gitbrowse.open, desc = "Open file in browser" },
 
   { "<leader>h", Snacks.picker.help, desc = "Help" },
 
