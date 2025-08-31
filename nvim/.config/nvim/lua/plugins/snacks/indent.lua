@@ -1,5 +1,5 @@
 return {
-  enabled = true,
+  enabled = false,
   priority = 1,
   char = "│",
   only_scope = true,
@@ -15,18 +15,6 @@ return {
     priority = 200,
     underline = false,
     hl = "SnacksIndentScope",
-  },
-  chunk = {
-    enabled = false,
-    priority = 200,
-    hl = "SnacksIndentChunk",
-    char = {
-      corner_top = "┌",
-      corner_bottom = "└",
-      horizontal = "─",
-      vertical = "│",
-      arrow = ">",
-    },
   },
 
   -- Filter for buffers to enable guides
