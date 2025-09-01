@@ -11,8 +11,9 @@ map("n", "<M-h>", "<cmd>TmuxNavigateLeft<CR>")
 map("n", "<M-l>", "<cmd>TmuxNavigateRight<CR>")
 
 local wk = require("which-key")
-
 wk.add({
+  { "<M-x>", Snacks.picker.commands, desc = "Search Commands" },
+
   { "<leader>f", Snacks.picker.smart, desc = "Find Files" },
   { "<leader>E", "<cmd>Ex<cr>", desc = "Explore Files" },
   { "<leader>r", Snacks.picker.recent, desc = "Recent Files" },
