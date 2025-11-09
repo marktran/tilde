@@ -1,0 +1,6 @@
+auth    [success=done default=ignore] pam_u2f.so cue
+auth    [success=done default=ignore] pam_fprintd.so
+#%PAM-1.0
+auth    include       system-auth
+account include       system-auth
+session include       system-auth
