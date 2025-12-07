@@ -1,0 +1,11 @@
+# System packages for bootstrapping
+# Install with: sudo pacman -S --needed - < packages.txt
+
+# Dictionaries and spell checking
+aspell
+aspell-en
+enchant
+words
+
+# Tools
+tree
