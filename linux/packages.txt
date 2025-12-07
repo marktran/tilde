@@ -8,4 +8,5 @@ enchant
 words
 
 # Tools
+calc
 tree
