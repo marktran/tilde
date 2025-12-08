@@ -10,5 +10,4 @@ set -gx _ZO_ECHO 1
 if test (uname) = Darwin
     set -gx CPATH /opt/homebrew/include $CPATH
     set -gx HOMEBREW_NO_ANALYTICS 1
-    set -gx LIBRARY_PATH /opt/homebrew/lib/gcc/14 $LIBRARY_PATH
 end
