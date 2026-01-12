@@ -1,6 +1,11 @@
 {
   "permissions": {
     "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "WebSearch",
+      "WebFetch",
       "Bash(ls:*)",
       "Bash(find:*)",
       "Bash(cat:*)",
@@ -20,7 +25,14 @@
       "Bash(pacman -Q:*)",
       "Bash(hyprctl:*)"
     ],
-    "deny": []
+    "ask": [
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
+    ],
+    "deny": [
+      "Read(.env*)",
+      "Bash(rm -rf:*)"
+    ]
   },
   "model": "opus"
 }
