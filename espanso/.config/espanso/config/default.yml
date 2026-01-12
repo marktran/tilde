@@ -1,0 +1,5 @@
+# Espanso configuration
+# https://espanso.org/docs/configuration/
+
+# The search bar shortcut
+search_shortcut: ALT+SPACE

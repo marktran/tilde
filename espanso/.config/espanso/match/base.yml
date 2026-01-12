@@ -1,0 +1,6 @@
+# Espanso text expansions
+# https://espanso.org/docs/matches/basics/
+
+matches:
+  - trigger: ",e"
+    replace: "mark.tran@gmail.com"
