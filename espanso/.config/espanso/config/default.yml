@@ -3,3 +3,6 @@
 
 # The search bar shortcut
 search_shortcut: CTRL+SPACE
+
+# Disable notifications (including startup notification)
+show_notifications: false
