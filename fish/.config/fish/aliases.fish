@@ -13,6 +13,7 @@ alias t 'tree'
 abbr -a tf terraform
 abbr -a mux tmuxinator
 alias writer 'open $1 -a /Applications/iA\ Writer.app'
+abbr -a vi nvim
 abbr -a y yarn
 
 type -q gcal; and alias cal gcal
