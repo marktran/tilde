@@ -8,7 +8,7 @@ alias l 'ls'
 alias ll 'ls -l'
 abbr -a n 'nvim'
 alias q 'llm -s "Answer in as few words as possible. Use a brief style with short replies." -m llama3.1:8b'
-abbr -a s ssh
+abbr -a s sesh
 alias t 'tree'
 abbr -a tf terraform
 abbr -a mux tmuxinator
