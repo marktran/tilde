@@ -9,4 +9,5 @@ words
 
 # Tools
 calc
+sesh-bin
 tree
