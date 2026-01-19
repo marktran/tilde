@@ -25,14 +25,13 @@
       "Bash(pacman -Q:*)",
       "Bash(hyprctl:*)"
     ],
-    "ask": [
-      "Bash(git commit:*)",
-      "Bash(git push:*)"
-    ],
     "deny": [
       "Read(.env*)",
       "Bash(rm -rf:*)"
+    ],
+    "ask": [
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
-  },
-  "model": "opus"
+  }
 }
