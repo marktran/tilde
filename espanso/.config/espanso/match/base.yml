@@ -4,3 +4,5 @@
 matches:
   - trigger: ",e"
     replace: "mark.tran@gmail.com"
+  - trigger: ",w"
+    replace: "mark@workos.com"
