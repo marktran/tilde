@@ -33,5 +33,6 @@
       "Bash(git commit:*)",
       "Bash(git push:*)"
     ]
-  }
+  },
+  "effortLevel": "medium"
 }
