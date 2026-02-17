@@ -3,6 +3,21 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
   exec "/Applications/1Password.app/Contents/MacOS/op-ssh-sign" "$@"
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  # Some shells/sessions (including automation contexts) do not export
+  # SSH_AUTH_SOCK, even though the 1Password agent socket exists.
+  if [[ -z "${SSH_AUTH_SOCK:-}" ]]; then
+    runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+    for sock in \
+      "$runtime_dir/1password/agent.sock" \
+      "$runtime_dir/s.sock" \
+      "$runtime_dir/1Password-BrowserSupport.sock"
+    do
+      if [[ -S "$sock" ]]; then
+        export SSH_AUTH_SOCK="$sock"
+        break
+      fi
+    done
+  fi
   exec "/opt/1Password/op-ssh-sign" "$@"
 else
   echo "Unsupported OS: $OSTYPE" >&2
