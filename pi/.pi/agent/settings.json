@@ -4,10 +4,7 @@
   "defaultModel": "gpt-5.3-codex",
   "defaultThinkingLevel": "xhigh",
   "theme": "nightowl",
-  "enabledModels": [
-    "claude-opus-4-6",
-    "openai-codex/gpt-5.3-codex"
-  ],
+  "enabledModels": ["claude-opus-4-6", "openai-codex/gpt-5.3-codex"],
   "extensions": [
     "extensions/answer.ts",
     "extensions/confirm-destructive.ts",
@@ -22,9 +19,7 @@
     "extensions/todos.ts",
     "extensions/whimsical.ts"
   ],
-  "skills": [
-    "skills/commit"
-  ],
+  "skills": ["skills/commit", "skills/github", "skills/native-web-search"],
   "hideThinkingBlock": false,
   "quietStartup": true
 }

@@ -13,7 +13,8 @@
       "api.github.com",
       "raw.githubusercontent.com"
     ],
-    "deniedDomains": []
+    "deniedDomains": [],
+    "allowAllUnixSockets": true
   },
   "filesystem": {
     "denyRead": [
