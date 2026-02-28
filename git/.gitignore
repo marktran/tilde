@@ -1,3 +1,6 @@
 .#*
 .dir-locals.el
 .DS_Store
+
+# Pi coding agent local todos
+.pi/todos/
