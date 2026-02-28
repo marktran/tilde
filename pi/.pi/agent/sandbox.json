@@ -18,7 +18,7 @@
   },
   "filesystem": {
     "denyRead": ["~/.ssh", "~/.aws", "~/.gnupg"],
-    "allowWrite": [".", "/tmp"],
+    "allowWrite": [".", "/tmp", "../../.git/modules/emacs/.emacs.d"],
     "denyWrite": [".env", ".env.*", "*.pem", "*.key"]
   }
 }
