@@ -1,0 +1,15 @@
+{
+  "lastChangelogVersion": "0.55.3",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.3-codex",
+  "defaultThinkingLevel": "medium",
+  "theme": "dark",
+  "enabledModels": [
+    "openai-codex/gpt-5.3-codex"
+  ],
+  "extensions": [
+    "extensions/minimal.ts"
+  ],
+  "hideThinkingBlock": false,
+  "quietStartup": true
+}
