@@ -18,6 +18,7 @@
     "extensions/preset.ts",
     "extensions/protected-paths.ts",
     "extensions/review.ts",
+    "extensions/sandbox",
     "extensions/todos.ts",
     "extensions/whimsical.ts"
   ],
