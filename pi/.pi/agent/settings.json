@@ -12,6 +12,7 @@
     "extensions/notify.ts",
     "extensions/minimal.ts",
     "extensions/permission-gate.ts",
+    "extensions/protected-paths.ts",
     "extensions/review.ts",
     "extensions/todos.ts",
     "extensions/whimsical.ts"
