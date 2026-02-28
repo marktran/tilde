@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "network": {
     "allowedDomains": [
       "npmjs.org",
@@ -17,20 +17,8 @@
     "allowAllUnixSockets": true
   },
   "filesystem": {
-    "denyRead": [
-      "~/.ssh",
-      "~/.aws",
-      "~/.gnupg"
-    ],
-    "allowWrite": [
-      ".",
-      "/tmp"
-    ],
-    "denyWrite": [
-      ".env",
-      ".env.*",
-      "*.pem",
-      "*.key"
-    ]
+    "denyRead": ["~/.ssh", "~/.aws", "~/.gnupg"],
+    "allowWrite": [".", "/tmp"],
+    "denyWrite": [".env", ".env.*", "*.pem", "*.key"]
   }
 }
