@@ -3,12 +3,18 @@
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.3-codex",
   "defaultThinkingLevel": "medium",
-  "theme": "dark",
+  "theme": "nightowl",
   "enabledModels": [
     "openai-codex/gpt-5.3-codex"
   ],
   "extensions": [
-    "extensions/minimal.ts"
+    "extensions/answer.ts",
+    "extensions/files.ts",
+    "extensions/notify.ts",
+    "extensions/minimal.ts",
+    "extensions/review.ts",
+    "extensions/todos.ts",
+    "extensions/whimsical.ts"
   ],
   "hideThinkingBlock": false,
   "quietStartup": true
