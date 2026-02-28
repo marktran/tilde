@@ -9,8 +9,7 @@ alias ll 'ls -l'
 abbr -a n 'nvim'
 alias q 'llm -s "Answer in as few words as possible. Use a brief style with short replies." -m llama3.1:8b'
 abbr -a s sesh
-alias t 'tree'
-abbr -a tf terraform
+abbr -a t tmux
 abbr -a mux tmuxinator
 alias writer 'open $1 -a /Applications/iA\ Writer.app'
 abbr -a vi nvim
