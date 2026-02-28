@@ -4,12 +4,13 @@
   "defaultModel": "gpt-5.3-codex",
   "defaultThinkingLevel": "xhigh",
   "theme": "nightowl",
-  "enabledModels": ["openai-codex/gpt-5.3-codex"],
+  "enabledModels": ["claude-opus-4-6", "openai-codex/gpt-5.3-codex"],
   "extensions": [
     "extensions/answer.ts",
     "extensions/files.ts",
     "extensions/notify.ts",
     "extensions/minimal.ts",
+    "extensions/permission-gate.ts",
     "extensions/review.ts",
     "extensions/todos.ts",
     "extensions/whimsical.ts"
