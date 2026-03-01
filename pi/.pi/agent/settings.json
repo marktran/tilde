@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.55.3",
-  "defaultProvider": "baseten",
-  "defaultModel": "moonshotai/Kimi-K2.5",
-  "defaultThinkingLevel": "high",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.3-codex",
+  "defaultThinkingLevel": "xhigh",
   "theme": "nightowl",
   "enabledModels": [
     "claude-opus-4-6",
@@ -22,7 +22,11 @@
     "extensions/review.ts",
     "extensions/whimsical.ts"
   ],
-  "skills": ["skills/commit", "skills/github", "skills/native-web-search"],
+  "skills": [
+    "skills/commit",
+    "skills/github",
+    "skills/native-web-search"
+  ],
   "hideThinkingBlock": false,
   "quietStartup": true
 }
