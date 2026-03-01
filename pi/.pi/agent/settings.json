@@ -16,17 +16,13 @@
     "extensions/notify.ts",
     "extensions/minimal.ts",
     "extensions/permission-gate.ts",
+    "extensions/plan-mode.ts",
     "extensions/preset.ts",
     "extensions/protected-paths.ts",
     "extensions/review.ts",
-    "extensions/todos.ts",
     "extensions/whimsical.ts"
   ],
-  "skills": [
-    "skills/commit",
-    "skills/github",
-    "skills/native-web-search"
-  ],
+  "skills": ["skills/commit", "skills/github", "skills/native-web-search"],
   "hideThinkingBlock": false,
   "quietStartup": true
 }
