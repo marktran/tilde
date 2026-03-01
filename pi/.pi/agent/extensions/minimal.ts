@@ -45,7 +45,7 @@ export default function (pi: ExtensionAPI) {
       dispose: () => {},
       invalidate() {},
       render(width: number): string[] {
-        const model = ctx.model?.id ?? "no-model";
+        const model = ctx.model?.name ?? ctx.model?.id ?? "no-model";
         const contextUsage = ctx.getContextUsage();
         const contextTokens = contextUsage?.tokens ?? 0;
         const contextPercent = Math.max(0, Math.min(100, Math.round(contextUsage?.percent ?? 0)));
