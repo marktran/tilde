@@ -1,5 +1,5 @@
 /**
- * Minimal footer: model name + token usage (session total + context %)
+ * Minimal footer: model name (thinking level) + token usage (session total + context %)
  */
 
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
@@ -46,6 +46,7 @@ export default function (pi: ExtensionAPI) {
       invalidate() {},
       render(width: number): string[] {
         const model = ctx.model?.name ?? ctx.model?.id ?? "no-model";
+        const thinkingLevel = pi.getThinkingLevel();
         const contextUsage = ctx.getContextUsage();
         const contextTokens = contextUsage?.tokens ?? 0;
         const contextPercent = Math.max(0, Math.min(100, Math.round(contextUsage?.percent ?? 0)));
@@ -53,7 +54,7 @@ export default function (pi: ExtensionAPI) {
         // Calculate total session tokens from all assistant messages
         const sessionTokens = calculateSessionTokens(ctx);
 
-        const left = theme.fg("dim", ` ${model}`);
+        const left = theme.fg("dim", ` ${model} (${thinkingLevel})`);
 
         // Show both session total and context percentage
         // Format: "172k (45%)" or just "172k" if no context percent
