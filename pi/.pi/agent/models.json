@@ -7,7 +7,7 @@
       "models": [
         {
           "id": "moonshotai/Kimi-K2.5",
-          "name": "Kimi K2.5",
+          "name": "kimi k2.5",
           "reasoning": true,
           "input": ["text", "image"],
           "contextWindow": 262144,
@@ -24,14 +24,14 @@
     "openai-codex": {
       "modelOverrides": {
         "gpt-5.3-codex": {
-          "name": "Codex 5.3"
+          "name": "codex 5.3"
         }
       }
     },
     "anthropic": {
       "modelOverrides": {
         "claude-opus-4-6": {
-          "name": "Opus 4.6"
+          "name": "opus 4.6"
         }
       }
     }
