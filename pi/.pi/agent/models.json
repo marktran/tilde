@@ -23,8 +23,8 @@
     },
     "openai-codex": {
       "modelOverrides": {
-        "gpt-5.3-codex": {
-          "name": "codex 5.3"
+        "gpt-5.4": {
+          "name": "gpt 5.4"
         }
       }
     },
