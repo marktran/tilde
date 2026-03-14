@@ -435,7 +435,7 @@ function resolveActivePack(config: PeonConfig): { pack: InstalledPack; fallback:
   return { pack: first, fallback: true };
 }
 
-function pickSound(category: Category, config: PeonConfig, state: PeonState): { file: string; label: string; packName: string } | null {
+function pickSound(category: Category, config: PeonConfig, state: PeonState): { file: string } | null {
   if (!config.categories[category]) return null;
 
   const resolved = resolveActivePack(config);
@@ -460,8 +460,6 @@ function pickSound(category: Category, config: PeonConfig, state: PeonState): { 
   state.last_played[category] = selected.file;
   return {
     file: fullPath,
-    label: selected.label || basename(selected.file),
-    packName: resolved.pack.name,
   };
 }
 
