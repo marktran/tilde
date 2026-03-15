@@ -1,16 +1,11 @@
 /**
- * Local peon-ping clone for Pi.
+ * Peon Ping clone for Pi.
  *
- * Closer to upstream than the initial minimal version:
  * - /peon opens a settings panel in interactive mode
  * - /peon install installs the default upstream pack set when no pack is given
  * - pack browsing previews sounds while you move through the list
  * - per-category toggles and silent-window setting
  * - config/state stored in ~/.config/peon-ping/
- *
- * Still intentionally smaller than upstream:
- * - no relay support
- * - no desktop notifications here (you already have notify.ts)
  */
 
 import { execSync, spawn } from "node:child_process";
@@ -231,24 +226,37 @@ function playFile(file: string, volume: number): boolean {
           });
           break;
         case "ffplay":
-          child = spawn("ffplay", [
-            "-nodisp",
-            "-autoexit",
-            "-loglevel",
-            "quiet",
-            "-volume",
-            String(Math.round(clamp(volume, 0, 1) * 100)),
-            file,
-          ], {
-            stdio: "ignore",
-            detached: true,
-          });
+          child = spawn(
+            "ffplay",
+            [
+              "-nodisp",
+              "-autoexit",
+              "-loglevel",
+              "quiet",
+              "-volume",
+              String(Math.round(clamp(volume, 0, 1) * 100)),
+              file,
+            ],
+            {
+              stdio: "ignore",
+              detached: true,
+            },
+          );
           break;
         case "mpv":
-          child = spawn("mpv", ["--really-quiet", "--no-video", `--volume=${Math.round(clamp(volume, 0, 1) * 100)}`, file], {
-            stdio: "ignore",
-            detached: true,
-          });
+          child = spawn(
+            "mpv",
+            [
+              "--really-quiet",
+              "--no-video",
+              `--volume=${Math.round(clamp(volume, 0, 1) * 100)}`,
+              file,
+            ],
+            {
+              stdio: "ignore",
+              detached: true,
+            },
+          );
           break;
         case "play":
           child = spawn("play", ["-q", "-v", String(clamp(volume, 0, 1)), file], {
@@ -291,9 +299,10 @@ function loadConfig(): PeonConfig {
     }
     delete migrated.active_pack;
 
-    const rawCategories = typeof migrated.categories === "object" && migrated.categories !== null
-      ? (migrated.categories as Partial<Record<Category, boolean>>)
-      : {};
+    const rawCategories =
+      typeof migrated.categories === "object" && migrated.categories !== null
+        ? (migrated.categories as Partial<Record<Category, boolean>>)
+        : {};
 
     return {
       ...DEFAULT_CONFIG,
@@ -303,13 +312,8 @@ function loadConfig(): PeonConfig {
           ? migrated.default_pack
           : DEFAULT_CONFIG.default_pack,
       volume:
-        typeof migrated.volume === "number"
-          ? clamp(migrated.volume, 0, 1)
-          : DEFAULT_CONFIG.volume,
-      enabled:
-        typeof migrated.enabled === "boolean"
-          ? migrated.enabled
-          : DEFAULT_CONFIG.enabled,
+        typeof migrated.volume === "number" ? clamp(migrated.volume, 0, 1) : DEFAULT_CONFIG.volume,
+      enabled: typeof migrated.enabled === "boolean" ? migrated.enabled : DEFAULT_CONFIG.enabled,
       annoyed_threshold:
         typeof migrated.annoyed_threshold === "number"
           ? Math.max(1, Math.round(migrated.annoyed_threshold))
@@ -343,7 +347,9 @@ function saveConfig(config: PeonConfig): PeonConfig {
     ...config,
     categories: {
       ...DEFAULT_CONFIG.categories,
-      ...(typeof currentRaw.categories === "object" && currentRaw.categories !== null ? currentRaw.categories : {}),
+      ...(typeof currentRaw.categories === "object" && currentRaw.categories !== null
+        ? currentRaw.categories
+        : {}),
       ...config.categories,
     },
   };
@@ -435,7 +441,11 @@ function resolveActivePack(config: PeonConfig): { pack: InstalledPack; fallback:
   return { pack: first, fallback: true };
 }
 
-function pickSound(category: Category, config: PeonConfig, state: PeonState): { file: string } | null {
+function pickSound(
+  category: Category,
+  config: PeonConfig,
+  state: PeonState,
+): { file: string } | null {
   if (!config.categories[category]) return null;
 
   const resolved = resolveActivePack(config);
@@ -561,7 +571,8 @@ function formatStatus(config: PeonConfig, state: PeonState): string {
   const packs = listInstalledPacks();
   const active = resolveActivePack(config);
   const platform = detectPlatform();
-  const player = platform === "linux" ? (detectLinuxPlayer() ?? "none") : platform === "mac" ? "afplay" : "none";
+  const player =
+    platform === "linux" ? (detectLinuxPlayer() ?? "none") : platform === "mac" ? "afplay" : "none";
   const packText = active
     ? `${active.pack.name}${active.fallback ? " (fallback)" : ""}`
     : `${config.default_pack} (missing)`;
@@ -703,7 +714,12 @@ async function runInstallInteractive(
   onInstallEnd: () => void,
 ): Promise<void> {
   const result: { installed: number; total: number } | null = await ctx.ui.custom(
-    (tui: any, theme: any, _kb: any, done: (value: { installed: number; total: number } | null) => void) => {
+    (
+      tui: any,
+      theme: any,
+      _kb: any,
+      done: (value: { installed: number; total: number } | null) => void,
+    ) => {
       const container = new Container();
       container.addChild(new DynamicBorder((text: string) => theme.fg("border", text)));
 
@@ -762,7 +778,11 @@ async function runInstallInteractive(
   );
 
   if (result) {
-    report(ctx, `peon-ping: installed ${result.installed}/${result.total} packs`, result.installed > 0 ? "info" : "error");
+    report(
+      ctx,
+      `peon-ping: installed ${result.installed}/${result.total} packs`,
+      result.installed > 0 ? "info" : "error",
+    );
   } else {
     report(ctx, "peon-ping: install cancelled", "info");
   }
@@ -792,7 +812,11 @@ async function runInstallCli(packNames: string[], ctx: any): Promise<void> {
     }
   }
 
-  report(ctx, `peon-ping: installed ${installed}/${names.length} packs`, installed > 0 ? "info" : "error");
+  report(
+    ctx,
+    `peon-ping: installed ${installed}/${names.length} packs`,
+    installed > 0 ? "info" : "error",
+  );
 }
 
 function createSettingsPanel(
@@ -901,7 +925,11 @@ export default function (pi: ExtensionAPI) {
     }
   }
 
-  function playCategorySound(category: Category, ctx: any, options?: { ignoreUi?: boolean }): boolean {
+  function playCategorySound(
+    category: Category,
+    ctx: any,
+    options?: { ignoreUi?: boolean },
+  ): boolean {
     if (installing) return false;
     if (!options?.ignoreUi && !ctx.hasUI) return false;
 
@@ -942,7 +970,9 @@ export default function (pi: ExtensionAPI) {
     const now = Date.now();
     const windowMs = config.annoyed_window_seconds * 1000;
 
-    state.prompt_timestamps = state.prompt_timestamps.filter((timestamp) => now - timestamp < windowMs);
+    state.prompt_timestamps = state.prompt_timestamps.filter(
+      (timestamp) => now - timestamp < windowMs,
+    );
     state.prompt_timestamps.push(now);
     saveState(state);
 
@@ -1001,8 +1031,12 @@ export default function (pi: ExtensionAPI) {
             await runInstallInteractive(
               [],
               ctx,
-              () => { installing = true; },
-              () => { installing = false; },
+              () => {
+                installing = true;
+              },
+              () => {
+                installing = false;
+              },
             );
           }
           return;
@@ -1018,8 +1052,12 @@ export default function (pi: ExtensionAPI) {
           await runInstallInteractive(
             packNames,
             ctx,
-            () => { installing = true; },
-            () => { installing = false; },
+            () => {
+              installing = true;
+            },
+            () => {
+              installing = false;
+            },
           );
         } else {
           installing = true;
@@ -1128,7 +1166,11 @@ export default function (pi: ExtensionAPI) {
         }
 
         const played = playCategorySound(category, ctx, { ignoreUi: true });
-        report(ctx, played ? `Played ${category}` : `Could not play ${category}; run /peon status`, played ? "info" : "warning");
+        report(
+          ctx,
+          played ? `Played ${category}` : `Could not play ${category}; run /peon status`,
+          played ? "info" : "warning",
+        );
         return;
       }
 
