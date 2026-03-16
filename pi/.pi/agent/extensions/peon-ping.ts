@@ -443,13 +443,10 @@ function resolveActivePack(config: PeonConfig): { pack: InstalledPack; fallback:
   return { pack: first, fallback: true };
 }
 
-function resolveEndOfTurnCategory(config: PeonConfig): Category {
-  const resolved = resolveActivePack(config);
-  if (!resolved) return "input.required";
-
-  const manifest = loadManifest(resolved.pack.path);
-  const inputRequiredSounds = manifest?.categories?.["input.required"]?.sounds ?? [];
-  return inputRequiredSounds.length > 0 ? "input.required" : "task.complete";
+function resolveEndOfTurnCategory(): Category {
+  // Successful agent completion should always use the completion bucket.
+  // Reserve input.required for actual approval / input prompts.
+  return "task.complete";
 }
 
 function getAgentEndOutcome(
@@ -1042,7 +1039,7 @@ export default function (pi: ExtensionAPI) {
     state.last_stop_time = now;
     saveState(state);
 
-    const endOfTurnCategory = resolveEndOfTurnCategory(config);
+    const endOfTurnCategory = resolveEndOfTurnCategory();
     playCategorySound(endOfTurnCategory, ctx);
   });
 
@@ -1199,7 +1196,7 @@ export default function (pi: ExtensionAPI) {
       }
 
       if (command === "test") {
-        const category = (rest[0] || resolveEndOfTurnCategory(config)) as Category;
+        const category = (rest[0] || resolveEndOfTurnCategory()) as Category;
         if (!TESTABLE_CATEGORIES.includes(category)) {
           report(ctx, `Unknown category. Try: ${TESTABLE_CATEGORIES.join(", ")}`, "error");
           return;
