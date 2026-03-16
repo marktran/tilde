@@ -1,0 +1,9 @@
+history = true
+history_when_empty = false
+always_show_default = true
+
+[[entries]]
+default = true
+name = "Google"
+url = "https://www.google.com/search?q=%TERM%"
+icon = "/home/mark/.config/elephant/google-favicon.png"
