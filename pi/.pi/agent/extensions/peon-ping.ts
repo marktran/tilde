@@ -51,6 +51,7 @@ interface PeonState {
   paused: boolean;
   last_played: Record<string, string>;
   prompt_timestamps: number[];
+  prompt_start_time: number;
   last_stop_time: number;
   session_start_time: number;
 }
@@ -115,6 +116,7 @@ const DEFAULT_STATE: PeonState = {
   paused: false,
   last_played: {},
   prompt_timestamps: [],
+  prompt_start_time: 0,
   last_stop_time: 0,
   session_start_time: 0,
 };
@@ -441,6 +443,29 @@ function resolveActivePack(config: PeonConfig): { pack: InstalledPack; fallback:
   return { pack: first, fallback: true };
 }
 
+function resolveEndOfTurnCategory(config: PeonConfig): Category {
+  const resolved = resolveActivePack(config);
+  if (!resolved) return "input.required";
+
+  const manifest = loadManifest(resolved.pack.path);
+  const inputRequiredSounds = manifest?.categories?.["input.required"]?.sounds ?? [];
+  return inputRequiredSounds.length > 0 ? "input.required" : "task.complete";
+}
+
+function getAgentEndOutcome(
+  messages: Array<{ role?: string; stopReason?: string }>,
+): "success" | "error" | "none" {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const message = messages[i];
+    if (message?.role !== "assistant") continue;
+    if (message.stopReason === "stop") return "success";
+    if (message.stopReason === "error") return "error";
+    return "none";
+  }
+
+  return "none";
+}
+
 function pickSound(
   category: Category,
   config: PeonConfig,
@@ -682,7 +707,7 @@ function buildSettingsItems(): SettingItem[] {
     {
       id: "silent_window_seconds",
       label: "Silent window",
-      description: "Suppress task.complete for very short tasks",
+      description: "Suppress the end-of-turn sound for very short tasks",
       currentValue: `${config.silent_window_seconds}s`,
       values: SILENT_WINDOW_STEPS,
     },
@@ -957,6 +982,7 @@ export default function (pi: ExtensionAPI) {
     const config = loadConfig();
     const state = loadState();
     state.session_start_time = Date.now();
+    state.prompt_start_time = 0;
     state.prompt_timestamps = [];
     saveState(state);
 
@@ -970,6 +996,7 @@ export default function (pi: ExtensionAPI) {
     const now = Date.now();
     const windowMs = config.annoyed_window_seconds * 1000;
 
+    state.prompt_start_time = now;
     state.prompt_timestamps = state.prompt_timestamps.filter(
       (timestamp) => now - timestamp < windowMs,
     );
@@ -983,27 +1010,40 @@ export default function (pi: ExtensionAPI) {
     }
   });
 
-  pi.on("tool_execution_end", async (event, ctx) => {
-    if (!event.isError) return;
-    playCategorySound("task.error", ctx);
-  });
+  // Tool-level errors are often recoverable during normal agent work
+  // (for example, probing commands or searches with no matches), so
+  // do not map them to the user-facing task.error sound.
 
-  pi.on("agent_end", async (_event, ctx) => {
+  pi.on("agent_end", async (event, ctx) => {
     const config = loadConfig();
     const state = loadState();
     const now = Date.now();
+    const outcome = getAgentEndOutcome(
+      event.messages as Array<{ role?: string; stopReason?: string }>,
+    );
+    const promptStartTime = state.prompt_start_time;
 
-    if (now - state.last_stop_time < 5000) return;
-    state.last_stop_time = now;
+    state.prompt_start_time = 0;
+    saveState(state);
 
-    const silentMs = config.silent_window_seconds * 1000;
-    if (silentMs > 0 && now - state.session_start_time < silentMs) {
-      saveState(state);
+    if (outcome === "error") {
+      playCategorySound("task.error", ctx);
       return;
     }
 
+    if (outcome !== "success") return;
+
+    const silentMs = config.silent_window_seconds * 1000;
+    if (silentMs > 0 && promptStartTime > 0 && now - promptStartTime < silentMs) {
+      return;
+    }
+
+    if (now - state.last_stop_time < 5000) return;
+    state.last_stop_time = now;
     saveState(state);
-    playCategorySound("task.complete", ctx);
+
+    const endOfTurnCategory = resolveEndOfTurnCategory(config);
+    playCategorySound(endOfTurnCategory, ctx);
   });
 
   pi.registerCommand("peon", {
@@ -1159,7 +1199,7 @@ export default function (pi: ExtensionAPI) {
       }
 
       if (command === "test") {
-        const category = (rest[0] || "task.complete") as Category;
+        const category = (rest[0] || resolveEndOfTurnCategory(config)) as Category;
         if (!TESTABLE_CATEGORIES.includes(category)) {
           report(ctx, `Unknown category. Try: ${TESTABLE_CATEGORIES.join(", ")}`, "error");
           return;
