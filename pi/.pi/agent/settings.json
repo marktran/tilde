@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.58.1",
+  "lastChangelogVersion": "0.58.3",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.4",
   "defaultThinkingLevel": "xhigh",
@@ -27,6 +27,9 @@
     "skills/commit",
     "skills/github",
     "skills/native-web-search"
+  ],
+  "packages": [
+    "npm:pi-chrome-cdp@1.0.2"
   ],
   "hideThinkingBlock": false,
   "quietStartup": true
