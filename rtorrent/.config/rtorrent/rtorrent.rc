@@ -1,6 +1,6 @@
 # dirs
 method.insert = cfg.basedir,  private|const|string, (cat, (system.env, HOME), "/.local/share/rtorrent/")
-method.insert = cfg.download, private|const|string, (cat, (system.env, HOME), "/Downloads/torrents/")
+method.insert = cfg.download, private|const|string, (cat, (system.env, HOME), "/Downloads/torrents/.downloading/")
 method.insert = cfg.complete, private|const|string, (cat, (system.env, HOME), "/Downloads/torrents/")
 method.insert = cfg.watch,    private|const|string, (cat, (system.env, HOME), "/Downloads/")
 method.insert = cfg.session,  private|const|string, (cat, (cfg.basedir), "session/")
@@ -53,9 +53,9 @@ schedule2 = watch_directory, 5, 5, ((load.start, (cat, (cfg.watch), "*.torrent")
 
 # complete
 method.insert = d.move_to_complete, simple, \
-    "d.directory.set=$d.custom1= ; \
-     execute=mkdir,-p,$d.custom1= ; \
-     execute=mv,-u,$d.base_path=,$d.custom1="
+    "execute=mkdir,-p,$d.custom1= ; \
+     execute=mv,-u,$d.base_path=,$d.custom1= ; \
+     d.directory.set=$d.custom1="
 
 method.set_key = event.download.finished, move_complete, \
     "d.custom1.set=(cat,(cfg.complete)) ; d.move_to_complete="
