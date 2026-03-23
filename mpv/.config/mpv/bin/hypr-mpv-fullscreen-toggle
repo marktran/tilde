@@ -2,8 +2,11 @@
 set -euo pipefail
 
 # Toggle fullscreen for mpv windows in a Hyprland PiP setup.
-# - Entering fullscreen: unpin + unfloat first, then fullscreen.
-# - Leaving fullscreen: exit fullscreen, then restore float + pin.
+# - Entering fullscreen: save geometry, unpin + unfloat, then fullscreen.
+# - Leaving fullscreen: exit fullscreen, restore float + pin + saved geometry.
+
+STATE_DIR="${XDG_RUNTIME_DIR:-/tmp}/hypr-mpv-fullscreen"
+mkdir -p "$STATE_DIR"
 
 active="$(hyprctl activewindow -j 2>/dev/null || true)"
 [[ -z "${active}" ]] && exit 0
@@ -12,6 +15,7 @@ class="$(echo "$active" | jq -r '.class // .initialClass // ""')"
 fullscreen="$(echo "$active" | jq -r '.fullscreen // 0')"
 pinned="$(echo "$active" | jq -r '.pinned // false')"
 floating="$(echo "$active" | jq -r '.floating // false')"
+address="$(echo "$active" | jq -r '.address // ""')"
 
 # Fallback for non-mpv windows: just toggle fullscreen.
 if [[ ! "$class" =~ ^mpv$ ]]; then
@@ -24,6 +28,8 @@ if [[ "$fullscreen" == "1" || "$fullscreen" == "2" || "$fullscreen" == "true" ]]
   is_fullscreen=1
 fi
 
+state_file="${STATE_DIR}/${address}"
+
 if [[ "$is_fullscreen" -eq 1 ]]; then
   hyprctl dispatch fullscreen 0 >/dev/null 2>&1 || true
 
@@ -34,7 +40,24 @@ if [[ "$is_fullscreen" -eq 1 ]]; then
   if [[ "$pinned" != "true" ]]; then
     hyprctl dispatch pin >/dev/null 2>&1 || true
   fi
+
+  # Restore saved position/size, or center as fallback.
+  if [[ -f "$state_file" ]]; then
+    IFS=' ' read -r sx sy sw sh < "$state_file"
+    hyprctl dispatch movewindowpixel "exact $sx $sy,address:$address" >/dev/null 2>&1 || true
+    hyprctl dispatch resizewindowpixel "exact $sw $sh,address:$address" >/dev/null 2>&1 || true
+    rm -f "$state_file"
+  else
+    hyprctl dispatch centerwindow >/dev/null 2>&1 || true
+  fi
 else
+  # Save current geometry before going fullscreen.
+  x="$(echo "$active" | jq -r '.at[0] // 0')"
+  y="$(echo "$active" | jq -r '.at[1] // 0')"
+  w="$(echo "$active" | jq -r '.size[0] // 0')"
+  h="$(echo "$active" | jq -r '.size[1] // 0')"
+  echo "$x $y $w $h" > "$state_file"
+
   # Ensure the window can actually fullscreen.
   if [[ "$pinned" == "true" ]]; then
     hyprctl dispatch pin >/dev/null 2>&1 || true
