@@ -44,7 +44,8 @@ network.receive_buffer.size.set = 4M
 protocol.encryption.set = allow_incoming,try_outgoing,enable_retry
 
 # pieces
-pieces.hash.on_completion.set = yes
+# A full rehash after completion is redundant and can trip completion-moving workflows.
+pieces.hash.on_completion.set = no
 pieces.memory.max.set         = 2048M
 system.file.allocate.set      = yes
 
@@ -52,13 +53,24 @@ system.file.allocate.set      = yes
 schedule2 = watch_directory, 5, 5, ((load.start, (cat, (cfg.watch), "*.torrent"), "d.custom1.set=(cat,(cfg.watch))", "d.delete_tied="))
 
 # complete
-method.insert = d.move_to_complete, simple, \
-    "execute=mkdir,-p,$d.custom1= ; \
-     execute=mv,-u,$d.base_path=,$d.custom1= ; \
-     d.directory.set=$d.custom1="
+method.insert = d.move_to_complete_single, simple|private, \
+    "d.directory.set=(argument.1) ; \
+     execute.throw=mkdir,-p,(argument.1) ; \
+     execute.throw=mv,-u,(argument.0),(argument.1)"
+
+method.insert = d.move_to_complete_multi, simple|private, \
+    "d.directory_base.set=(argument.1) ; \
+     execute.throw=mkdir,-p,(argument.2) ; \
+     execute.throw=mv,-uT,(argument.0),(argument.1)"
+
+method.insert = d.move_to_complete, simple|private, \
+    "branch=d.is_multi_file=, \
+        \"d.move_to_complete_multi=(argument.0),(argument.1),(argument.2)\", \
+        \"d.move_to_complete_single=(argument.0),(argument.2)\" ; \
+     d.save_full_session="
 
 method.set_key = event.download.finished, move_complete, \
-    "d.custom1.set=(cat,(cfg.complete)) ; d.move_to_complete="
+    "d.move_to_complete=(d.base_path),(cat,(cfg.complete),(d.name)),(cfg.complete)"
 
 # seeding
 # stop seeding at ratio 1.00
