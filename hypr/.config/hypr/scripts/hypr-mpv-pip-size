@@ -1,0 +1,31 @@
+#!/bin/bash
+set -euo pipefail
+
+# Resize the active PiP window relative to the focused monitor size.
+# Usage: hypr-mpv-pip-size [half|normal|double]
+
+mode="${1:-normal}"
+base_pct="${MPV_PIP_BASE_PCT:-36}"  # Percentage of monitor width for "normal"
+half_pct="${MPV_PIP_HALF_PCT:-25}"  # Percentage of monitor width for "half"
+double_pct="${MPV_PIP_DOUBLE_PCT:-52}"  # Percentage of monitor width for "double"
+
+if [[ "$mode" == "half" ]]; then
+  pct="$half_pct"
+elif [[ "$mode" == "double" ]]; then
+  pct="$double_pct"
+else
+  pct="$base_pct"
+fi
+
+monitor_json="$(hyprctl monitors -j | jq -r '.[] | select(.focused == true)')"
+monitor_w="$(echo "$monitor_json" | jq -r '.width')"
+target_w=$((monitor_w * pct / 100))
+target_h=$((target_w * 9 / 16))
+
+# Keep a minimum usable PiP size.
+if (( target_w < 480 )); then
+  target_w=480
+  target_h=$((target_w * 9 / 16))
+fi
+
+hyprctl dispatch resizeactive exact "$target_w" "$target_h"

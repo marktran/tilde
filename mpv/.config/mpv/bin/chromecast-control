@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "chromecast-common"
+
+control_cmd = ARGV[0].to_s
+control_arg = ARGV[1]
+
+if control_cmd.empty?
+  warn "chromecast-control: missing catt command (for example: play_toggle)"
+  exit 2
+end
+
+opts = ChromecastCommon.load_options
+
+cmd = [ChromecastCommon.resolve_catt_bin(opts)]
+cmd = ChromecastCommon.with_device(cmd, opts)
+cmd << control_cmd
+cmd << control_arg.to_s unless control_arg.nil? || control_arg.to_s.empty?
+
+exec(*cmd)

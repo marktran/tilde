@@ -1,0 +1,47 @@
+#!/bin/bash
+set -euo pipefail
+
+# Toggle fullscreen for mpv windows in a Hyprland PiP setup.
+# - Entering fullscreen: unpin + unfloat first, then fullscreen.
+# - Leaving fullscreen: exit fullscreen, then restore float + pin.
+
+active="$(hyprctl activewindow -j 2>/dev/null || true)"
+[[ -z "${active}" ]] && exit 0
+
+class="$(echo "$active" | jq -r '.class // .initialClass // ""')"
+fullscreen="$(echo "$active" | jq -r '.fullscreen // 0')"
+pinned="$(echo "$active" | jq -r '.pinned // false')"
+floating="$(echo "$active" | jq -r '.floating // false')"
+
+# Fallback for non-mpv windows: just toggle fullscreen.
+if [[ ! "$class" =~ ^mpv$ ]]; then
+  hyprctl dispatch fullscreen 0 >/dev/null 2>&1 || true
+  exit 0
+fi
+
+is_fullscreen=0
+if [[ "$fullscreen" == "1" || "$fullscreen" == "2" || "$fullscreen" == "true" ]]; then
+  is_fullscreen=1
+fi
+
+if [[ "$is_fullscreen" -eq 1 ]]; then
+  hyprctl dispatch fullscreen 0 >/dev/null 2>&1 || true
+
+  # Restore PiP behavior when leaving fullscreen.
+  if [[ "$floating" != "true" ]]; then
+    hyprctl dispatch togglefloating >/dev/null 2>&1 || true
+  fi
+  if [[ "$pinned" != "true" ]]; then
+    hyprctl dispatch pin >/dev/null 2>&1 || true
+  fi
+else
+  # Ensure the window can actually fullscreen.
+  if [[ "$pinned" == "true" ]]; then
+    hyprctl dispatch pin >/dev/null 2>&1 || true
+  fi
+  if [[ "$floating" == "true" ]]; then
+    hyprctl dispatch togglefloating >/dev/null 2>&1 || true
+  fi
+
+  hyprctl dispatch fullscreen 0 >/dev/null 2>&1 || true
+fi

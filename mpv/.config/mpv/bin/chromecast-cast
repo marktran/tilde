@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "chromecast-common"
+
+target = ARGV[0].to_s
+time_pos_raw = ARGV[1] || "0"
+
+if target.empty?
+  warn "chromecast-cast: missing media target path/url"
+  exit 2
+end
+
+opts = ChromecastCommon.load_options
+
+cmd = [ChromecastCommon.resolve_catt_bin(opts)]
+cmd = ChromecastCommon.with_device(cmd, opts)
+cmd << "cast"
+
+cmd << "-f" if ChromecastCommon.truthy?(opts["force_default"], default: true)
+cmd << "--no-subs" if ChromecastCommon.truthy?(opts["no_subs"], default: true)
+
+if ChromecastCommon.truthy?(opts["seek_current"], default: true)
+  pos = ChromecastCommon.floor_nonneg(time_pos_raw, default: 0)
+  min_seek = ChromecastCommon.floor_nonneg(opts.fetch("min_seek_seconds", "1"), default: 1)
+  cmd += ["-t", pos.to_s] if pos >= min_seek
+end
+
+cmd << target
+exec(*cmd)
