@@ -203,6 +203,17 @@ function collectModuleCandidates() {
   return Array.from(candidates);
 }
 
+function collectSiblingModuleCandidates(fileName) {
+  const candidates = new Set();
+
+  for (const candidate of collectModuleCandidates()) {
+    if (!candidate) continue;
+    candidates.add(join(dirname(candidate), fileName));
+  }
+
+  return Array.from(candidates);
+}
+
 async function loadPiAi() {
   const tried = [];
 
@@ -223,6 +234,29 @@ async function loadPiAi() {
 
   throw new Error(
     `Could not load @mariozechner/pi-ai. Set PI_AI_MODULE_PATH to its dist/index.js.\nTried:\n- ${tried.join("\n- ")}`,
+  );
+}
+
+async function loadPiAiOAuth() {
+  const tried = [];
+
+  try {
+    return await import("@mariozechner/pi-ai/oauth");
+  } catch (err) {
+    tried.push(`@mariozechner/pi-ai/oauth (${err?.code || err?.message || "not found"})`);
+  }
+
+  for (const candidate of collectSiblingModuleCandidates("oauth.js")) {
+    if (!existsSync(candidate)) continue;
+    try {
+      return await import(pathToFileURL(candidate).href);
+    } catch (err) {
+      tried.push(`${candidate} (${err?.code || err?.message || "failed"})`);
+    }
+  }
+
+  throw new Error(
+    `Could not load @mariozechner/pi-ai/oauth. Set PI_AI_MODULE_PATH to @mariozechner/pi-ai's dist/index.js.\nTried:\n- ${tried.join("\n- ")}`,
   );
 }
 
@@ -276,8 +310,11 @@ async function resolveApiKey(provider, auth, authPath, piAi) {
     );
   }
 
-  if (typeof piAi.getOAuthApiKey !== "function") {
-    throw new Error("Loaded pi-ai module does not export getOAuthApiKey");
+  const oauthApi =
+    typeof piAi.getOAuthApiKey === "function" ? piAi : await loadPiAiOAuth();
+
+  if (typeof oauthApi.getOAuthApiKey !== "function") {
+    throw new Error("Loaded pi-ai OAuth helper does not export getOAuthApiKey");
   }
 
   const oauthCreds = {};
@@ -287,7 +324,7 @@ async function resolveApiKey(provider, auth, authPath, piAi) {
     }
   }
 
-  const refreshed = await piAi.getOAuthApiKey(provider, oauthCreds);
+  const refreshed = await oauthApi.getOAuthApiKey(provider, oauthCreds);
   if (!refreshed) {
     throw new Error(`No OAuth credentials available for provider '${provider}'`);
   }
