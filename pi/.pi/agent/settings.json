@@ -32,7 +32,8 @@
     "skills/native-web-search"
   ],
   "packages": [
-    "npm:pi-chrome-cdp@1.0.2"
+    "npm:pi-chrome-cdp@1.0.2",
+    "npm:pi-prompt-template-model@0.6.8"
   ],
   "hideThinkingBlock": false,
   "quietStartup": true
