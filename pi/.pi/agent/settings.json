@@ -1,12 +1,13 @@
 {
-  "lastChangelogVersion": "0.62.0",
-  "defaultProvider": "baseten",
-  "defaultModel": "moonshotai/Kimi-K2.5",
+  "lastChangelogVersion": "0.64.0",
+  "defaultProvider": "fireworks",
+  "defaultModel": "accounts/fireworks/routers/kimi-k2p5-turbo",
   "defaultThinkingLevel": "high",
   "theme": "nightowl",
   "enabledModels": [
     "claude-opus-4-6",
     "openai-codex/gpt-5.4",
+    "fireworks/accounts/fireworks/routers/kimi-k2p5-turbo",
     "baseten/moonshotai/Kimi-K2.5"
   ],
   "extensions": [

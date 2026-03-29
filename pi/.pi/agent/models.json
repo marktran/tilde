@@ -7,11 +7,29 @@
       "models": [
         {
           "id": "moonshotai/Kimi-K2.5",
-          "name": "kimi k2.5",
+          "name": "kimi k2.5 [baseten]",
           "reasoning": true,
           "input": ["text", "image"],
           "contextWindow": 262144,
           "maxTokens": 32768,
+          "compat": {
+            "maxTokensField": "max_tokens",
+            "supportsStore": false,
+            "supportsDeveloperRole": false,
+            "supportsReasoningEffort": false
+          }
+        }
+      ]
+    },
+    "fireworks": {
+      "baseUrl": "https://api.fireworks.ai/inference/v1",
+      "api": "openai-completions",
+      "apiKey": "FIREWORKS_API_KEY",
+      "models": [
+        {
+          "id": "accounts/fireworks/routers/kimi-k2p5-turbo",
+          "name": "kimi k2.5 turbo",
+          "reasoning": true,
           "compat": {
             "maxTokensField": "max_tokens",
             "supportsStore": false,
