@@ -12,6 +12,7 @@
   ],
   "extensions": [
     "extensions/answer.ts",
+    "extensions/baseten-provider.ts",
     "extensions/confirm-destructive.ts",
     "extensions/files.ts",
     "extensions/fireworks-provider.ts",
