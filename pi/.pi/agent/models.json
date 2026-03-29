@@ -21,24 +21,6 @@
         }
       ]
     },
-    "fireworks": {
-      "baseUrl": "https://api.fireworks.ai/inference/v1",
-      "api": "openai-completions",
-      "apiKey": "FIREWORKS_API_KEY",
-      "models": [
-        {
-          "id": "accounts/fireworks/routers/kimi-k2p5-turbo",
-          "name": "kimi k2.5 turbo",
-          "reasoning": true,
-          "compat": {
-            "maxTokensField": "max_tokens",
-            "supportsStore": false,
-            "supportsDeveloperRole": false,
-            "supportsReasoningEffort": false
-          }
-        }
-      ]
-    },
     "openai-codex": {
       "modelOverrides": {
         "gpt-5.4": {
