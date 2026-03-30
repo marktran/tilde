@@ -1,0 +1,7 @@
+{
+  "tui.select.up": ["up", "ctrl+p"],
+  "tui.select.down": ["down", "ctrl+n"],
+  "tui.select.pageUp": ["pageUp", "alt+v"],
+  "tui.select.pageDown": ["pageDown", "ctrl+v"],
+  "tui.select.cancel": ["escape", "ctrl+c", "ctrl+g"]
+}
