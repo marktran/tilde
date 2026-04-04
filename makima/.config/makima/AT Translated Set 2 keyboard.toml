@@ -1,0 +1,22 @@
+# Internal ThinkPad keyboard on the i8042/serio0 path.
+#
+# On this X1 Carbon Gen 13, the Copilot key appears to the compositor as:
+#   Super_L + Shift_L + XF86Assistant
+# which is evdev KEY_LEFTMETA + KEY_LEFTSHIFT + KEY_F23.
+#
+# Despite the generic name, this is the built-in laptop keyboard path, not a USB HHKB.
+
+[remap]
+KEY_LEFTMETA-KEY_LEFTSHIFT-KEY_F23 = ["KEY_RIGHTCTRL"]
+KEY_LEFTSHIFT-KEY_LEFTMETA-KEY_F23 = ["KEY_RIGHTCTRL"]
+
+[commands]
+KEY_LEFTCTRL-KEY_LEFT = ["/home/mark/bin/spotify-control previous"]
+KEY_RIGHTCTRL-KEY_LEFT = ["/home/mark/bin/spotify-control previous"]
+KEY_LEFTCTRL-KEY_DOWN = ["/home/mark/bin/spotify-control play-pause"]
+KEY_RIGHTCTRL-KEY_DOWN = ["/home/mark/bin/spotify-control play-pause"]
+KEY_LEFTCTRL-KEY_RIGHT = ["/home/mark/bin/spotify-control next"]
+KEY_RIGHTCTRL-KEY_RIGHT = ["/home/mark/bin/spotify-control next"]
+
+[settings]
+GRAB_DEVICE = "true"

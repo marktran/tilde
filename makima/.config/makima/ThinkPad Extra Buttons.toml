@@ -1,0 +1,10 @@
+# Remap the built-in ThinkPad Copilot key to Right Control.
+#
+# Recent ThinkPads emit the Copilot key as LShift+LMeta+F23.
+# Read and remap this device directly so the original combo does not leak.
+
+[remap]
+KEY_LEFTSHIFT-KEY_LEFTMETA-KEY_F23 = ["KEY_RIGHTCTRL"]
+
+[settings]
+GRAB_DEVICE = "true"
