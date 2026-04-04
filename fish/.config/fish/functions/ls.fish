@@ -5,7 +5,7 @@ if command ls --version 1>/dev/null 2>/dev/null
     if isatty 1
       set param $param --indicator-style=classify
     end
-    command ls -F $param $argv
+    command ls -N -F $param $argv
   end
 
   if not set -q LS_COLORS
