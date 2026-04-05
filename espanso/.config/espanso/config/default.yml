@@ -1,8 +1,0 @@
-# Espanso configuration
-# https://espanso.org/docs/configuration/
-
-# The search bar shortcut
-search_shortcut: OFF
-
-# Disable notifications (including startup notification)
-show_notifications: false
