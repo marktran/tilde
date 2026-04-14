@@ -1,10 +1,14 @@
 {
-  "lastChangelogVersion": "0.66.1",
+  "lastChangelogVersion": "0.67.1",
   "defaultProvider": "baseten",
   "defaultModel": "moonshotai/Kimi-K2.5",
   "defaultThinkingLevel": "high",
   "theme": "nightowl",
-  "enabledModels": ["claude-opus-4-6", "openai-codex/gpt-5.4", "baseten/moonshotai/Kimi-K2.5"],
+  "enabledModels": [
+    "claude-opus-4-6",
+    "openai-codex/gpt-5.4",
+    "baseten/moonshotai/Kimi-K2.5"
+  ],
   "extensions": [
     "extensions/answer.ts",
     "extensions/baseten-provider.ts",
@@ -21,8 +25,15 @@
     "extensions/review.ts",
     "extensions/whimsical.ts"
   ],
-  "skills": ["skills/commit", "skills/github", "skills/native-web-search"],
-  "packages": ["npm:pi-chrome-cdp@1.0.2", "npm:pi-prompt-template-model@0.6.8"],
+  "skills": [
+    "skills/commit",
+    "skills/github",
+    "skills/native-web-search"
+  ],
+  "packages": [
+    "npm:pi-chrome-cdp@1.0.2",
+    "npm:pi-prompt-template-model@0.6.8"
+  ],
   "hideThinkingBlock": false,
   "quietStartup": true
 }
