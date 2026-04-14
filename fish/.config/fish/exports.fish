@@ -15,4 +15,9 @@ end
 if test (uname) = Darwin
     set -gx CPATH /opt/homebrew/include $CPATH
     set -gx HOMEBREW_NO_ANALYTICS 1
+
+    if test -x /Applications/Obsidian.app/Contents/MacOS/obsidian
+        contains -- /Applications/Obsidian.app/Contents/MacOS $PATH
+        or set -gx PATH /Applications/Obsidian.app/Contents/MacOS $PATH
+    end
 end
