@@ -32,7 +32,9 @@
     "ask": [
       "Bash(git commit:*)",
       "Bash(git push:*)"
-    ]
+    ],
+    "defaultMode": "auto"
   },
-  "effortLevel": "medium"
+  "effortLevel": "high",
+  "skipAutoPermissionPrompt": true
 }

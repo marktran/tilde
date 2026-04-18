@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.67.1",
+  "lastChangelogVersion": "0.67.68",
   "defaultProvider": "baseten",
   "defaultModel": "moonshotai/Kimi-K2.5",
   "defaultThinkingLevel": "high",
