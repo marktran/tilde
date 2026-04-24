@@ -1,8 +1,8 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 
 const BASETEN_KIMI = {
-  id: "moonshotai/Kimi-K2.5",
-  name: "kimi k2.5",
+  id: "moonshotai/Kimi-K2.6",
+  name: "kimi k2.6",
   reasoning: true,
   input: ["text", "image"] as const,
   cost: {

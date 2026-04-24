@@ -1,13 +1,13 @@
 {
-  "lastChangelogVersion": "0.67.68",
+  "lastChangelogVersion": "0.70.0",
   "defaultProvider": "baseten",
-  "defaultModel": "moonshotai/Kimi-K2.5",
-  "defaultThinkingLevel": "high",
+  "defaultModel": "moonshotai/Kimi-K2.6",
+  "defaultThinkingLevel": "xhigh",
   "theme": "nightowl",
   "enabledModels": [
     "claude-opus-4-6",
     "openai-codex/gpt-5.4",
-    "baseten/moonshotai/Kimi-K2.5"
+    "baseten/moonshotai/Kimi-K2.6"
   ],
   "extensions": [
     "extensions/answer.ts",
