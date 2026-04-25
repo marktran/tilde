@@ -1,0 +1,60 @@
+# Voxtype Configuration
+# Managed from ~/src/mark/tilde via GNU Stow.
+# Link with: stow -t ~ voxtype
+
+# Use the ONNX Parakeet engine for English dictation.
+# Requires ONNX backend enabled: sudo voxtype setup onnx --enable
+engine = "parakeet"
+
+# State file for Waybar/status integrations.
+state_file = "auto"
+
+[hotkey]
+# Hotkey is configured in Hyprland. Default is Super + Ctrl + X.
+enabled = false
+
+[audio]
+# Pause MPRIS media players during recording.
+pause_media = true
+
+# Audio input device ("default" uses system default).
+# List devices with: pactl list sources short
+device = "default"
+
+# Whisper/ASR input sample rate.
+sample_rate = 16000
+
+# Safety limit for a single recording.
+max_duration_secs = 60
+
+[parakeet]
+# NVIDIA Parakeet TDT English model with punctuation.
+# Download with: voxtype setup --download --model parakeet-tdt-0.6b-v3
+model = "parakeet-tdt-0.6b-v3"
+model_type = "tdt"
+
+# Keep the model loaded for faster transcriptions.
+on_demand_loading = false
+
+[whisper]
+# Fallback/reference settings if switching back to engine = "whisper".
+model = "base.en"
+language = "en"
+translate = false
+
+[output]
+# Type text at the cursor via wtype, falling back to clipboard if needed.
+mode = "type"
+fallback_to_clipboard = true
+
+# Small delay avoids dropped characters in some apps.
+type_delay_ms = 1
+
+[output.notification]
+on_recording_start = false
+on_recording_stop = false
+on_transcription = false
+
+# [text]
+# spoken_punctuation = false
+# replacements = { "hyperwhisper" = "hyprwhspr" }
