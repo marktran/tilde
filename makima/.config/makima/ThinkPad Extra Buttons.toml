@@ -4,6 +4,7 @@
 # Read and remap this device directly so the original combo does not leak.
 
 [remap]
+KEY_LEFTMETA-KEY_LEFTSHIFT-KEY_F23 = ["KEY_RIGHTCTRL"]
 KEY_LEFTSHIFT-KEY_LEFTMETA-KEY_F23 = ["KEY_RIGHTCTRL"]
 KEY_BOOKMARKS = ["KEY_COMPOSE"]
 
