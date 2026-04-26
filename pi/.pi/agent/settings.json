@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.70.2",
-  "defaultProvider": "baseten",
-  "defaultModel": "moonshotai/Kimi-K2.6",
-  "defaultThinkingLevel": "high",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.5",
+  "defaultThinkingLevel": "medium",
   "theme": "modern-dark",
   "enabledModels": [
     "claude-opus-4-7",
