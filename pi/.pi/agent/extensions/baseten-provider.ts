@@ -21,11 +21,40 @@ const BASETEN_KIMI = {
   },
 };
 
+const BASETEN_DEEPSEEK_4_PRO = {
+  id: "deepseek-ai/DeepSeek-V4-Pro",
+  name: "deepseek 4 pro",
+  reasoning: true,
+  input: ["text"] as const,
+  cost: {
+    input: 0,
+    output: 0,
+    cacheRead: 0,
+    cacheWrite: 0,
+  },
+  contextWindow: 1000000,
+  maxTokens: 384000,
+  compat: {
+    maxTokensField: "max_tokens" as const,
+    supportsStore: false,
+    supportsDeveloperRole: false,
+    thinkingFormat: "deepseek" as const,
+    requiresReasoningContentOnAssistantMessages: true,
+    reasoningEffortMap: {
+      minimal: "high",
+      low: "high",
+      medium: "high",
+      high: "high",
+      xhigh: "max",
+    },
+  },
+};
+
 export default function basetenProvider(pi: ExtensionAPI) {
   pi.registerProvider("baseten", {
     baseUrl: "https://inference.baseten.co/v1",
     apiKey: "BASETEN_API_KEY",
     api: "openai-completions",
-    models: [BASETEN_KIMI],
+    models: [BASETEN_KIMI, BASETEN_DEEPSEEK_4_PRO],
   });
 }
