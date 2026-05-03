@@ -10,7 +10,8 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     for sock in \
       "$runtime_dir/1password/agent.sock" \
       "$runtime_dir/s.sock" \
-      "$runtime_dir/1Password-BrowserSupport.sock"
+      "$runtime_dir/1Password-BrowserSupport.sock" \
+      "$HOME/.1password/agent.sock"
     do
       if [[ -S "$sock" ]]; then
         export SSH_AUTH_SOCK="$sock"
