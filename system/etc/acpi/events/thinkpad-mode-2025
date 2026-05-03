@@ -1,0 +1,4 @@
+# ThinkPad 2025+ F8/Mode key: HKEY 0x1401
+# Run as the desktop user so gsettings talks to the correct D-Bus session.
+event=ibm/hotkey .* 00000080 00001401
+action=/usr/bin/runuser -u mark -- /home/mark/bin/toggle-color-scheme

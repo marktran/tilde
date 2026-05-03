@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.local/share/omarchy/bin:/usr/local/bin:/usr/bin:/bin:${PATH:-}"
+
+# Makima/acpid-style launchers may run outside the interactive shell but still
+# need to talk to the logged-in user's D-Bus session for gsettings/OSD/notify.
+if [[ -z ${XDG_RUNTIME_DIR:-} ]]; then
+  export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+fi
+if [[ -z ${DBUS_SESSION_BUS_ADDRESS:-} && -S "$XDG_RUNTIME_DIR/bus" ]]; then
+  export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
+fi
+
+usage() {
+  echo "Usage: ${0##*/} [toggle|light|dark|status]" >&2
+}
+
+current_color_scheme() {
+  gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null | tr -d "'"
+}
+
+notify_scheme() {
+  local label="$1"
+  local icon="$2"
+
+  if command -v swayosd-client >/dev/null 2>&1 && \
+    swayosd-client --custom-message "$label mode" --custom-icon "$icon" >/dev/null 2>&1; then
+    return
+  fi
+
+  if command -v notify-send >/dev/null 2>&1; then
+    notify-send -u low -t 1500 "Appearance" "$label mode" >/dev/null 2>&1 || true
+  fi
+}
+
+cmd="${1:-toggle}"
+
+debounce_toggle() {
+  [[ $cmd == "toggle" ]] || return 0
+
+  local state_dir="$XDG_RUNTIME_DIR/toggle-color-scheme"
+  local stamp="$state_dir/last-toggle-ms"
+  local now last
+
+  mkdir -p "$state_dir"
+  exec 9>"$state_dir/lock"
+  flock 9
+
+  now=$(date +%s%3N)
+  last=0
+  if [[ -r $stamp ]]; then
+    read -r last <"$stamp" || last=0
+  fi
+  [[ $last =~ ^[0-9]+$ ]] || last=0
+
+  # Avoid double-toggling if both Makima and Hyprland see the same key press.
+  if ((now - last < 750)); then
+    exit 0
+  fi
+
+  printf '%s\n' "$now" >"$stamp"
+}
+
+case "$cmd" in
+  toggle)
+    case "$(current_color_scheme)" in
+      prefer-dark) mode="light" ;;
+      *) mode="dark" ;;
+    esac
+    ;;
+  light|prefer-light)
+    mode="light"
+    ;;
+  dark|prefer-dark)
+    mode="dark"
+    ;;
+  status)
+    case "$(current_color_scheme)" in
+      prefer-light) echo "light" ;;
+      prefer-dark) echo "dark" ;;
+      *) current_color_scheme ;;
+    esac
+    exit 0
+    ;;
+  -h|--help|help)
+    usage
+    exit 0
+    ;;
+  *)
+    usage
+    exit 2
+    ;;
+esac
+
+debounce_toggle
+
+case "$mode" in
+  light)
+    color_scheme="prefer-light"
+    gtk_theme="Adwaita"
+    gtk_prefer_dark="false"
+    label="Light"
+    icon="weather-clear-symbolic"
+    ;;
+  dark)
+    color_scheme="prefer-dark"
+    gtk_theme="Adwaita-dark"
+    gtk_prefer_dark="true"
+    label="Dark"
+    icon="weather-clear-night-symbolic"
+    ;;
+esac
+
+# This is the setting exposed by xdg-desktop-portal as
+# org.freedesktop.appearance color-scheme. Chromium, Electron, GTK, and apps
+# using CSS prefers-color-scheme generally follow it.
+gsettings set org.gnome.desktop.interface color-scheme "$color_scheme"
+gsettings set org.gnome.desktop.interface gtk-theme "$gtk_theme"
+
+# Keep older GTK consumers in sync when this key is available.
+if gsettings list-keys org.gnome.desktop.interface | grep -qx gtk-application-prefer-dark-theme; then
+  gsettings set org.gnome.desktop.interface gtk-application-prefer-dark-theme "$gtk_prefer_dark" || true
+fi
+
+# Omarchy keeps Chromium/Brave on the system/device color scheme via managed
+# policy. Refresh it so web-app windows use the OS preference instead of a
+# manually selected browser appearance.
+if command -v omarchy-theme-set-browser >/dev/null 2>&1; then
+  omarchy-theme-set-browser >/dev/null 2>&1 || true
+elif [[ -x $HOME/.local/share/omarchy/bin/omarchy-theme-set-browser ]]; then
+  "$HOME/.local/share/omarchy/bin/omarchy-theme-set-browser" >/dev/null 2>&1 || true
+fi
+
+# Some existing Chromium profiles can retain an explicit light/dark appearance
+# in Preferences. Keep the profile set to "system/device" so browser policy and
+# OS preference can drive prefers-color-scheme. This is Omarchy's upstream fix
+# for Chrome's current theme prefs: color_scheme2 is the field Chromium now reads.
+CHROMIUM_PREFS="$HOME/.config/chromium/Default/Preferences"
+if [[ -f $CHROMIUM_PREFS && -w $CHROMIUM_PREFS ]] && command -v jq >/dev/null 2>&1; then
+  tmp=$(mktemp)
+  if jq '.browser.theme.color_scheme = 0 | .browser.theme.color_scheme2 = 0' "$CHROMIUM_PREFS" >"$tmp"; then
+    mv "$tmp" "$CHROMIUM_PREFS"
+  else
+    rm -f "$tmp"
+  fi
+fi
+
+notify_scheme "$label" "$icon"

@@ -1,0 +1,4 @@
+# ThinkPad 2024 F8/Mode key: HKEY 0x131f
+# Run as the desktop user so gsettings talks to the correct D-Bus session.
+event=ibm/hotkey .* 00000080 0000131f
+action=/usr/bin/runuser -u mark -- /home/mark/bin/toggle-color-scheme
