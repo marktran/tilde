@@ -38,6 +38,7 @@
 	format = ssh
 [gpg "ssh"]
 	program = op-ssh-sign-wrapper
+	allowedSignersFile = ~/.config/git/allowed_signers
 [hub]
     http-clone = true
 [magit]
