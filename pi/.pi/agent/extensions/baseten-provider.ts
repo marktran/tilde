@@ -21,6 +21,27 @@ const BASETEN_KIMI = {
   },
 };
 
+const BASETEN_GLM_5 = {
+  id: "zai-org/GLM-5",
+  name: "glm 5",
+  reasoning: true,
+  input: ["text"] as const,
+  cost: {
+    input: 0,
+    output: 0,
+    cacheRead: 0,
+    cacheWrite: 0,
+  },
+  contextWindow: 200000,
+  maxTokens: 128000,
+  compat: {
+    maxTokensField: "max_tokens" as const,
+    supportsStore: false,
+    supportsDeveloperRole: false,
+    supportsReasoningEffort: false,
+  },
+};
+
 const BASETEN_DEEPSEEK_4_PRO = {
   id: "deepseek-ai/DeepSeek-V4-Pro",
   name: "deepseek 4 pro",
@@ -55,6 +76,6 @@ export default function basetenProvider(pi: ExtensionAPI) {
     baseUrl: "https://inference.baseten.co/v1",
     apiKey: "BASETEN_API_KEY",
     api: "openai-completions",
-    models: [BASETEN_KIMI, BASETEN_DEEPSEEK_4_PRO],
+    models: [BASETEN_KIMI, BASETEN_GLM_5, BASETEN_DEEPSEEK_4_PRO],
   });
 }
