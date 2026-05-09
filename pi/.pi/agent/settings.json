@@ -1,9 +1,9 @@
 {
-  "lastChangelogVersion": "0.72.1",
+  "lastChangelogVersion": "0.74.0",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
   "defaultThinkingLevel": "low",
-  "theme": "modern-dark",
+  "theme": "dark",
   "enabledModels": [
     "claude-opus-4-7",
     "openai-codex/gpt-5.5",
@@ -36,5 +36,8 @@
     "npm:pi-prompt-template-model@0.6.8"
   ],
   "hideThinkingBlock": false,
-  "quietStartup": true
+  "quietStartup": true,
+  "warnings": {
+    "anthropicExtraUsage": false
+  }
 }
