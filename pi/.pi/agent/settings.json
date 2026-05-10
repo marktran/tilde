@@ -32,9 +32,7 @@
     "skills/github",
     "skills/native-web-search"
   ],
-  "packages": [
-    "npm:pi-prompt-template-model@0.6.8"
-  ],
+  "packages": [],
   "hideThinkingBlock": false,
   "quietStartup": true,
   "warnings": {
