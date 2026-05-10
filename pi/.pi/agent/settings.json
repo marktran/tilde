@@ -16,7 +16,6 @@
     "extensions/baseten-provider.ts",
     "extensions/confirm-destructive.ts",
     "extensions/files.ts",
-    "extensions/fireworks-provider.ts",
     "extensions/notify.ts",
     "extensions/minimal.ts",
     "extensions/peon-ping.ts",
