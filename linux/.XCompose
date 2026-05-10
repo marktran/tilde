@@ -1,5 +1,4 @@
+# Personal bindings live in ~/.XCompose.private (not tracked).
+# xkbcommon expects include directives before compose rules.
+include "%H/.XCompose.private"
 include "%H/.local/share/omarchy/default/xcompose"
-
-# Identification
-<Multi_key> <space> <n> : "Mark Tran"
-<Multi_key> <space> <e> : "mark.tran@gmail.com"
