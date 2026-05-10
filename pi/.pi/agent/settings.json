@@ -2,8 +2,8 @@
   "lastChangelogVersion": "0.74.0",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "xhigh",
-  "theme": "dark",
+  "defaultThinkingLevel": "low",
+  "theme": "modern-dark",
   "enabledModels": [
     "claude-opus-4-7",
     "openai-codex/gpt-5.5",
