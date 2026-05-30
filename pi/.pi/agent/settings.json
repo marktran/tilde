@@ -1,11 +1,11 @@
 {
   "lastChangelogVersion": "0.78.0",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5",
+  "defaultProvider": "baseten",
+  "defaultModel": "moonshotai/Kimi-K2.6",
   "defaultThinkingLevel": "high",
   "theme": "modern-dark",
   "enabledModels": [
-    "claude-opus-4-7",
+    "claude-opus-4-8",
     "openai-codex/gpt-5.5",
     "baseten/moonshotai/Kimi-K2.6",
     "baseten/zai-org/GLM-5",
