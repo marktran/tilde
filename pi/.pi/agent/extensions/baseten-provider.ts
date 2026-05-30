@@ -87,7 +87,7 @@ const BASETEN_DEEPSEEK_4_PRO = {
 export default function basetenProvider(pi: ExtensionAPI) {
   pi.registerProvider("baseten", {
     baseUrl: "https://inference.baseten.co/v1",
-    apiKey: "BASETEN_API_KEY",
+    apiKey: "$BASETEN_API_KEY",
     api: "openai-completions",
     models: [BASETEN_KIMI, BASETEN_GLM_5, BASETEN_DEEPSEEK_4_PRO],
   });
