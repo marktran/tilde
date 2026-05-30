@@ -21,3 +21,5 @@ if test (uname) = Darwin
         or set -gx PATH /Applications/Obsidian.app/Contents/MacOS $PATH
     end
 end
+
+fish_add_path $HOME/.grok/bin
