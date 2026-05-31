@@ -1,0 +1,25 @@
+# GNU Stow package-local ignore list for the system package.
+# Defining this file replaces Stow's built-in default ignore list, so the
+# defaults are re-listed here, plus repo-only files below.
+
+RCS
+.+,v
+
+CVS
+\.\#.+       # CVS conflict files / emacs lock files
+\.cvsignore
+
+\.svn
+_darcs
+\.hg
+
+\.git
+\.gitignore
+\.gitmodules
+
+.+~          # emacs backup files
+\#.*\#       # emacs autosave files
+
+^/README.*
+^/LICENSE.*
+^/COPYING
