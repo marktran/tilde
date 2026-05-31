@@ -9,8 +9,6 @@ opt.showtabline = 0
 opt.softtabstop = 2
 opt.tabstop = 2
 opt.wrap = false
-opt.number = true
-opt.relativenumber = false
 
 opt.clipboard:append("unnamedplus")
 opt.fillchars:append({ eob = " " })
