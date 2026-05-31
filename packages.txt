@@ -1,14 +1,21 @@
-# System packages for bootstrapping
-# Install with: sudo pacman -S --needed - < packages.txt
+# Official-repo packages for bootstrapping (curated list, not a full snapshot).
+#
+# Install all:   sudo pacman -S --needed - < packages.txt
+# AUR packages live in aur.txt (install those with an AUR helper).
+#
+# Regenerate from this machine's explicitly-installed repo packages:
+#   pacman -Qqen > packages.txt   (then re-add these comments)
+# List what's explicit but missing here:
+#   comm -23 <(pacman -Qqen | sort) <(grep -v '^#' packages.txt | sort -u)
 
-# Dictionaries and spell checking
 aspell
 aspell-en
 enchant
 words
 
-# Tools
+pam-u2f
+fprintd
+
 acpid
 calc
-sesh-bin
 tree

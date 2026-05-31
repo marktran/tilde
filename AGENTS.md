@@ -6,7 +6,7 @@
   needs sudo: `sudo stow -t / system`.
 - No platform sub-namespaces — install only the packages that apply to the machine
   (skip `macos` on Linux; skip `hypr`, `makima`, etc. on macOS).
-- `packages.txt` is an installed-package inventory, not a Stow package.
+- `packages.txt` (official-repo) and `aur.txt` (AUR) are package inventories, not Stow packages.
 - Assume all new files and file edits should be made in this repo.
 - Do not edit files directly in `$HOME` paths that are symlinked by Stow.
 - After changes, Stow is used to (re)link files into `$HOME`. See `README.md`.

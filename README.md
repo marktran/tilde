@@ -32,7 +32,8 @@ directly.
 
 ## Notes
 
-- `packages.txt` — installed-package inventory (reference only; not a Stow package).
+- `packages.txt` — official-repo package inventory (install with `pacman -S --needed - < packages.txt`; not a Stow package).
+- `aur.txt` — AUR package inventory (install with `paru -S --needed - < aur.txt`; not a Stow package).
 - Linux-only packages: `hypr`, `makima`, `voxtype`, `elephant`, `wireplumber`,
   `xcompose`, `rtorrent`. macOS-only: `macos`. Stow only what applies.
 - `system/` has its own `README.md` describing its `/etc` files and which are
