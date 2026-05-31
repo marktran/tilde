@@ -61,3 +61,11 @@ spoken_punctuation = false
 [text.replacements]
 "work os" = "WorkOS"
 "work o s" = "WorkOS"
+
+[osd]
+# Floating mic visualizer — disabled (master switch off).
+# With this off, the daemon renders nothing and the OSD frontend exits at launch.
+enabled = false
+# To re-enable, set enabled = true; these then apply:
+# frontend = "gtk4"          # or "quickshell" (needs the quickshell package)
+# position = "bottom-left"   # bottom-center | bottom-left | bottom-right | top-center | top-left | top-right
