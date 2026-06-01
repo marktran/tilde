@@ -25,7 +25,7 @@ device = "default"
 sample_rate = 16000
 
 # Safety limit for a single recording.
-max_duration_secs = 60
+max_duration_secs = 120
 
 [parakeet]
 # NVIDIA Parakeet TDT English model with punctuation.
