@@ -7,9 +7,6 @@
   "enabledModels": [
     "claude-opus-4-8",
     "openai-codex/gpt-5.5",
-    "baseten/moonshotai/Kimi-K2.6",
-    "baseten/zai-org/GLM-5",
-    "baseten/deepseek-ai/DeepSeek-V4-Pro",
     "fireworks/kimi k2.7",
     "fireworks/minimax m3",
     "fireworks/glm 5.1",
@@ -17,7 +14,6 @@
   ],
   "extensions": [
     "extensions/answer.ts",
-    "extensions/baseten-provider.ts",
     "extensions/confirm-destructive.ts",
     "extensions/files.ts",
     "extensions/fireworks-aliases.ts",
