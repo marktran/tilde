@@ -1,21 +1,26 @@
 {
   "lastChangelogVersion": "0.79.2",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "low",
+  "defaultProvider": "fireworks",
+  "defaultModel": "kimi k2.7",
+  "defaultThinkingLevel": "high",
   "theme": "modern-dark",
   "enabledModels": [
     "claude-opus-4-8",
     "openai-codex/gpt-5.5",
     "baseten/moonshotai/Kimi-K2.6",
     "baseten/zai-org/GLM-5",
-    "baseten/deepseek-ai/DeepSeek-V4-Pro"
+    "baseten/deepseek-ai/DeepSeek-V4-Pro",
+    "fireworks/kimi k2.7",
+    "fireworks/minimax m3",
+    "fireworks/glm 5.1",
+    "fireworks/deepseek v4 pro"
   ],
   "extensions": [
     "extensions/answer.ts",
     "extensions/baseten-provider.ts",
     "extensions/confirm-destructive.ts",
     "extensions/files.ts",
+    "extensions/fireworks-aliases.ts",
     "extensions/notify.ts",
     "extensions/minimal.ts",
     "extensions/peon-ping.ts",
