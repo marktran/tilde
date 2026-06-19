@@ -15,100 +15,46 @@
       }
     },
     "fireworks": {
-      "name": "Fireworks AI",
-      "baseUrl": "https://api.fireworks.ai/inference",
-      "api": "anthropic-messages",
-      "apiKey": "$FIREWORKS_API_KEY",
-      "compat": {
-        "sendSessionAffinityHeaders": true,
-        "supportsEagerToolInputStreaming": false,
-        "supportsCacheControlOnTools": false,
-        "supportsLongCacheRetention": false
-      },
-      "models": [
-        {
-          "id": "kimi k2.7",
+      "modelOverrides": {
+        "accounts/fireworks/models/kimi-k2p7-code": {
           "name": "kimi k2.7",
-          "reasoning": true,
           "thinkingLevelMap": {
             "minimal": null,
             "low": "low",
             "medium": null,
             "high": "high",
             "xhigh": null
-          },
-          "input": ["text", "image"],
-          "cost": {
-            "input": 0.95,
-            "output": 4,
-            "cacheRead": 0.19,
-            "cacheWrite": 0
-          },
-          "contextWindow": 262144,
-          "maxTokens": 262144
+          }
         },
-        {
-          "id": "minimax m3",
+        "accounts/fireworks/models/minimax-m3": {
           "name": "minimax m3",
-          "reasoning": true,
           "thinkingLevelMap": {
             "minimal": null,
             "low": null,
             "medium": null,
             "xhigh": null
-          },
-          "input": ["text", "image"],
-          "cost": {
-            "input": 0.3,
-            "output": 1.2,
-            "cacheRead": 0.06,
-            "cacheWrite": 0
-          },
-          "contextWindow": 512000,
-          "maxTokens": 512000
+          }
         },
-        {
-          "id": "glm 5.1",
-          "name": "glm 5.1",
-          "reasoning": true,
+        "accounts/fireworks/models/glm-5p2": {
+          "name": "glm 5.2",
           "thinkingLevelMap": {
             "minimal": null,
             "low": null,
             "medium": null,
             "xhigh": null
-          },
-          "input": ["text"],
-          "cost": {
-            "input": 1.4,
-            "output": 4.4,
-            "cacheRead": 0.26,
-            "cacheWrite": 0
-          },
-          "contextWindow": 202752,
-          "maxTokens": 131072
+          }
         },
-        {
-          "id": "deepseek v4 pro",
+        "accounts/fireworks/models/deepseek-v4-pro": {
           "name": "deepseek v4 pro",
-          "reasoning": true,
           "thinkingLevelMap": {
             "minimal": null,
             "low": null,
             "medium": null,
             "high": "high",
             "xhigh": "max"
-          },
-          "input": ["text"],
-          "cost": {
-            "input": 1.74,
-            "output": 3.48,
-            "cacheRead": 0.145,
-            "cacheWrite": 0
-          },
-          "contextWindow": 1048576,
-          "maxTokens": 384000
+          }
         }
-      ]
+      }
     }
   }
 }
