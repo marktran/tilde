@@ -120,10 +120,13 @@ Prefer small, shared, low-risk modules first.
 - [ ] Fish:
   - [x] Split the bridge from one whole `.config/fish` directory link to
     explicit Fish file/directory links.
-  - [ ] Evaluate `programs.fish`.
+  - [x] Move `config.fish` plus simple aliases/abbreviations to
+    `programs.fish`.
   - [ ] Keep machine-specific PATH or environment details explicit.
   - [ ] Avoid breaking interactive startup; test by opening a new shell after
     activation.
+    - [x] Linux activation tested.
+    - [ ] macOS activation pending.
 
 - [ ] Tmux:
   - Evaluate `programs.tmux`.

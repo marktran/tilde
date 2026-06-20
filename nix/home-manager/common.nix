@@ -17,6 +17,46 @@ in
 
   programs.home-manager.enable = true;
 
+  programs.fish = {
+    enable = true;
+    generateCompletions = false;
+
+    shellAliases = {
+      c = "calc -d";
+      ip = "dig +short myip.opendns.com @resolver1.opendns.com";
+      l = "ls";
+      ll = "ls -l";
+    };
+
+    shellAbbrs = {
+      b = "brew";
+      g = "git";
+      n = "nvim";
+      s = "sesh";
+      t = "tmux";
+      vi = "nvim";
+    };
+
+    shellInit = ''
+      source "$HOME/.config/fish/exports.fish"
+      source "$HOME/.config/fish/colors.fish"
+
+      test -e "$HOME/.config/fish/local.fish"; and source "$HOME/.config/fish/local.fish"
+
+      zoxide init --cmd j fish | source
+      type -q mise; and mise activate fish | source
+      type -q direnv; and eval (direnv hook fish)
+
+      if test (uname) = Darwin
+          source ~/.orbstack/shell/init2.fish 2>/dev/null || :
+      end
+    '';
+
+    interactiveShellInit = ''
+      type -q gcal; and alias cal gcal
+    '';
+  };
+
   programs.git = {
     enable = true;
     package = null;
@@ -129,9 +169,7 @@ in
     {
       name = "fish";
       entries = [
-        ".config/fish/aliases.fish"
         ".config/fish/colors.fish"
-        ".config/fish/config.fish"
         ".config/fish/exports.fish"
         ".config/fish/completions"
         ".config/fish/functions"
