@@ -26,8 +26,8 @@ checkout at `~/src/mark/tilde`.
 
 Most examples copy files into the Nix store and link from there. That is more
 reproducible, but the store is read-only. This repo has mutable config
-directories such as `.emacs.d`, `.config/fish`, and `.tmux`, so the first pass
-uses Home Manager's out-of-store symlinks. That keeps behavior close to Stow:
+directories such as `.emacs.d` and `.config/fish`, so the first pass uses
+Home Manager's out-of-store symlinks. That keeps behavior close to Stow:
 
 ```text
 ~/.config/fish -> ~/src/mark/tilde/fish/.config/fish
@@ -35,10 +35,9 @@ uses Home Manager's out-of-store symlinks. That keeps behavior close to Stow:
 ```
 
 Individual configs can move from file links to typed Home Manager options, for
-example `programs.git`, `programs.fish`, or `programs.tmux`. Git is the first
-typed migration: Home Manager now generates `~/.config/git/config` through
-`programs.git`, plus `~/.config/git/allowed_signers` and
-`~/.config/git/ignore`.
+example `programs.git`, `programs.fish`, or `programs.tmux`. Git, Fish,
+Ghostty, and tmux now use typed Home Manager config where it is clearer than
+file links.
 
 This bridge intentionally follows the current live Stow granularity. Some
 targets are whole-directory links, while stateful directories such as
@@ -83,8 +82,9 @@ while other pieces are now typed or store-backed:
   Shure MV7 override, and `mpv/mpv.conf` + `mpv/input.conf` (mpv `scripts/`,
   `bin/`, `script-opts/` stay linked).
 
-Shared store-backed static files (both hosts): `tmux/.tmux.conf` (the `.tmux`
-directory stays linked because TPM writes plugins into it).
+Shared typed config (both hosts) includes `programs.tmux`: Home Manager
+generates `~/.config/tmux/tmux.conf`, tmux itself stays native/Homebrew-owned,
+and tmux plugins come from Nix `pkgs.tmuxPlugins` rather than TPM checkouts.
 
 The macOS host is a nix-darwin system (`nix/darwin/configuration.nix`) with
 Home Manager folded in. nix-darwin declares the Homebrew brews/casks/taps
