@@ -37,8 +37,8 @@ uses Home Manager's out-of-store symlinks. That keeps behavior close to Stow:
 Individual configs can move from file links to typed Home Manager options, for
 example `programs.git`, `programs.fish`, or `programs.tmux`. Git is the first
 typed migration: Home Manager now generates `~/.config/git/config` through
-`programs.git`, while `allowed_signers` and the global `.gitignore` remain file
-links for now.
+`programs.git`, plus `~/.config/git/allowed_signers` and
+`~/.config/git/ignore`.
 
 This bridge intentionally follows the current live Stow granularity. Some
 targets are whole-directory links, while stateful directories such as

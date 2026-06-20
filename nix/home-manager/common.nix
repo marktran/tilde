@@ -1,9 +1,14 @@
-{ config, lib, username, homeDirectory, stateVersion, checkoutPath, forceStowLinks, ... }:
+{ config, lib, pkgs, username, homeDirectory, stateVersion, checkoutPath, forceStowLinks, ... }:
 
 let
   stow = import ../lib/stow-package.nix {
     inherit config lib checkoutPath forceStowLinks;
   };
+
+  ghCredentialHelper =
+    if pkgs.stdenv.hostPlatform.isDarwin
+    then "!/opt/homebrew/bin/gh auth git-credential"
+    else "!/usr/bin/gh auth git-credential";
 in
 {
   home.username = username;
@@ -23,6 +28,14 @@ in
       signer = "op-ssh-sign-wrapper";
     };
 
+    ignores = [
+      ".#*"
+      ".dir-locals.el"
+      ".DS_Store"
+      "**/.claude/settings.local.json"
+      ".pi/todos/"
+    ];
+
     settings = [
       {
         user = {
@@ -34,7 +47,6 @@ in
 
         core = {
           quotepath = false;
-          excludesfile = "~/.gitignore";
           pager = "less";
         };
 
@@ -84,18 +96,23 @@ in
         credential."https://github.com".helper = "";
       }
       {
-        credential."https://github.com".helper = "!/usr/bin/gh auth git-credential";
+        credential."https://github.com".helper = ghCredentialHelper;
       }
       {
         credential."https://gist.github.com".helper = "";
       }
       {
-        credential."https://gist.github.com".helper = "!/usr/bin/gh auth git-credential";
+        credential."https://gist.github.com".helper = ghCredentialHelper;
       }
     ];
   };
 
   xdg.configFile."git/config".force = forceStowLinks;
+  xdg.configFile."git/ignore".force = forceStowLinks;
+  xdg.configFile."git/allowed_signers" = {
+    force = forceStowLinks;
+    text = "mark.tran@gmail.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK6j5pkvHqP1YRODd00yh5FM7YGuozykifYWYYuQeMuu\n";
+  };
 
   home.file = stow.linksFor [
     {
@@ -116,13 +133,6 @@ in
     {
       name = "ghostty";
       entries = [ ".config/ghostty/config" ];
-    }
-    {
-      name = "git";
-      entries = [
-        ".config/git/allowed_signers"
-        ".gitignore"
-      ];
     }
     {
       name = "nvim";
