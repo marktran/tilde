@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.79.7",
+  "lastChangelogVersion": "0.79.8",
   "defaultProvider": "fireworks",
-  "defaultModel": "accounts/fireworks/models/kimi-k2p7-code",
+  "defaultModel": "accounts/fireworks/models/glm-5p2",
   "defaultThinkingLevel": "high",
   "theme": "modern-dark",
   "enabledModels": [
