@@ -128,7 +128,16 @@ in
     }
     {
       name = "fish";
-      entries = [ ".config/fish" ];
+      entries = [
+        ".config/fish/aliases.fish"
+        ".config/fish/colors.fish"
+        ".config/fish/config.fish"
+        ".config/fish/exports.fish"
+        ".config/fish/completions"
+        ".config/fish/functions"
+        ".config/fish/fish_variables"
+        ".config/fish/local.fish"
+      ];
     }
     {
       name = "ghostty";
