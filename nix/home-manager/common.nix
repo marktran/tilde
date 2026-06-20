@@ -155,6 +155,10 @@ in
     ];
 
     extraConfig = ''
+      # Make shells launched by tmux read the Home Manager-managed Fish config,
+      # even if the tmux server inherited a sparse GUI/macOS environment.
+      set-environment -g XDG_CONFIG_HOME "${homeDirectory}/.config"
+
       # Re-number windows with 1-based indexing
       set-option -g renumber-windows on
 
