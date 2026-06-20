@@ -3,18 +3,19 @@
 {
   # nix-darwin system configuration for the MacBook Air.
   #
-  # Scope is intentionally minimal for the first migration step:
   #   - Declare Homebrew brews/casks/taps so they are reproducible in Nix.
   #   - Fold Home Manager in (wired up in flake.nix) so one `darwin-rebuild
   #     switch` activates both the system and the user environment.
+  #   - Declare macOS system.defaults (Dock/Finder/keyboard/trackpad), capturing
+  #     the machine's current intentional settings so activation is a no-op
+  #     baseline that is now reproducible.
   #
-  # Deliberately NOT changed yet:
+  # Deliberately NOT changed:
   #   - nix.enable = false: Nix was installed by the upstream multi-user
   #     installer, which already manages /etc/nix/nix.conf and the nix-daemon.
   #     Letting nix-darwin take that over is a separate, explicit decision.
   #   - Shell ownership: fish stays Homebrew-managed and remains the login
   #     shell (already in /etc/shells); nix-darwin does not touch it.
-  #   - macOS system.defaults (Dock/Finder/keyboard): not set yet.
 
   nixpkgs.hostPlatform = "aarch64-darwin";
   nixpkgs.config.allowUnfree = true;
@@ -26,6 +27,46 @@
 
   users.users.mark = {
     home = "/Users/mark";
+  };
+
+  # macOS preferences. Values mirror the machine's current settings, so the
+  # first activation does not change behavior -- it just makes them declarative.
+  # Some keys only take effect after a logout/restart (nix-darwin restarts Dock
+  # and Finder automatically on activation).
+  system.defaults = {
+    NSGlobalDomain = {
+      AppleInterfaceStyle = "Dark";
+      # Fast key repeat (lower = faster). InitialKeyRepeat=15, KeyRepeat=2.
+      InitialKeyRepeat = 15;
+      KeyRepeat = 2;
+      AppleShowAllExtensions = true;
+      AppleShowScrollBars = "WhenScrolling";
+      NSAutomaticCapitalizationEnabled = false;
+      AppleICUForce24HourTime = true;
+    };
+
+    dock = {
+      autohide = true;
+      tilesize = 75;
+      show-recents = false;
+      # Bottom-right hot corner (current value preserved).
+      wvous-br-corner = 1;
+    };
+
+    finder = {
+      FXPreferredViewStyle = "icnv"; # icon view
+      ShowStatusBar = true;
+      NewWindowTarget = "Home";
+      ShowExternalHardDrivesOnDesktop = true;
+      ShowHardDrivesOnDesktop = false;
+      ShowRemovableMediaOnDesktop = true;
+    };
+
+    trackpad = {
+      Clicking = false; # tap to click off
+      TrackpadThreeFingerDrag = false;
+      TrackpadRightClick = true;
+    };
   };
 
   homebrew = {
