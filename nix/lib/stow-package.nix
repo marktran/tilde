@@ -1,4 +1,4 @@
-{ config, lib, checkoutPath }:
+{ config, lib, checkoutPath, forceStowLinks ? false }:
 
 let
   mkEntry = packageName: entry:
@@ -9,7 +9,7 @@ let
     {
       name = targetPath;
       value = {
-        force = true;
+        force = forceStowLinks;
         source =
           config.lib.file.mkOutOfStoreSymlink
             "${checkoutPath}/${packageName}/${sourcePath}";

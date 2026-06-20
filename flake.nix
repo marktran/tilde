@@ -15,7 +15,7 @@
       username = "mark";
       stateVersion = "26.05";
 
-      mkHome = { system, homeDirectory, modules ? [ ] }:
+      mkHome = { system, homeDirectory, forceStowLinks ? false, modules ? [ ] }:
         home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             inherit system;
@@ -23,7 +23,7 @@
           };
 
           extraSpecialArgs = {
-            inherit inputs username homeDirectory stateVersion;
+            inherit inputs username homeDirectory stateVersion forceStowLinks;
             checkoutPath = "${homeDirectory}/src/mark/tilde";
           };
 
@@ -37,6 +37,7 @@
         linux = mkHome {
           system = "x86_64-linux";
           homeDirectory = "/home/mark";
+          forceStowLinks = true;
           modules = [
             ./nix/home-manager/linux.nix
             ./nix/hosts/x1-carbon/home.nix

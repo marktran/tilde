@@ -1,8 +1,8 @@
-{ config, lib, checkoutPath, ... }:
+{ config, lib, checkoutPath, forceStowLinks, ... }:
 
 let
   stow = import ../lib/stow-package.nix {
-    inherit config lib checkoutPath;
+    inherit config lib checkoutPath forceStowLinks;
   };
 in
 {
