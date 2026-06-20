@@ -9,8 +9,10 @@
 
   # macOS-only Ghostty settings. Shared settings are in common.nix.
   programs.ghostty.settings = {
-    # Use the native macOS titlebar so the window title is centered.
-    # (Default "transparent" renders the title left-aligned.)
+    # Use the native macOS titlebar. The title centers only when no tab bar is
+    # shown in the titlebar; with multiple tabs open the title is left-aligned
+    # and Ghostty has no config option to center it (tabs are implemented via
+    # native-titlebar view hacking, so macOS controls the layout).
     macos-titlebar-style = "native";
   };
 }
