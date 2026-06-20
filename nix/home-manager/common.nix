@@ -251,10 +251,9 @@ in
     }
     {
       name = "tmux";
-      entries = [
-        ".tmux"
-        ".tmux.conf"
-      ];
+      # .tmux.conf is store-backed below; the .tmux dir stays linked because
+      # TPM writes plugins into it.
+      entries = [ ".tmux" ];
     }
     {
       name = "claude";
@@ -291,5 +290,11 @@ in
         ".pi/agent/keybindings.json"
       ];
     }
-  ];
+  ] // {
+    # Store-backed static tmux config (TPM plugin state lives in ~/.tmux).
+    ".tmux.conf" = {
+      source = ../../tmux/.tmux.conf;
+      force = forceStowLinks;
+    };
+  };
 }

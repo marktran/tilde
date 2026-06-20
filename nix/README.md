@@ -63,8 +63,12 @@ while other pieces are now typed or store-backed:
 - `systemd.user.services.voxtype` (typed user service; binary stays
   system-installed).
 - Store-backed static files: `.XCompose`, `voxtype/config.toml`,
-  `elephant/websearch.toml`, `elephant/google-favicon.png`, and the WirePlumber
-  Shure MV7 override.
+  `elephant/websearch.toml`, `elephant/google-favicon.png`, the WirePlumber
+  Shure MV7 override, and `mpv/mpv.conf` + `mpv/input.conf` (mpv `scripts/`,
+  `bin/`, `script-opts/` stay linked).
+
+Shared store-backed static files (both hosts): `tmux/.tmux.conf` (the `.tmux`
+directory stays linked because TPM writes plugins into it).
 
 The macOS host imports shared config plus `macos`.
 

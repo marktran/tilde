@@ -67,6 +67,14 @@ in
       source = ../../wireplumber/.config/wireplumber/wireplumber.conf.d/51-shure-mv7-mic-only.conf;
       force = forceStowLinks;
     };
+    "mpv/mpv.conf" = {
+      source = ../../mpv/.config/mpv/mpv.conf;
+      force = forceStowLinks;
+    };
+    "mpv/input.conf" = {
+      source = ../../mpv/.config/mpv/input.conf;
+      force = forceStowLinks;
+    };
   };
 
   home.file = stow.linksFor [
@@ -101,10 +109,10 @@ in
     }
     {
       name = "mpv";
+      # mpv.conf and input.conf are store-backed above; these stay linked
+      # because they are mutable/plugin trees.
       entries = [
-        ".config/mpv/mpv.conf"
         ".config/mpv/script-opts"
-        ".config/mpv/input.conf"
         ".config/mpv/scripts"
         ".config/mpv/bin"
       ];

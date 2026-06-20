@@ -232,7 +232,11 @@ Do not blindly move every package into Nix.
   - [x] First batch (Linux-only, store-backed): `.XCompose`,
     `voxtype/config.toml`, `elephant/websearch.toml`,
     `elephant/google-favicon.png`, and the WirePlumber Shure MV7 override.
+  - [x] Second batch: `tmux/.tmux.conf` (shared; `.tmux` dir stays linked for
+    TPM plugins) and `mpv/mpv.conf` + `mpv/input.conf` (Linux; `scripts/`,
+    `bin/`, `script-opts/` stay linked).
   - [x] Linux activation tested (links resolve into `/nix/store`).
+  - [ ] macOS activation pending for the shared `tmux/.tmux.conf`.
 - [ ] Keep out-of-store links for mutable directories such as Emacs packages,
   agent skills, app state, and plugin trees unless there is a better owner.
 - [x] Consider adding a small check script that runs:
