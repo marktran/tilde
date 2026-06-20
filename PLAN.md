@@ -74,7 +74,7 @@ If the dry run is clean, activate:
 
 ### 1. Verify Both Machines After Git Migration
 
-- [ ] On Linux, confirm Git uses Home Manager generated config:
+- [x] On Linux, confirm Git uses Home Manager generated config:
 
   ```sh
   git config --show-origin --get user.email
@@ -82,22 +82,25 @@ If the dry run is clean, activate:
   git config --show-origin --get user.signingkey
   ```
 
-- [ ] On macOS, confirm Git uses the Homebrew `gh` helper:
+- [x] On macOS, confirm Git uses the Homebrew `gh` helper:
 
   ```sh
   git config --show-origin --get-regexp '^credential\.https://github\.com\.helper$'
   ```
 
-- [ ] Confirm old home-level Git files are gone or intentionally unmanaged:
+- [x] Confirm old home-level Git files are gone or intentionally unmanaged:
 
   ```sh
   test ! -e ~/.gitconfig
   test ! -e ~/.gitignore
   ```
 
+  - [x] Linux confirmed.
+  - [x] macOS confirmed.
+
 ### 2. Clean Up The Stow Bridge As Configs Move
 
-- [ ] Remove now-empty Git package directories from the repo if they are empty
+- [x] Remove now-empty Git package directories from the repo if they are empty
   on disk.
 - [ ] Periodically inspect remaining bridge-managed files:
 
