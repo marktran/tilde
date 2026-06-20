@@ -59,5 +59,5 @@ Home Manager owns the home-directory links. Do not use `stow` for `$HOME`.
   those files. Both are Linux-only bootstrapping lists, not Stow packages.
 - `system/` has its own `README.md` describing its `/etc` files. These are
   privileged Linux system files and remain outside standalone Home Manager.
-- Submodules: `emacs/.emacs.d`, `tmux/.tmux/plugins/tpm`
-  (run `git submodule update --init --recursive` on a fresh clone).
+- Submodule: `emacs.d` (the Emacs config repo, linked to `~/.emacs.d`).
+  Run `git submodule update --init --recursive` on a fresh clone.

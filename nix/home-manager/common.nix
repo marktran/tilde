@@ -595,7 +595,7 @@ in
     # Intentional mutable/plugin-like out-of-store links. Static files above are
     # generated from the Nix store; these stay live-editable from the checkout.
     ".emacs.d" = {
-      source = outOfStore "emacs/.emacs.d";
+      source = outOfStore "emacs.d";
       force = forceStowLinks;
     };
     # NOTE: ~/.config/fish/fish_variables (fish universal vars) and local.fish
