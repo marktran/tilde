@@ -17,6 +17,14 @@ in
 
   programs.home-manager.enable = true;
 
+  # Portable CLI tools owned by Home Manager (same on Linux and macOS).
+  # Start conservative: only tools that are safe to have Nix provide.
+  # direnv is referenced by the fish startup below but was not installed on
+  # Linux, so this is purely additive there.
+  home.packages = [
+    pkgs.direnv
+  ];
+
   home.sessionVariables = {
     ALTERNATE_EDITOR = "";
     EDITOR = "nvim";

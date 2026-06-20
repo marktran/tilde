@@ -162,17 +162,32 @@ Prefer small, shared, low-risk modules first.
 
 Do not blindly move every package into Nix.
 
-- [ ] Decide which CLI tools should be installed by Home Manager as
-  `home.packages`.
-- [ ] Keep OS integration packages in the native package manager when that is
+PATH ordering is asymmetric, so this matters when choosing what Nix should own:
+
+- Linux: `~/.nix-profile/bin` is **last** in PATH, so Nix tools cannot shadow
+  `/usr/bin` (pacman) or Homebrew.
+- macOS: `~/.nix-profile/bin` is **before** `/opt/homebrew/bin`, so Nix tools
+  **do** shadow Homebrew there.
+
+Safest rule for now: only add tools that are either missing or where the Nix
+version is an acceptable owner on both machines.
+
+- [x] Decide which CLI tools should be installed by Home Manager as
+  `home.packages`. Started `home.packages` in `common.nix`.
+  - [x] `direnv` (referenced by fish startup; was missing on Linux, so purely
+    additive there).
+- [x] Keep OS integration packages in the native package manager when that is
   more practical:
   - Linux system/desktop packages can remain in `packages.txt` and `aur.txt`
     until there is a clear reason to move them.
   - macOS GUI/Homebrew-managed apps can remain in `macos/Brewfile` until
     nix-darwin is introduced.
-- [ ] Start with portable CLI tools that are the same on Linux and macOS.
-- [ ] Avoid changing the owner of critical tools like `git`, `gh`, shells, or
+- [x] Start with portable CLI tools that are the same on Linux and macOS.
+- [x] Avoid changing the owner of critical tools like `git`, `gh`, shells, or
   desktop services until the tradeoff is explicit.
+  - [x] Linux activation tested (`direnv` resolves from `~/.nix-profile/bin`,
+    fish hook active).
+  - [ ] macOS activation pending (report `direnv` provenance there).
 
 ### 5. Linux-Only Work
 
