@@ -116,15 +116,17 @@ If the dry run is clean, activate:
 
 - [x] Remove now-empty Git package directories from the repo if they are empty
   on disk.
-- [ ] Periodically inspect remaining bridge-managed files:
+- [x] Remove the `stow.linksFor` helper entirely; remaining mutable/plugin-like
+  links are explicit `home.file` entries using `mkOutOfStoreSymlink`.
+- [x] Periodically inspect remaining bridge-managed files:
 
   ```sh
-  rg -n 'home.file = stow.linksFor|\{\s*name = ' nix/home-manager
+  rg -n 'mkOutOfStoreSymlink|outOfStore|home.file =' nix/home-manager
   ```
 
-- [ ] For each migrated package, remove its entries from `stow.linksFor`.
+- [x] For each migrated package, remove its entries from the old Stow bridge.
 - [ ] Prefer typed Home Manager modules when they make the config clearer.
-- [ ] Keep file links for large mutable app configs where typed modules would
+- [x] Keep file links for large mutable app configs where typed modules would
   add noise.
 
 ### 3. Candidate Typed Module Migrations
@@ -394,7 +396,7 @@ a system tool later, that becomes an explicit, separate decision.
    `programs.zoxide` (with `--cmd j`); evaluate `programs.mise` only after PATH
    ordering is rechecked.
 4. [x] Small static one-file configs: store-back or type-manage low-risk files
-   such as `emacs/.hunspell_default`, `rtorrent.rc`, Typora user config,
+   such as `.hunspell_default`, `rtorrent.rc`, Typora user config,
    Makima TOMLs, mpv script options, Hypr/Omarchy `hypr/*.conf` files, and
    Claude settings/commands.
 5. [x] Portable CLI packages: Nix-own additive cross-platform tools such as

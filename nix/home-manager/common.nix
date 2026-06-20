@@ -1,9 +1,8 @@
 { config, lib, pkgs, username, homeDirectory, stateVersion, checkoutPath, forceStowLinks, ... }:
 
 let
-  stow = import ../lib/stow-package.nix {
-    inherit config lib checkoutPath forceStowLinks;
-  };
+  outOfStore = relativePath:
+    config.lib.file.mkOutOfStoreSymlink "${checkoutPath}/${relativePath}";
 
   ghCredentialHelper =
     if pkgs.stdenv.hostPlatform.isDarwin
@@ -591,47 +590,42 @@ in
     text = "mark.tran@gmail.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK6j5pkvHqP1YRODd00yh5FM7YGuozykifYWYYuQeMuu\n";
   };
 
-  home.file = stow.linksFor [
-    {
-      name = "emacs";
-      entries = [ ".emacs.d" ];
-    }
-    {
-      name = "fish";
-      entries = [
-        ".config/fish/fish_variables"
-        ".config/fish/local.fish"
-      ];
-    }
-    {
-      name = "nvim";
-      entries = [
-        {
-          source = ".config/nvim/lazy-lock.json";
-          target = ".config/nvim/lazy-lock.json";
-          force = true;
-        }
-      ];
-    }
-    {
-      name = "agents";
-      entries = [
-        {
-          source = ".agents/skills";
-          target = ".agents/skills";
-          force = true;
-        }
-      ];
-    }
-    {
-      name = "pi";
-      entries = [
-        ".pi/agent/settings.json"
-        ".pi/agent/extensions"
-        ".pi/agent/skills"
-      ];
-    }
-  ] // {
+  home.file = {
+    # Intentional mutable/plugin-like out-of-store links. Static files above are
+    # generated from the Nix store; these stay live-editable from the checkout.
+    ".emacs.d" = {
+      source = outOfStore "emacs/.emacs.d";
+      force = forceStowLinks;
+    };
+    ".config/fish/fish_variables" = {
+      source = outOfStore "fish/.config/fish/fish_variables";
+      force = forceStowLinks;
+    };
+    ".config/fish/local.fish" = {
+      source = outOfStore "fish/.config/fish/local.fish";
+      force = forceStowLinks;
+    };
+    ".config/nvim/lazy-lock.json" = {
+      source = outOfStore "nvim/.config/nvim/lazy-lock.json";
+      force = true;
+    };
+    ".agents/skills" = {
+      source = outOfStore "agents/.agents/skills";
+      force = true;
+    };
+    ".pi/agent/settings.json" = {
+      source = outOfStore "pi/.pi/agent/settings.json";
+      force = forceStowLinks;
+    };
+    ".pi/agent/extensions" = {
+      source = outOfStore "pi/.pi/agent/extensions";
+      force = forceStowLinks;
+    };
+    ".pi/agent/skills" = {
+      source = outOfStore "pi/.pi/agent/skills";
+      force = forceStowLinks;
+    };
+
     "bin/op-ssh-sign-wrapper" = {
       source = ../../bin/bin/op-ssh-sign-wrapper;
       force = true;
@@ -654,7 +648,7 @@ in
       force = true;
     };
     ".hunspell_default" = {
-      source = ../../emacs/.hunspell_default;
+      source = ../files/hunspell/default;
       force = true;
     };
 

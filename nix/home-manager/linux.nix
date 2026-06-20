@@ -72,42 +72,42 @@
   # makes the active config reproducible from the flake.
   xdg.configFile = {
     "voxtype/config.toml" = {
-      source = ../../voxtype/.config/voxtype/config.toml;
+      source = ../files/voxtype/config.toml;
       force = forceStowLinks;
     };
     "elephant/websearch.toml" = {
-      source = ../../elephant/.config/elephant/websearch.toml;
+      source = ../files/elephant/websearch.toml;
       force = forceStowLinks;
     };
     "elephant/google-favicon.png" = {
-      source = ../../elephant/.config/elephant/google-favicon.png;
+      source = ../files/elephant/google-favicon.png;
       force = forceStowLinks;
     };
     "wireplumber/wireplumber.conf.d/51-shure-mv7-mic-only.conf" = {
-      source = ../../wireplumber/.config/wireplumber/wireplumber.conf.d/51-shure-mv7-mic-only.conf;
+      source = ../files/wireplumber/wireplumber.conf.d/51-shure-mv7-mic-only.conf;
       force = forceStowLinks;
     };
 
     "Typora/conf/conf.user.json" = {
-      source = ../../typora/.config/Typora/conf/conf.user.json;
+      source = ../files/typora/conf.user.json;
       force = forceStowLinks;
     };
 
     "rtorrent/rtorrent.rc" = {
-      source = ../../rtorrent/.config/rtorrent/rtorrent.rc;
+      source = ../files/rtorrent/rtorrent.rc;
       force = forceStowLinks;
     };
 
     "makima/AT Translated Set 2 keyboard.toml" = {
-      source = ../../makima/.config/makima + "/AT Translated Set 2 keyboard.toml";
+      source = ../files/makima + "/AT Translated Set 2 keyboard.toml";
       force = forceStowLinks;
     };
     "makima/Intel HID events.toml" = {
-      source = ../../makima/.config/makima + "/Intel HID events.toml";
+      source = ../files/makima + "/Intel HID events.toml";
       force = forceStowLinks;
     };
     "makima/ThinkPad Extra Buttons.toml" = {
-      source = ../../makima/.config/makima + "/ThinkPad Extra Buttons.toml";
+      source = ../files/makima + "/ThinkPad Extra Buttons.toml";
       force = forceStowLinks;
     };
 
@@ -212,7 +212,7 @@
   };
 
   home.file.".XCompose" = {
-    source = ../../xcompose/.XCompose;
+    source = ../files/xcompose/XCompose;
     force = forceStowLinks;
   };
 }

@@ -226,9 +226,10 @@ If the dry run is clean, activate Home Manager:
 ./result/activate
 ```
 
-The bridge entries use `force = true` because Stow already owns these paths as
-symlinks. Home Manager will replace Stow's symlinks with Home Manager symlinks
-that still resolve back to this checkout.
+Early bridge entries used `force = true` because Stow already owned those paths
+as symlinks. The generic Stow bridge helper is now gone: remaining live-editable
+paths are explicit Home Manager `home.file` entries using out-of-store symlinks,
+and static files are store-backed.
 
 Do not unstow `system` as part of Home Manager migration.
 
@@ -256,7 +257,8 @@ home-manager switch --flake ~/src/mark/tilde#linux
 Do not run `stow -D` after Home Manager owns the links; Stow can remove links
 that Home Manager just created because both point to the same checkout files.
 At that point "no Stow" means stop using Stow for `$HOME` and let Home Manager
-own future changes.
+own future changes. The only remaining Stow workflow is the privileged
+`system/` package for Linux `/etc` files.
 
 ## Step 6: Roll Back If Needed
 
