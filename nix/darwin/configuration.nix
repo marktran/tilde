@@ -29,6 +29,15 @@
     home = "/Users/mark";
   };
 
+  # Touch ID for sudo. /etc/pam.d/sudo already does `auth include sudo_local`
+  # (Apple's update-safe hook), and nix-darwin owns /etc/pam.d/sudo_local.
+  # reattach = true loads pam_reattach so the Touch ID prompt also works inside
+  # tmux/screen sessions (otherwise sudo in tmux falls back to a password).
+  security.pam.services.sudo_local = {
+    touchIdAuth = true;
+    reattach = true;
+  };
+
   # macOS preferences. Values mirror the machine's current settings, so the
   # first activation does not change behavior -- it just makes them declarative.
   # Some keys only take effect after a logout/restart (nix-darwin restarts Dock
