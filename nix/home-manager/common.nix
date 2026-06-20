@@ -649,10 +649,6 @@ in
       source = ../files/claude/settings.json;
       force = true;
     };
-    ".claude/commands" = {
-      source = ../files/claude/commands;
-      force = true;
-    };
     ".hunspell_default" = {
       source = ../files/hunspell/default;
       force = true;
