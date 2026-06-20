@@ -270,12 +270,17 @@ home-manager switch --rollback
 
 ## System-Level Linux Files
 
-The `system/` package targets `/etc` and remains outside Home Manager on
-Omarchy/Arch:
+The `system/` files target `/etc` and remain outside Home Manager on
+Omarchy/Arch. Deploy them with the install script (no longer GNU Stow):
 
 ```sh
-sudo stow -t / system
+sudo system/install.sh      # deploy (or: make system)
+system/install.sh --check   # dry run / show drift (or: make system-diff)
 ```
+
+Early-boot and security files are installed as real copies; runtime acpid
+events are symlinked; `etc/pam.d/sudo` is a reviewed manual step. See
+`system/README.md`.
 
 Those files can eventually move into NixOS modules if the ThinkPad moves to
 NixOS. Until then, keep them explicit and privileged.

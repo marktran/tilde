@@ -281,11 +281,11 @@ a system tool later, that becomes an explicit, separate decision.
     binary stays system-installed (`/usr/lib/voxtype`). Linked unit file
     removed.
   - [x] Linux activation tested (service enabled, active, restarts cleanly).
-- [ ] Document the remaining `system/` workflow for `/etc` clearly:
-
-  ```sh
-  sudo stow -t / system
-  ```
+- [x] Document the remaining `system/` workflow for `/etc` clearly. Replaced
+  GNU Stow with `system/install.sh` (real files for early-boot/security,
+  symlinks for acpid, `pam.d/sudo` a reviewed manual step). Deploy with
+  `make system` / inspect with `make system-diff`. This removed the last GNU
+  Stow usage in the repo.
 
 - [ ] Longer-term option: move Linux system config to NixOS only if the laptop
   moves from Omarchy/Arch to NixOS.

@@ -39,7 +39,7 @@ ACTIVATION := $(FLAKE)$(HASH)homeConfigurations.$(HOST).activationPackage
 # nothing). Run `make help` to list targets, `make switch` to apply.
 .DEFAULT_GOAL := dry-run
 
-.PHONY: help switch build dry-run check update update-switch rollback generations pkgs pkgs-diff
+.PHONY: help switch build dry-run check update update-switch rollback generations pkgs pkgs-diff system system-diff
 
 help: ## Show this help
 	@echo "Platform: $(UNAME_S) -> host '$(HOST)' ($(PLATFORM))"
@@ -100,4 +100,18 @@ ifeq ($(PLATFORM),linux)
 	@comm -23 <(pacman -Qqem | sort) <(grep -v '^#' linux/aur.txt | grep -v '^$$' | sort -u)
 else
 	@echo "pkgs-diff: Linux-only"
+endif
+
+system: ## (Linux) Deploy privileged /etc files (needs sudo)
+ifeq ($(PLATFORM),linux)
+	sudo system/install.sh
+else
+	@echo "system: Linux-only"
+endif
+
+system-diff: ## (Linux) Show what make system would change in /etc (no writes)
+ifeq ($(PLATFORM),linux)
+	@system/install.sh --check
+else
+	@echo "system-diff: Linux-only"
 endif
