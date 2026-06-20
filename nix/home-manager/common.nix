@@ -1,8 +1,27 @@
-{ config, pkgs, username, homeDirectory, stateVersion, checkoutPath, forceStowLinks, ... }:
+{ config, lib, pkgs, username, homeDirectory, stateVersion, checkoutPath, forceStowLinks, ... }:
 
 let
   outOfStore = relativePath:
     config.lib.file.mkOutOfStoreSymlink "${checkoutPath}/${relativePath}";
+
+  # Agent skills shared across harnesses. Linked per-skill into a target dir
+  # (e.g. ~/.agents/skills for pi, ~/.claude/skills for Claude Code) so the
+  # Linux-only Omarchy skill (see linux.nix) can be layered into the same dir.
+  # Each skill stays live-editable from the checkout.
+  sharedAgentSkills = [
+    "defuddle"
+    "json-canvas"
+    "obsidian-bases"
+    "obsidian-cli"
+    "obsidian-markdown"
+  ];
+  agentSkillLinks = dir: lib.listToAttrs (map (skill: {
+    name = "${dir}/${skill}";
+    value = {
+      source = outOfStore "nix/files/agents/skills/${skill}";
+      force = true;
+    };
+  }) sharedAgentSkills);
 
   ghCredentialHelper =
     if pkgs.stdenv.hostPlatform.isDarwin
@@ -591,30 +610,6 @@ in
       source = outOfStore "nix/files/nvim/lazy-lock.json";
       force = true;
     };
-    # Per-skill out-of-store links so platform-specific skills (e.g. the
-    # Linux-only omarchy skill, added in linux.nix) can be layered into the
-    # same ~/.agents/skills directory. Each skill stays live-editable from the
-    # checkout.
-    ".agents/skills/defuddle" = {
-      source = outOfStore "nix/files/agents/skills/defuddle";
-      force = true;
-    };
-    ".agents/skills/json-canvas" = {
-      source = outOfStore "nix/files/agents/skills/json-canvas";
-      force = true;
-    };
-    ".agents/skills/obsidian-bases" = {
-      source = outOfStore "nix/files/agents/skills/obsidian-bases";
-      force = true;
-    };
-    ".agents/skills/obsidian-cli" = {
-      source = outOfStore "nix/files/agents/skills/obsidian-cli";
-      force = true;
-    };
-    ".agents/skills/obsidian-markdown" = {
-      source = outOfStore "nix/files/agents/skills/obsidian-markdown";
-      force = true;
-    };
     ".pi/agent/settings.json" = {
       source = outOfStore "nix/files/pi/agent/settings.json";
       force = forceStowLinks;
@@ -674,5 +669,8 @@ in
       source = ../files/pi/agent/themes;
       force = true;
     };
-  };
+  }
+  # Shared agent skills, layered into both pi's and Claude Code's skill dirs.
+  // agentSkillLinks ".agents/skills"
+  // agentSkillLinks ".claude/skills";
 }

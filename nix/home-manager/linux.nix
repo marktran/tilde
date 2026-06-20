@@ -191,10 +191,18 @@
     force = forceStowLinks;
   };
 
-  # Linux-only agent skill provided by Omarchy. Layered into ~/.agents/skills
-  # alongside the shared per-skill links from common.nix. Points directly at
-  # the Omarchy-managed skill, so it is absent on macOS.
-  home.file.".agents/skills/omarchy".source =
-    config.lib.file.mkOutOfStoreSymlink
+  # Linux-only agent skill provided by Omarchy. Layered into the shared skill
+  # dirs alongside the per-skill links from common.nix. Points directly at the
+  # Omarchy-managed skill, so it is absent on macOS. force overwrites any
+  # pre-existing hand-made symlink.
+  home.file.".agents/skills/omarchy" = {
+    source = config.lib.file.mkOutOfStoreSymlink
       "${homeDirectory}/.local/share/omarchy/default/omarchy-skill";
+    force = true;
+  };
+  home.file.".claude/skills/omarchy" = {
+    source = config.lib.file.mkOutOfStoreSymlink
+      "${homeDirectory}/.local/share/omarchy/default/omarchy-skill";
+    force = true;
+  };
 }
