@@ -197,6 +197,9 @@ Prefer small, shared, low-risk modules first.
   - [x] Removed stale repo-only legacy configs that were no longer linked or
     active: old `.bash_profile`, Python/Ruby dotfiles, and the obsolete
     Obsidian custom-window-title plugin source.
+  - [x] Added activation cleanup for stale home-level Python/Ruby Stow symlinks
+    (`~/.pythonrc`, `~/.gemrc`, `~/.irbrc`, `~/.rspec`) when they still point
+    at the old checkout paths.
 
 ### 4. Package Management Strategy
 

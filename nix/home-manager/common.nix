@@ -4,6 +4,8 @@ let
   outOfStore = relativePath:
     config.lib.file.mkOutOfStoreSymlink "${checkoutPath}/${relativePath}";
 
+  relativeCheckoutPath = lib.removePrefix "${homeDirectory}/" checkoutPath;
+
   ghCredentialHelper =
     if pkgs.stdenv.hostPlatform.isDarwin
     then "!/opt/homebrew/bin/gh auth git-credential"
@@ -30,6 +32,31 @@ in
     PAGER = "less";
     _ZO_ECHO = "1";
   };
+
+  home.activation.removeLegacyStowDotfileLinks = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
+    for legacyPath in \
+      "${homeDirectory}/.pythonrc" \
+      "${homeDirectory}/.gemrc" \
+      "${homeDirectory}/.irbrc" \
+      "${homeDirectory}/.rspec"
+    do
+      if [ -L "$legacyPath" ]; then
+        target="$(readlink "$legacyPath")"
+        case "$target" in
+          "${checkoutPath}/python/.pythonrc"|\
+          "${checkoutPath}/ruby/.gemrc"|\
+          "${checkoutPath}/ruby/.irbrc"|\
+          "${checkoutPath}/ruby/.rspec"|\
+          "${relativeCheckoutPath}/python/.pythonrc"|\
+          "${relativeCheckoutPath}/ruby/.gemrc"|\
+          "${relativeCheckoutPath}/ruby/.irbrc"|\
+          "${relativeCheckoutPath}/ruby/.rspec")
+            ''${DRY_RUN_CMD:-} rm "$legacyPath"
+            ;;
+        esac
+      fi
+    done
+  '';
 
   # Portable CLI tools owned by Home Manager. The fish PATH pins the Home
   # Manager profile last, so native packages still win where they exist, but
