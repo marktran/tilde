@@ -440,10 +440,7 @@ in
     }
     {
       name = "emacs";
-      entries = [
-        ".emacs.d"
-        ".hunspell_default"
-      ];
+      entries = [ ".emacs.d" ];
     }
     {
       name = "fish";
@@ -507,5 +504,10 @@ in
         ".pi/agent/keybindings.json"
       ];
     }
-  ];
+  ] // {
+    ".hunspell_default" = {
+      source = ../../emacs/.hunspell_default;
+      force = true;
+    };
+  };
 }

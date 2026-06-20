@@ -69,9 +69,9 @@ The `homeConfigurations.mac` / `#macbook-air` standalone entries are kept for
 flake evaluation and as a rollback path. Do not run them with
 `home-manager switch` while nix-darwin owns the Home Manager profile.
 
-The Linux host imports shared config plus Linux-only config. Some of this is
-still linked from the checkout (`hypr`, `makima`, `rtorrent`, `typora`, `mpv`),
-while other pieces are now typed or store-backed:
+The Linux host imports shared config plus Linux-only config. Mutable or helper
+trees such as `hypr/scripts` and mpv `scripts/` + `bin/` still link from the
+checkout, while static files are typed or store-backed:
 
 - `programs.ghostty` Linux-only settings (keybinds, `gtk-toolbar-style`,
   `async-backend`).
@@ -79,8 +79,9 @@ while other pieces are now typed or store-backed:
   system-installed).
 - Store-backed static files: `.XCompose`, `voxtype/config.toml`,
   `elephant/websearch.toml`, `elephant/google-favicon.png`, the WirePlumber
-  Shure MV7 override, and `mpv/mpv.conf` + `mpv/input.conf` (mpv `scripts/`,
-  `bin/`, `script-opts/` stay linked).
+  Shure MV7 override, Typora user config, `rtorrent.rc`, Makima TOMLs,
+  `mpv/mpv.conf`, `mpv/input.conf`, mpv `script-opts/*.conf`, and
+  Hypr/Omarchy `hypr/*.conf` files.
 
 Shared typed config (both hosts) includes `programs.tmux`: Home Manager
 generates `~/.config/tmux/tmux.conf`, tmux itself stays native/Homebrew-owned,

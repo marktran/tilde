@@ -183,6 +183,11 @@ Prefer small, shared, low-risk modules first.
       so they no longer land on macOS.
     - [x] Linux activation tested (`ghostty +validate-config` passes).
     - [x] macOS activation tested (`ghostty +validate-config` passes).
+  - [x] `.hunspell_default` moved from the Emacs bridge to a shared
+    store-backed Home Manager file.
+  - [x] Linux-only static one-file configs store-backed in `linux.nix`: Typora
+    user config, `rtorrent.rc`, Makima TOMLs, mpv script options, and
+    Hypr/Omarchy `hypr/*.conf` files (scripts/helpers stay linked).
 
 ### 4. Package Management Strategy
 
@@ -233,7 +238,9 @@ a system tool later, that becomes an explicit, separate decision.
 
 ### 5. Linux-Only Work
 
-- [ ] Keep Omarchy/Hyprland config under `linux.nix`.
+- [x] Keep Omarchy/Hyprland config under `linux.nix`.
+  - [x] Static `hypr/*.conf` files are store-backed via `xdg.configFile`;
+    `hypr/scripts` remains an out-of-store bridge link.
 - [ ] Keep Linux-only apps out of common config:
   - Typora
   - mpv
@@ -334,6 +341,9 @@ a system tool later, that becomes an explicit, separate decision.
   - [x] Second batch: `mpv/mpv.conf` + `mpv/input.conf` (Linux; `scripts/`,
     `bin/`, `script-opts/` stay linked). `tmux/.tmux.conf` was initially
     store-backed here, then superseded by typed `programs.tmux`.
+  - [x] Third batch: shared `.hunspell_default`; Linux-only Typora user config,
+    `rtorrent.rc`, Makima TOMLs, mpv `script-opts/*.conf`, and Hypr/Omarchy
+    `hypr/*.conf` files. Mutable/executable helper trees stay linked.
   - [x] Linux activation tested (links resolve into `/nix/store`).
   - [x] macOS activation tested for the old shared `tmux/.tmux.conf` link
     before the later `programs.tmux` migration.
@@ -363,14 +373,15 @@ a system tool later, that becomes an explicit, separate decision.
 3. [x] Typed shell tool modules: convert manual hooks to `programs.direnv` and
    `programs.zoxide` (with `--cmd j`); evaluate `programs.mise` only after PATH
    ordering is rechecked.
-4. [ ] Small static one-file configs: store-back or type-manage low-risk files
+4. [x] Small static one-file configs: store-back or type-manage low-risk files
    such as `emacs/.hunspell_default`, `rtorrent.rc`, Typora user config,
-   Makima TOMLs, mpv script options, and Claude settings/commands if the apps
-   do not mutate them.
+   Makima TOMLs, mpv script options, and Hypr/Omarchy `hypr/*.conf` files.
+   Claude settings/commands remain a future candidate if the app does not
+   mutate them.
 5. [ ] Portable CLI packages: consider Nix-owning additive cross-platform tools
    such as `sesh`, `zoxide`, `tree`, `pwgen`, `calc`, `fzf`, `fd`, `ripgrep`,
    and `jq` while preserving the native-tool PATH priority rule.
-6. [ ] Hypr/Omarchy configs: first store-back static `hypr/*.conf` from
+6. [x] Hypr/Omarchy configs: first store-back static `hypr/*.conf` from
    `linux.nix` and leave scripts out-of-store; avoid full typed Hyprland until
    it is clear it will not fight Omarchy defaults/updates.
 

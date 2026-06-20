@@ -47,6 +47,25 @@ in
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  home.activation.removeLegacyStaticConfigLinks = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
+    for legacyPath in \
+      "${config.xdg.configHome}/makima" \
+      "${config.xdg.configHome}/rtorrent" \
+      "${config.xdg.configHome}/mpv/script-opts"
+    do
+      if [ -L "$legacyPath" ]; then
+        target="$(readlink "$legacyPath")"
+        case "$target" in
+          /nix/store/*-home-manager-files/.config/makima|\
+          /nix/store/*-home-manager-files/.config/rtorrent|\
+          /nix/store/*-home-manager-files/.config/mpv/script-opts)
+            ''${DRY_RUN_CMD:-} rm "$legacyPath"
+            ;;
+        esac
+      fi
+    done
+  '';
+
   # Store-backed copies of genuinely static, non-app-edited configs.
   # Editing these requires a rebuild rather than a live checkout edit, which
   # makes the active config reproducible from the flake.
@@ -67,6 +86,30 @@ in
       source = ../../wireplumber/.config/wireplumber/wireplumber.conf.d/51-shure-mv7-mic-only.conf;
       force = forceStowLinks;
     };
+
+    "Typora/conf/conf.user.json" = {
+      source = ../../typora/.config/Typora/conf/conf.user.json;
+      force = forceStowLinks;
+    };
+
+    "rtorrent/rtorrent.rc" = {
+      source = ../../rtorrent/.config/rtorrent/rtorrent.rc;
+      force = forceStowLinks;
+    };
+
+    "makima/AT Translated Set 2 keyboard.toml" = {
+      source = ../../makima/.config/makima + "/AT Translated Set 2 keyboard.toml";
+      force = forceStowLinks;
+    };
+    "makima/Intel HID events.toml" = {
+      source = ../../makima/.config/makima + "/Intel HID events.toml";
+      force = forceStowLinks;
+    };
+    "makima/ThinkPad Extra Buttons.toml" = {
+      source = ../../makima/.config/makima + "/ThinkPad Extra Buttons.toml";
+      force = forceStowLinks;
+    };
+
     "mpv/mpv.conf" = {
       source = ../../mpv/.config/mpv/mpv.conf;
       force = forceStowLinks;
@@ -75,44 +118,77 @@ in
       source = ../../mpv/.config/mpv/input.conf;
       force = forceStowLinks;
     };
+    "mpv/script-opts/chromecast-cast.conf" = {
+      source = ../../mpv/.config/mpv/script-opts/chromecast-cast.conf;
+      force = forceStowLinks;
+    };
+    "mpv/script-opts/osc.conf" = {
+      source = ../../mpv/.config/mpv/script-opts/osc.conf;
+      force = forceStowLinks;
+    };
+    "mpv/script-opts/pip-default-size.conf" = {
+      source = ../../mpv/.config/mpv/script-opts/pip-default-size.conf;
+      force = forceStowLinks;
+    };
+
+    "hypr/autostart.conf" = {
+      source = ../../hypr/.config/hypr/autostart.conf;
+      force = forceStowLinks;
+    };
+    "hypr/bindings.conf" = {
+      source = ../../hypr/.config/hypr/bindings.conf;
+      force = forceStowLinks;
+    };
+    "hypr/hypridle.conf" = {
+      source = ../../hypr/.config/hypr/hypridle.conf;
+      force = forceStowLinks;
+    };
+    "hypr/hyprland.conf" = {
+      source = ../../hypr/.config/hypr/hyprland.conf;
+      force = forceStowLinks;
+    };
+    "hypr/hyprlock.conf" = {
+      source = ../../hypr/.config/hypr/hyprlock.conf;
+      force = forceStowLinks;
+    };
+    "hypr/hyprsunset.conf" = {
+      source = ../../hypr/.config/hypr/hyprsunset.conf;
+      force = forceStowLinks;
+    };
+    "hypr/input.conf" = {
+      source = ../../hypr/.config/hypr/input.conf;
+      force = forceStowLinks;
+    };
+    "hypr/looknfeel.conf" = {
+      source = ../../hypr/.config/hypr/looknfeel.conf;
+      force = forceStowLinks;
+    };
+    "hypr/monitors.conf" = {
+      source = ../../hypr/.config/hypr/monitors.conf;
+      force = forceStowLinks;
+    };
+    "hypr/windows.conf" = {
+      source = ../../hypr/.config/hypr/windows.conf;
+      force = forceStowLinks;
+    };
+    "hypr/xdph.conf" = {
+      source = ../../hypr/.config/hypr/xdph.conf;
+      force = forceStowLinks;
+    };
   };
 
   home.file = stow.linksFor [
     {
       name = "hypr";
-      entries = [
-        ".config/hypr/hyprland.conf"
-        ".config/hypr/hyprsunset.conf"
-        ".config/hypr/scripts"
-        ".config/hypr/windows.conf"
-        ".config/hypr/autostart.conf"
-        ".config/hypr/bindings.conf"
-        ".config/hypr/input.conf"
-        ".config/hypr/monitors.conf"
-        ".config/hypr/hypridle.conf"
-        ".config/hypr/hyprlock.conf"
-        ".config/hypr/looknfeel.conf"
-        ".config/hypr/xdph.conf"
-      ];
-    }
-    {
-      name = "makima";
-      entries = [ ".config/makima" ];
-    }
-    {
-      name = "rtorrent";
-      entries = [ ".config/rtorrent" ];
-    }
-    {
-      name = "typora";
-      entries = [ ".config/Typora/conf/conf.user.json" ];
+      # Static *.conf files are store-backed above; scripts stay linked because
+      # they are executable helpers edited from the checkout.
+      entries = [ ".config/hypr/scripts" ];
     }
     {
       name = "mpv";
-      # mpv.conf and input.conf are store-backed above; these stay linked
-      # because they are mutable/plugin trees.
+      # Static mpv config and script options are store-backed above; scripts
+      # and bin stay linked because they are helper/plugin trees.
       entries = [
-        ".config/mpv/script-opts"
         ".config/mpv/scripts"
         ".config/mpv/bin"
       ];
