@@ -13,9 +13,14 @@ Home Manager across:
 - Linux uses standalone Home Manager.
 - macOS uses nix-darwin with Home Manager folded in (one `darwin-rebuild
   switch` activates system + user env). Homebrew brews/casks/taps are declared
-  in `nix/darwin/configuration.nix`. Conservative defaults: `nix.enable =
-  false`, `homebrew.onActivation.cleanup = "none"`, fish stays Homebrew-managed
-  as the login shell.
+  in `nix/darwin/configuration.nix` and are fully declarative
+  (`homebrew.onActivation.cleanup = "uninstall"`): undeclared packages/taps are
+  removed on switch. `nix.enable = false` and fish stays Homebrew-managed as the
+  login shell.
+- Homebrew tap-trust is machine-local state nix-darwin cannot manage. With
+  `cleanup = "uninstall"`, the declared third-party taps must be trusted once
+  per machine or the switch fails:
+  `brew trust d12frosted/emacs-plus dopplerhq/cli oven-sh/bun`.
 - A standalone macOS Home Manager config (`#mac` / `#macbook-air`) is kept for
   evaluation and rollback only; do not `home-manager switch` it while
   nix-darwin owns the profile.
@@ -252,14 +257,26 @@ a system tool later, that becomes an explicit, separate decision.
 - [x] Conservative first cut to limit blast radius:
   - `nix.enable = false` (upstream installer keeps managing the nix-daemon and
     `/etc/nix/nix.conf`).
-  - `homebrew.onActivation.cleanup = "none"` (no surprise uninstalls).
   - `home-manager.useUserPackages = false` so `home.packages` stay in
     `~/.nix-profile/bin`, matching Linux and the fish PATH design.
   - fish stays Homebrew-managed as the login shell; nix-darwin does not touch
     `/etc/shells`.
-- [ ] Next: consider tightening `homebrew.onActivation.cleanup` to
-  `"uninstall"` once the declared lists are confirmed to match the machine,
-  then optionally add `system.defaults`.
+- [x] Made Homebrew fully declarative (`homebrew.onActivation.cleanup =
+  "uninstall"`):
+  - Curated the declared brews/casks/taps to the wanted set.
+  - Dry-ran `brew bundle cleanup` (taps trusted first) to confirm the exact
+    removal set before flipping.
+  - macOS activation tested: undeclared packages/taps removed; kept packages
+    and their dependencies retained.
+  - Tap-trust is machine-local: trust the declared third-party taps once per
+    machine (`brew trust d12frosted/emacs-plus dopplerhq/cli oven-sh/bun`) or
+    the switch fails on `brew bundle --cleanup`.
+  - Known cosmetic quirk: Homebrew core renamed `sdl2` -> `sdl2-compat`, so
+    cleanup keeps reporting it would uninstall `sdl2-compat`. That name is not
+    installed (the real `sdl2` keg, used by mpv/ffmpeg/openai-whisper, is
+    retained), so it is a harmless no-op. Resolve later by migrating the keg
+    (e.g. reinstall mpv/ffmpeg/openai-whisper).
+- [ ] Next: optionally add `system.defaults` (Dock/Finder/keyboard).
 
 ### 7. Improve Host Structure
 

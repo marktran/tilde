@@ -88,11 +88,28 @@ directory stays linked because TPM writes plugins into it).
 
 The macOS host is a nix-darwin system (`nix/darwin/configuration.nix`) with
 Home Manager folded in. nix-darwin declares the Homebrew brews/casks/taps
-(replacing the old linked `macos/Brewfile`). Conservative defaults for the
-first migration: `nix.enable = false` (the upstream installer keeps managing
-the nix-daemon and `/etc/nix/nix.conf`), `homebrew.onActivation.cleanup =
-"none"` (no surprise uninstalls), and fish stays Homebrew-managed as the login
-shell.
+(replacing the old linked `macos/Brewfile`) and is fully declarative:
+`homebrew.onActivation.cleanup = "uninstall"` removes any package or tap that is
+installed but not declared (dependencies of declared packages are kept). Other
+defaults: `nix.enable = false` (the upstream installer keeps managing the
+nix-daemon and `/etc/nix/nix.conf`), and fish stays Homebrew-managed as the
+login shell.
+
+Homebrew's tap-trust is machine-local state nix-darwin cannot manage. Because
+`cleanup = "uninstall"` makes `brew bundle --cleanup` load every declared
+formula, the declared third-party taps must be trusted once per machine or the
+switch fails:
+
+```sh
+brew trust d12frosted/emacs-plus dopplerhq/cli oven-sh/bun
+```
+
+To preview what a switch would uninstall before activating:
+
+```sh
+nix eval --raw ~/src/mark/tilde#darwinConfigurations.mac.config.homebrew.brewfile > /tmp/Brewfile
+brew bundle cleanup --file=/tmp/Brewfile   # no --force = dry run
+```
 
 ## Quick Check
 
