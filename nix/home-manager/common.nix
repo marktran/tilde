@@ -529,10 +529,6 @@ in
     source = ../files/fish/completions/docker.fish;
     force = true;
   };
-  xdg.configFile."fish/completions/fisher.fish" = {
-    source = ../files/fish/completions/fisher.fish;
-    force = true;
-  };
   xdg.configFile."fish/completions/fzf_configure_bindings.fish" = {
     source = ../files/fish/completions/fzf_configure_bindings.fish;
     force = true;
@@ -563,10 +559,6 @@ in
   };
   xdg.configFile."fish/functions/bass.fish" = {
     source = ../files/fish/functions/bass.fish;
-    force = true;
-  };
-  xdg.configFile."fish/functions/fisher.fish" = {
-    source = ../files/fish/functions/fisher.fish;
     force = true;
   };
   xdg.configFile."fish/functions/btmm.fish".force = true;
