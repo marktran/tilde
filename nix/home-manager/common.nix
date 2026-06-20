@@ -250,6 +250,12 @@ in
       # even if the tmux server inherited a sparse GUI/macOS environment.
       set-environment -g XDG_CONFIG_HOME "${homeDirectory}/.config"
 
+      # tmux-sensible sets default-command to `reattach-to-user-namespace -l $SHELL`
+      # on macOS. In a nix-darwin/Home Manager tmux server, that $SHELL can be
+      # /bin/sh, which makes panes start sh/bash instead of the default Fish shell.
+      # Keep this empty so tmux launches `default-shell` directly.
+      set-option -g default-command ""
+
       # Re-number windows with 1-based indexing
       set-option -g renumber-windows on
 
