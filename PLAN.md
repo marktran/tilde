@@ -146,10 +146,16 @@ Prefer small, shared, low-risk modules first.
     - [x] Linux activation tested.
     - [x] macOS activation tested.
 
-- [ ] Tmux:
-  - Evaluate `programs.tmux`.
-  - Keep TPM/plugin behavior stable before replacing the whole `.tmux` link.
-  - This may stay as a link if plugin state makes typed config less useful.
+- [x] Tmux:
+  - [x] Migrated shared config to typed `programs.tmux` in `common.nix`
+    (`package = null`, so native/Homebrew tmux still owns the binary).
+  - [x] Replaced TPM-managed plugins with Nix-provided
+    `pkgs.tmuxPlugins.{sensible,yank,vim-tmux-navigator}`.
+  - [x] Removed the old `.tmux.conf` store-backed link, `.tmux` bridge link,
+    and TPM submodule.
+  - [x] Linux activation tested (`home-manager switch --flake ...#linux`; old
+    `~/.tmux.conf`/`~/.tmux` links removed, XDG tmux config parses).
+  - [ ] macOS activation tested.
 
 - [ ] Shell environment:
   - [x] Move portable static editor/pager/color/zoxide variables to
@@ -317,11 +323,12 @@ a system tool later, that becomes an explicit, separate decision.
   - [x] First batch (Linux-only, store-backed): `.XCompose`,
     `voxtype/config.toml`, `elephant/websearch.toml`,
     `elephant/google-favicon.png`, and the WirePlumber Shure MV7 override.
-  - [x] Second batch: `tmux/.tmux.conf` (shared; `.tmux` dir stays linked for
-    TPM plugins) and `mpv/mpv.conf` + `mpv/input.conf` (Linux; `scripts/`,
-    `bin/`, `script-opts/` stay linked).
+  - [x] Second batch: `mpv/mpv.conf` + `mpv/input.conf` (Linux; `scripts/`,
+    `bin/`, `script-opts/` stay linked). `tmux/.tmux.conf` was initially
+    store-backed here, then superseded by typed `programs.tmux`.
   - [x] Linux activation tested (links resolve into `/nix/store`).
-  - [x] macOS activation tested for the shared `tmux/.tmux.conf`.
+  - [x] macOS activation tested for the old shared `tmux/.tmux.conf` link
+    before the later `programs.tmux` migration.
 - [ ] Keep out-of-store links for mutable directories such as Emacs packages,
   agent skills, app state, and plugin trees unless there is a better owner.
 - [x] Consider adding a small check script that runs:
@@ -337,17 +344,26 @@ a system tool later, that becomes an explicit, separate decision.
 - [ ] Consider a CI check later, but only after the flake can evaluate cleanly
   for both Linux and macOS in the chosen environment.
 
-## Good Next Step
+## Recommended Migration Sequence
 
-The next practical migration is probably Fish or the shell environment.
+1. [x] Tmux: migrate `.tmux.conf` to `programs.tmux`, keep `package = null`,
+   and replace TPM plugins with Nix-provided tmux plugins.
+2. [ ] Remaining Fish static functions: move pure functions such as
+   `fish_prompt`, `fish_greeting`, `cd`, `ls`, `l.`, and `btmm` to
+   `programs.fish.functions`; keep `fish_variables` and `local.fish` unmanaged.
+3. [ ] Typed shell tool modules: convert manual hooks to `programs.direnv` and
+   `programs.zoxide` (with `--cmd j`); evaluate `programs.mise` only after PATH
+   ordering is rechecked.
+4. [ ] Small static one-file configs: store-back or type-manage low-risk files
+   such as `emacs/.hunspell_default`, `rtorrent.rc`, Typora user config,
+   Makima TOMLs, mpv script options, and Claude settings/commands if the apps
+   do not mutate them.
+5. [ ] Portable CLI packages: consider Nix-owning additive cross-platform tools
+   such as `sesh`, `zoxide`, `tree`, `pwgen`, `calc`, `fzf`, `fd`, `ripgrep`,
+   and `jq` while preserving the native-tool PATH priority rule.
+6. [ ] Hypr/Omarchy configs: first store-back static `hypr/*.conf` from
+   `linux.nix` and leave scripts out-of-store; avoid full typed Hyprland until
+   it is clear it will not fight Omarchy defaults/updates.
 
-Suggested approach:
-
-1. Read `fish/.config/fish`.
-2. Identify pure settings, aliases, abbreviations, and environment variables.
-3. Move only the obvious static pieces into `programs.fish`.
-4. Leave complex startup code linked until it is clear that Home Manager makes
-   it simpler.
-5. Build and dry-run both hosts.
-6. Activate one machine at a time.
-7. Commit.
+For each step: build/evaluate both hosts, activate one machine at a time, test
+interactive behavior, then commit the logical migration before continuing.
