@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.79.9",
-  "defaultProvider": "fireworks",
-  "defaultModel": "accounts/fireworks/models/glm-5p2",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-4-8",
   "defaultThinkingLevel": "high",
   "theme": "modern-dark",
   "enabledModels": [
