@@ -47,6 +47,28 @@ in
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  # Store-backed copies of genuinely static, non-app-edited configs.
+  # Editing these requires a rebuild rather than a live checkout edit, which
+  # makes the active config reproducible from the flake.
+  xdg.configFile = {
+    "voxtype/config.toml" = {
+      source = ../../voxtype/.config/voxtype/config.toml;
+      force = forceStowLinks;
+    };
+    "elephant/websearch.toml" = {
+      source = ../../elephant/.config/elephant/websearch.toml;
+      force = forceStowLinks;
+    };
+    "elephant/google-favicon.png" = {
+      source = ../../elephant/.config/elephant/google-favicon.png;
+      force = forceStowLinks;
+    };
+    "wireplumber/wireplumber.conf.d/51-shure-mv7-mic-only.conf" = {
+      source = ../../wireplumber/.config/wireplumber/wireplumber.conf.d/51-shure-mv7-mic-only.conf;
+      force = forceStowLinks;
+    };
+  };
+
   home.file = stow.linksFor [
     {
       name = "hypr";
@@ -70,29 +92,6 @@ in
       entries = [ ".config/makima" ];
     }
     {
-      name = "voxtype";
-      entries = [
-        ".config/voxtype/config.toml"
-      ];
-    }
-    {
-      name = "elephant";
-      entries = [
-        ".config/elephant/google-favicon.png"
-        ".config/elephant/websearch.toml"
-      ];
-    }
-    {
-      name = "wireplumber";
-      entries = [
-        ".config/wireplumber/wireplumber.conf.d/51-shure-mv7-mic-only.conf"
-      ];
-    }
-    {
-      name = "xcompose";
-      entries = [ ".XCompose" ];
-    }
-    {
       name = "rtorrent";
       entries = [ ".config/rtorrent" ];
     }
@@ -110,5 +109,10 @@ in
         ".config/mpv/bin"
       ];
     }
-  ];
+  ] // {
+    ".XCompose" = {
+      source = ../../xcompose/.XCompose;
+      force = forceStowLinks;
+    };
+  };
 }

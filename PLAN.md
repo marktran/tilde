@@ -227,8 +227,12 @@ Do not blindly move every package into Nix.
 
 ### 8. Reproducibility Improvements
 
-- [ ] Gradually replace out-of-store links with store-backed files where the
+- [x] Gradually replace out-of-store links with store-backed files where the
   files are static and should not be edited by applications.
+  - [x] First batch (Linux-only, store-backed): `.XCompose`,
+    `voxtype/config.toml`, `elephant/websearch.toml`,
+    `elephant/google-favicon.png`, and the WirePlumber Shure MV7 override.
+  - [x] Linux activation tested (links resolve into `/nix/store`).
 - [ ] Keep out-of-store links for mutable directories such as Emacs packages,
   agent skills, app state, and plugin trees unless there is a better owner.
 - [ ] Consider adding a small check script that runs:
