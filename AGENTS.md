@@ -22,7 +22,9 @@
   standalone Home Manager.
 - No platform sub-namespaces — the flake selects shared, Linux-only, and macOS-only
   modules.
-- `packages.txt` (official-repo) and `aur.txt` (AUR) are package inventories, not Stow packages.
+- `linux/packages.txt` (official-repo) and `linux/aur.txt` (AUR) are Linux-only
+  package inventories, not Stow packages. Use `make pkgs` to install and
+  `make pkgs-diff` to spot uncurated installed packages.
 - Assume all new files and file edits should be made in this repo.
 - Do not edit generated symlinks directly in `$HOME`.
 - After home config changes, run the appropriate switch command for the

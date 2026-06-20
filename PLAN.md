@@ -237,8 +237,8 @@ a system tool later, that becomes an explicit, separate decision.
     prefers native packages when present.
   - [x] Portable CLI tools in `home.packages`: `sesh`, `tree`, `pwgen`,
     `calc`, `fzf`, `fd`, `ripgrep`, and `jq`. Removed now-Nix-owned entries
-    from native inventories where this repo declared them (`packages.txt`,
-    `aur.txt`, nix-darwin Homebrew brews).
+    from native inventories where this repo declared them (`linux/packages.txt`,
+    `linux/aur.txt`, nix-darwin Homebrew brews).
   - [x] Spellcheck command packages moved to Home Manager: `aspell`, English
     aspell dictionary, `enchant`, and `scowl`; removed now-Nix-owned spellcheck
     packages from Linux native inventory and macOS Homebrew.
@@ -249,8 +249,8 @@ a system tool later, that becomes an explicit, separate decision.
     so the Nix profile remains lowest priority.
 - [x] Keep OS integration packages in the native package manager when that is
   more practical:
-  - Linux system/desktop packages can remain in `packages.txt` and `aur.txt`
-    until there is a clear reason to move them.
+  - Linux system/desktop packages can remain in `linux/packages.txt` and
+    `linux/aur.txt` until there is a clear reason to move them.
   - macOS GUI/Homebrew-managed apps are now declared via nix-darwin's
     `homebrew` module in `nix/darwin/configuration.nix` (brews/casks/taps).
     Homebrew still installs them; nix-darwin just makes the list declarative.

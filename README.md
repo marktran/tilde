@@ -51,8 +51,12 @@ Home Manager owns the home-directory links. Do not use `stow` for `$HOME`.
 
 ## Notes
 
-- `packages.txt` — official-repo package inventory (install with `pacman -S --needed - < packages.txt`; not a Stow package).
-- `aur.txt` — AUR package inventory (install with `paru -S --needed - < aur.txt`; not a Stow package).
+- `linux/packages.txt` — official-repo package inventory (install with
+  `make pkgs`, or `sudo pacman -S --needed - < linux/packages.txt`).
+- `linux/aur.txt` — AUR package inventory (install with `make pkgs`, or
+  `paru -S --needed - < linux/aur.txt`).
+- `make pkgs-diff` lists explicitly-installed packages not yet curated into
+  those files. Both are Linux-only bootstrapping lists, not Stow packages.
 - `system/` has its own `README.md` describing its `/etc` files. These are
   privileged Linux system files and remain outside standalone Home Manager.
 - Submodules: `emacs/.emacs.d`, `tmux/.tmux/plugins/tpm`
