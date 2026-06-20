@@ -138,7 +138,7 @@ Prefer small, shared, low-risk modules first.
     `home.sessionVariables`.
   - [x] Keep PATH and OS-specific startup logic in Fish for now.
   - [x] Linux activation tested.
-  - [ ] macOS activation pending.
+  - [x] macOS activation tested.
   - [ ] Keep app-specific startup logic in fish if Home Manager would obscure it.
 
 - [ ] Simple one-file configs:
