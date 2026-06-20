@@ -169,8 +169,19 @@ PATH ordering is asymmetric, so this matters when choosing what Nix should own:
 - macOS: `~/.nix-profile/bin` is **before** `/opt/homebrew/bin`, so Nix tools
   **do** shadow Homebrew there.
 
-Safest rule for now: only add tools that are either missing or where the Nix
-version is an acceptable owner on both machines.
+Decision: pin `~/.nix-profile/bin` at the **lowest** PATH priority on both
+machines (asserted in fish after `mise activate`, since mise rewrites PATH).
+This is consistent and safe: the Home Manager profile (which also contains
+`fish`, `man`, etc.) never shadows system tools, and `home.packages` is purely
+additive -- it only provides tools the OS does not (e.g. `direnv`). To override
+a system tool later, that becomes an explicit, separate decision.
+
+- [x] Settle PATH ordering: Nix profile pinned last; survives mise prompt
+  hooks and directory changes.
+  - [x] Linux activation tested (`~/.nix-profile/bin` is last; `fish`/`man`
+    resolve from the system; `direnv` still resolves from Nix).
+  - [ ] macOS activation pending (confirm Nix profile is last and no longer
+    shadows Homebrew `fish`).
 
 - [x] Decide which CLI tools should be installed by Home Manager as
   `home.packages`. Started `home.packages` in `common.nix`.
@@ -187,7 +198,8 @@ version is an acceptable owner on both machines.
   desktop services until the tradeoff is explicit.
   - [x] Linux activation tested (`direnv` resolves from `~/.nix-profile/bin`,
     fish hook active).
-  - [ ] macOS activation pending (report `direnv` provenance there).
+  - [x] macOS activation tested (`direnv` was absent before, now Nix-owned at
+    `~/.nix-profile/bin`; no shadowing, fish hook active).
 
 ### 5. Linux-Only Work
 

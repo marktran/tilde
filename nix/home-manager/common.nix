@@ -56,7 +56,7 @@ in
     };
 
     shellInit = ''
-      set -gx PATH ./node_modules/.bin $HOME/.nix-profile/bin $HOME/.opencode/bin $HOME/.cargo/bin $HOME/bin $HOME/.local/bin /opt/homebrew/bin /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/sbin
+      set -gx PATH ./node_modules/.bin $HOME/.opencode/bin $HOME/.cargo/bin $HOME/bin $HOME/.local/bin /opt/homebrew/bin /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/sbin
 
       if test (uname) = Linux; and test -d $HOME/.local/share/omarchy/bin
           set -gx OMARCHY_PATH $HOME/.local/share/omarchy
@@ -89,6 +89,14 @@ in
 
       zoxide init --cmd j fish | source
       type -q mise; and mise activate fish | source
+
+      # Pin the Home Manager profile (~/.nix-profile/bin) at the lowest PATH
+      # priority so it never shadows system tools (fish, man, brew, pacman);
+      # it only provides tools the OS does not (e.g. direnv). mise rewrites
+      # PATH during activation, so assert this afterwards -- it then survives
+      # mise's per-prompt hooks.
+      set -gx PATH (string match -v -- $HOME/.nix-profile/bin $PATH) $HOME/.nix-profile/bin
+
       type -q direnv; and eval (direnv hook fish)
 
       if test (uname) = Darwin
