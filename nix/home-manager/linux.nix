@@ -24,6 +24,29 @@ in
     ];
   };
 
+  # Voxtype push-to-talk voice-to-text daemon. The binary is installed
+  # system-wide (/usr/lib/voxtype); only the user service is managed here.
+  systemd.user.services.voxtype = {
+    Unit = {
+      Description = "Voxtype push-to-talk voice-to-text daemon";
+      Documentation = "https://voxtype.io";
+      PartOf = "graphical-session.target";
+      After = "graphical-session.target";
+    };
+
+    Service = {
+      Type = "simple";
+      # ONNX build so the Parakeet engine in ~/.config/voxtype/config.toml works.
+      ExecStart = "/usr/lib/voxtype/voxtype-onnx-avx2 daemon";
+      Restart = "on-failure";
+      RestartSec = 5;
+      # Ensure we have access to the display.
+      Environment = [ "XDG_RUNTIME_DIR=%t" ];
+    };
+
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   home.file = stow.linksFor [
     {
       name = "hypr";
@@ -50,7 +73,6 @@ in
       name = "voxtype";
       entries = [
         ".config/voxtype/config.toml"
-        ".config/systemd/user/voxtype.service"
       ];
     }
     {

@@ -185,8 +185,12 @@ Do not blindly move every package into Nix.
   - Voxtype
   - WirePlumber
   - rtorrent
-- [ ] Decide whether `voxtype.service` should become a typed
+- [x] Decide whether `voxtype.service` should become a typed
   `systemd.user.services` definition instead of a linked unit file.
+  - [x] Migrated to typed `systemd.user.services.voxtype` in `linux.nix`;
+    binary stays system-installed (`/usr/lib/voxtype`). Linked unit file
+    removed.
+  - [x] Linux activation tested (service enabled, active, restarts cleanly).
 - [ ] Document the remaining `system/` workflow for `/etc` clearly:
 
   ```sh
