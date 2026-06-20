@@ -90,6 +90,14 @@ in
       zoxide init --cmd j fish | source
       type -q mise; and mise activate fish | source
 
+      # On macOS, nix-darwin provides system tools (e.g. darwin-rebuild) under
+      # /run/current-system/sw/bin. The explicit PATH above drops it, so add it
+      # back -- pinned low, like the Home Manager profile, so Nix never shadows
+      # system tools.
+      if test (uname) = Darwin
+          set -gx PATH (string match -v -- /run/current-system/sw/bin $PATH) /run/current-system/sw/bin
+      end
+
       # Pin the Home Manager profile (~/.nix-profile/bin) at the lowest PATH
       # priority so it never shadows system tools (fish, man, brew, pacman);
       # it only provides tools the OS does not (e.g. direnv). mise rewrites

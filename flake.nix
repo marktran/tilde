@@ -80,7 +80,12 @@
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
+            # Keep home.packages in ~/.nix-profile/bin (HM default), matching
+            # the Linux setup and the fish PATH design that pins that dir last.
+            # useUserPackages = true would instead route them to
+            # /etc/profiles/per-user/$USER/bin, which the fish PATH does not
+            # include (it would drop direnv off PATH).
+            home-manager.useUserPackages = false;
             home-manager.extraSpecialArgs = homeExtraArgs {
               homeDirectory = "/Users/mark";
               forceStowLinks = false;
