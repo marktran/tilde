@@ -9,6 +9,14 @@
 # pkgs-diff uses bash process substitution.
 SHELL := bash
 
+# Make recipes run in a non-interactive shell that may not have sourced the
+# Nix profile (notably on macOS, where nix is only added to PATH by login/
+# interactive shell init). Append the standard Nix locations so nix,
+# home-manager, and darwin-rebuild are found. Appended (not prepended) so the
+# Nix profile never shadows system tools, matching this repo's PATH policy.
+# Non-existent entries are harmless.
+export PATH := $(PATH):/nix/var/nix/profiles/default/bin:$(HOME)/.nix-profile/bin:/run/current-system/sw/bin
+
 UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S),Linux)
