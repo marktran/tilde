@@ -87,23 +87,23 @@
     };
 
     "mpv/mpv.conf" = {
-      source = ../../mpv/.config/mpv/mpv.conf;
+      source = ../files/mpv/mpv.conf;
       force = forceStowLinks;
     };
     "mpv/input.conf" = {
-      source = ../../mpv/.config/mpv/input.conf;
+      source = ../files/mpv/input.conf;
       force = forceStowLinks;
     };
     "mpv/script-opts/chromecast-cast.conf" = {
-      source = ../../mpv/.config/mpv/script-opts/chromecast-cast.conf;
+      source = ../files/mpv/script-opts/chromecast-cast.conf;
       force = forceStowLinks;
     };
     "mpv/script-opts/osc.conf" = {
-      source = ../../mpv/.config/mpv/script-opts/osc.conf;
+      source = ../files/mpv/script-opts/osc.conf;
       force = forceStowLinks;
     };
     "mpv/script-opts/pip-default-size.conf" = {
-      source = ../../mpv/.config/mpv/script-opts/pip-default-size.conf;
+      source = ../files/mpv/script-opts/pip-default-size.conf;
       force = forceStowLinks;
     };
 
@@ -157,31 +157,31 @@
     };
 
     "mpv/bin/chromecast-cast" = {
-      source = ../../mpv/.config/mpv/bin/chromecast-cast;
+      source = ../files/mpv/bin/chromecast-cast;
       force = forceStowLinks;
     };
     "mpv/bin/chromecast-common.rb" = {
-      source = ../../mpv/.config/mpv/bin/chromecast-common.rb;
+      source = ../files/mpv/bin/chromecast-common.rb;
       force = forceStowLinks;
     };
     "mpv/bin/chromecast-control" = {
-      source = ../../mpv/.config/mpv/bin/chromecast-control;
+      source = ../files/mpv/bin/chromecast-control;
       force = forceStowLinks;
     };
     "mpv/bin/hypr-mpv-fullscreen-toggle" = {
-      source = ../../mpv/.config/mpv/bin/hypr-mpv-fullscreen-toggle;
+      source = ../files/mpv/bin/hypr-mpv-fullscreen-toggle;
       force = forceStowLinks;
     };
     "mpv/scripts/chromecast-cast.lua" = {
-      source = ../../mpv/.config/mpv/scripts/chromecast-cast.lua;
+      source = ../files/mpv/scripts/chromecast-cast.lua;
       force = forceStowLinks;
     };
     "mpv/scripts/pip-default-size.lua" = {
-      source = ../../mpv/.config/mpv/scripts/pip-default-size.lua;
+      source = ../files/mpv/scripts/pip-default-size.lua;
       force = forceStowLinks;
     };
     "mpv/scripts/playlist-toggle.lua" = {
-      source = ../../mpv/.config/mpv/scripts/playlist-toggle.lua;
+      source = ../files/mpv/scripts/playlist-toggle.lua;
       force = forceStowLinks;
     };
   };

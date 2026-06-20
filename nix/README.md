@@ -30,8 +30,8 @@ directories such as `.emacs.d` and app extension trees, so the first pass uses
 Home Manager's out-of-store symlinks. That keeps behavior close to Stow:
 
 ```text
-~/.pi/agent/extensions -> ~/src/mark/tilde/pi/.pi/agent/extensions
-~/.config/nvim/lazy-lock.json -> ~/src/mark/tilde/nvim/.config/nvim/lazy-lock.json
+~/.pi/agent/extensions -> ~/src/mark/tilde/nix/files/pi/agent/extensions
+~/.config/nvim/lazy-lock.json -> ~/src/mark/tilde/nix/files/nvim/lazy-lock.json
 ```
 
 Individual configs can move from file links to typed Home Manager options, for

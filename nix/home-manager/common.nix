@@ -441,132 +441,132 @@ in
   };
 
   xdg.configFile."nvim/init.lua" = {
-    source = ../../nvim/.config/nvim/init.lua;
+    source = ../files/nvim/init.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/autocmds.lua" = {
-    source = ../../nvim/.config/nvim/lua/autocmds.lua;
+    source = ../files/nvim/lua/autocmds.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/config/lazy.lua" = {
-    source = ../../nvim/.config/nvim/lua/config/lazy.lua;
+    source = ../files/nvim/lua/config/lazy.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/keymaps.lua" = {
-    source = ../../nvim/.config/nvim/lua/keymaps.lua;
+    source = ../files/nvim/lua/keymaps.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins.lua;
+    source = ../files/nvim/lua/plugins.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins/diffview.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins/diffview.lua;
+    source = ../files/nvim/lua/plugins/diffview.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins/eunuch.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins/eunuch.lua;
+    source = ../files/nvim/lua/plugins/eunuch.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins/gruvdark.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins/gruvdark.lua;
+    source = ../files/nvim/lua/plugins/gruvdark.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins/lualine.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins/lualine.lua;
+    source = ../files/nvim/lua/plugins/lualine.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins/neogit.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins/neogit.lua;
+    source = ../files/nvim/lua/plugins/neogit.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins/rose-pine.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins/rose-pine.lua;
+    source = ../files/nvim/lua/plugins/rose-pine.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins/snacks/dashboard.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins/snacks/dashboard.lua;
+    source = ../files/nvim/lua/plugins/snacks/dashboard.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins/snacks/indent.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins/snacks/indent.lua;
+    source = ../files/nvim/lua/plugins/snacks/indent.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins/snacks/init.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins/snacks/init.lua;
+    source = ../files/nvim/lua/plugins/snacks/init.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins/snacks/picker.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins/snacks/picker.lua;
+    source = ../files/nvim/lua/plugins/snacks/picker.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins/snacks/toggle.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins/snacks/toggle.lua;
+    source = ../files/nvim/lua/plugins/snacks/toggle.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins/tmux.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins/tmux.lua;
+    source = ../files/nvim/lua/plugins/tmux.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins/tokyonight.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins/tokyonight.lua;
+    source = ../files/nvim/lua/plugins/tokyonight.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/plugins/which-key.lua" = {
-    source = ../../nvim/.config/nvim/lua/plugins/which-key.lua;
+    source = ../files/nvim/lua/plugins/which-key.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/settings.lua" = {
-    source = ../../nvim/.config/nvim/lua/settings.lua;
+    source = ../files/nvim/lua/settings.lua;
     force = true;
   };
   xdg.configFile."nvim/lua/theme.lua" = {
-    source = ../../nvim/.config/nvim/lua/theme.lua;
+    source = ../files/nvim/lua/theme.lua;
     force = true;
   };
 
   xdg.configFile."fish/completions/docker.fish" = {
-    source = ../../fish/.config/fish/completions/docker.fish;
+    source = ../files/fish/completions/docker.fish;
     force = true;
   };
   xdg.configFile."fish/completions/fisher.fish" = {
-    source = ../../fish/.config/fish/completions/fisher.fish;
+    source = ../files/fish/completions/fisher.fish;
     force = true;
   };
   xdg.configFile."fish/completions/fzf_configure_bindings.fish" = {
-    source = ../../fish/.config/fish/completions/fzf_configure_bindings.fish;
+    source = ../files/fish/completions/fzf_configure_bindings.fish;
     force = true;
   };
   xdg.configFile."fish/completions/grok.fish" = {
-    source = ../../fish/.config/fish/completions/grok.fish;
+    source = ../files/fish/completions/grok.fish;
     force = true;
   };
   xdg.configFile."fish/completions/kubectl.fish" = {
-    source = ../../fish/.config/fish/completions/kubectl.fish;
+    source = ../files/fish/completions/kubectl.fish;
     force = true;
   };
   xdg.configFile."fish/completions/orbctl.fish" = {
-    source = ../../fish/.config/fish/completions/orbctl.fish;
+    source = ../files/fish/completions/orbctl.fish;
     force = true;
   };
   xdg.configFile."fish/completions/sesh.fish" = {
-    source = ../../fish/.config/fish/completions/sesh.fish;
+    source = ../files/fish/completions/sesh.fish;
     force = true;
   };
   xdg.configFile."fish/completions/tmuxinator.fish" = {
-    source = ../../fish/.config/fish/completions/tmuxinator.fish;
+    source = ../files/fish/completions/tmuxinator.fish;
     force = true;
   };
   xdg.configFile."fish/functions/__bass.py" = {
-    source = ../../fish/.config/fish/functions/__bass.py;
+    source = ../files/fish/functions/__bass.py;
     force = true;
   };
   xdg.configFile."fish/functions/bass.fish" = {
-    source = ../../fish/.config/fish/functions/bass.fish;
+    source = ../files/fish/functions/bass.fish;
     force = true;
   };
   xdg.configFile."fish/functions/fisher.fish" = {
-    source = ../../fish/.config/fish/functions/fisher.fish;
+    source = ../files/fish/functions/fisher.fish;
     force = true;
   };
   xdg.configFile."fish/functions/btmm.fish".force = true;
@@ -592,15 +592,15 @@ in
       force = forceStowLinks;
     };
     ".config/fish/fish_variables" = {
-      source = outOfStore "fish/.config/fish/fish_variables";
+      source = outOfStore "nix/files/fish/fish_variables";
       force = forceStowLinks;
     };
     ".config/fish/local.fish" = {
-      source = outOfStore "fish/.config/fish/local.fish";
+      source = outOfStore "nix/files/fish/local.fish";
       force = forceStowLinks;
     };
     ".config/nvim/lazy-lock.json" = {
-      source = outOfStore "nvim/.config/nvim/lazy-lock.json";
+      source = outOfStore "nix/files/nvim/lazy-lock.json";
       force = true;
     };
     ".agents/skills" = {
@@ -608,37 +608,37 @@ in
       force = true;
     };
     ".pi/agent/settings.json" = {
-      source = outOfStore "pi/.pi/agent/settings.json";
+      source = outOfStore "nix/files/pi/agent/settings.json";
       force = forceStowLinks;
     };
     ".pi/agent/extensions" = {
-      source = outOfStore "pi/.pi/agent/extensions";
+      source = outOfStore "nix/files/pi/agent/extensions";
       force = forceStowLinks;
     };
     ".pi/agent/skills" = {
-      source = outOfStore "pi/.pi/agent/skills";
+      source = outOfStore "nix/files/pi/agent/skills";
       force = forceStowLinks;
     };
 
     "bin/op-ssh-sign-wrapper" = {
-      source = ../../bin/bin/op-ssh-sign-wrapper;
+      source = ../files/bin/op-ssh-sign-wrapper;
       force = true;
     };
     "bin/spotify-control" = {
-      source = ../../bin/bin/spotify-control;
+      source = ../files/bin/spotify-control;
       force = true;
     };
     "bin/toggle-color-scheme" = {
-      source = ../../bin/bin/toggle-color-scheme;
+      source = ../files/bin/toggle-color-scheme;
       force = true;
     };
 
     ".claude/settings.json" = {
-      source = ../../claude/.claude/settings.json;
+      source = ../files/claude/settings.json;
       force = true;
     };
     ".claude/commands" = {
-      source = ../../claude/.claude/commands;
+      source = ../files/claude/commands;
       force = true;
     };
     ".hunspell_default" = {
@@ -647,27 +647,27 @@ in
     };
 
     ".pi/agent/agents" = {
-      source = ../../pi/.pi/agent/agents;
+      source = ../files/pi/agent/agents;
       force = true;
     };
     ".pi/agent/keybindings.json" = {
-      source = ../../pi/.pi/agent/keybindings.json;
+      source = ../files/pi/agent/keybindings.json;
       force = true;
     };
     ".pi/agent/models.json" = {
-      source = ../../pi/.pi/agent/models.json;
+      source = ../files/pi/agent/models.json;
       force = true;
     };
     ".pi/agent/presets.json" = {
-      source = ../../pi/.pi/agent/presets.json;
+      source = ../files/pi/agent/presets.json;
       force = true;
     };
     ".pi/agent/prompts" = {
-      source = ../../pi/.pi/agent/prompts;
+      source = ../files/pi/agent/prompts;
       force = true;
     };
     ".pi/agent/themes" = {
-      source = ../../pi/.pi/agent/themes;
+      source = ../files/pi/agent/themes;
       force = true;
     };
   };
