@@ -257,7 +257,19 @@ a system tool later, that becomes an explicit, separate decision.
     (interface style, key repeat, Dock autohide/tilesize/recents, Finder view
     and desktop icons, trackpad tap/right-click). Values mirror current state,
     so activation was a no-op baseline. Tested clean.
-  - [ ] launchd services: not migrated yet.
+  - [x] launchd user services: nothing to migrate. The only user LaunchAgents
+    are Dropbox's own app-managed agents (`com.dropbox.*`); there are no
+    custom/personal agents. Add `launchd.user.agents.<name>` here if a
+    background job is ever needed.
+  - [x] Touch ID for sudo: `security.pam.services.sudo_local.touchIdAuth = true`
+    plus `reattach = true` (pam_reattach) so the prompt also works inside
+    tmux/screen. `/etc/pam.d/sudo` already includes `sudo_local`. Tested clean.
+  - Known cosmetic churn: each switch prints "Uninstalled 1 formula" because
+    Homebrew renamed `sdl2` -> `sdl2-compat` but the keg is still installed
+    under the old name (`Cellar/sdl2`). cleanup mis-matches it against
+    mpv/ffmpeg's `sdl2` dependency and reports removing it, but it persists and
+    mpv keeps working. Clear it with `brew upgrade sdl2-compat` (one-time keg
+    rename migration) if the noise is bothersome.
 - [x] Conservative first cut to limit blast radius:
   - `nix.enable = false` (upstream installer keeps managing the nix-daemon and
     `/etc/nix/nix.conf`).
