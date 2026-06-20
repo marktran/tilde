@@ -26,12 +26,12 @@ checkout at `~/src/mark/tilde`.
 
 Most examples copy files into the Nix store and link from there. That is more
 reproducible, but the store is read-only. This repo has mutable config
-directories such as `.emacs.d` and `.config/fish`, so the first pass uses
+directories such as `.emacs.d` and app extension trees, so the first pass uses
 Home Manager's out-of-store symlinks. That keeps behavior close to Stow:
 
 ```text
-~/.config/fish/completions -> ~/src/mark/tilde/fish/.config/fish/completions
 ~/.pi/agent/extensions -> ~/src/mark/tilde/pi/.pi/agent/extensions
+~/.config/nvim/lazy-lock.json -> ~/src/mark/tilde/nvim/.config/nvim/lazy-lock.json
 ```
 
 Individual configs can move from file links to typed Home Manager options, for
@@ -71,9 +71,9 @@ The `homeConfigurations.mac` / `#macbook-air` standalone entries are kept for
 flake evaluation and as a rollback path. Do not run them with
 `home-manager switch` while nix-darwin owns the Home Manager profile.
 
-The Linux host imports shared config plus Linux-only config. Mutable or helper
-trees such as `hypr/scripts` and mpv `scripts/` + `bin/` still link from the
-checkout, while static files are typed or store-backed:
+The Linux host imports shared config plus Linux-only config. Static files and
+helper scripts are typed or store-backed; only mutable lock/state files and
+plugin-like trees stay linked from the checkout:
 
 - `programs.ghostty` Linux-only settings (keybinds, `gtk-toolbar-style`,
   `async-backend`).
@@ -82,14 +82,16 @@ checkout, while static files are typed or store-backed:
 - Store-backed static files: `.XCompose`, `voxtype/config.toml`,
   `elephant/websearch.toml`, `elephant/google-favicon.png`, the WirePlumber
   Shure MV7 override, Typora user config, `rtorrent.rc`, Makima TOMLs,
-  `mpv/mpv.conf`, `mpv/input.conf`, mpv `script-opts/*.conf`, and
-  Hypr/Omarchy `hypr/*.conf` files.
+  `mpv/mpv.conf`, `mpv/input.conf`, mpv `script-opts/*.conf`, mpv helper
+  scripts, and Hypr/Omarchy `hypr/*.conf` + helper scripts.
 
 Shared typed config (both hosts) includes `programs.tmux`: Home Manager
 generates `~/.config/tmux/tmux.conf`, tmux itself stays native/Homebrew-owned,
 and tmux plugins come from Nix `pkgs.tmuxPlugins` rather than TPM checkouts.
 Home Manager also owns shared portable CLI tools (`sesh`, `tree`, `pwgen`,
-`calc`, `fzf`, `fd`, `ripgrep`, `jq`) with the Nix profile pinned last in PATH.
+`calc`, `fzf`, `fd`, `ripgrep`, `jq`) with the Nix profile pinned last in PATH,
+plus shared store-backed helpers/config such as `~/bin`, Fish completions,
+Claude settings/commands, Pi static config, and Neovim Lua config.
 
 The macOS host is a nix-darwin system (`nix/darwin/configuration.nix`) with
 Home Manager folded in. nix-darwin declares the Homebrew brews/casks/taps

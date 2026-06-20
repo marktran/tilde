@@ -1,10 +1,5 @@
-{ config, lib, checkoutPath, forceStowLinks, ... }:
+{ config, lib, forceStowLinks, ... }:
 
-let
-  stow = import ../lib/stow-package.nix {
-    inherit config lib checkoutPath forceStowLinks;
-  };
-in
 {
   # Linux/Hyprland-specific Ghostty settings. Shared settings are in common.nix.
   programs.ghostty.settings = {
@@ -51,6 +46,9 @@ in
     for legacyPath in \
       "${config.xdg.configHome}/makima" \
       "${config.xdg.configHome}/rtorrent" \
+      "${config.xdg.configHome}/hypr/scripts" \
+      "${config.xdg.configHome}/mpv/bin" \
+      "${config.xdg.configHome}/mpv/scripts" \
       "${config.xdg.configHome}/mpv/script-opts"
     do
       if [ -L "$legacyPath" ]; then
@@ -58,6 +56,9 @@ in
         case "$target" in
           /nix/store/*-home-manager-files/.config/makima|\
           /nix/store/*-home-manager-files/.config/rtorrent|\
+          /nix/store/*-home-manager-files/.config/hypr/scripts|\
+          /nix/store/*-home-manager-files/.config/mpv/bin|\
+          /nix/store/*-home-manager-files/.config/mpv/scripts|\
           /nix/store/*-home-manager-files/.config/mpv/script-opts)
             ''${DRY_RUN_CMD:-} rm "$legacyPath"
             ;;
@@ -175,28 +176,43 @@ in
       source = ../../hypr/.config/hypr/xdph.conf;
       force = forceStowLinks;
     };
-  };
-
-  home.file = stow.linksFor [
-    {
-      name = "hypr";
-      # Static *.conf files are store-backed above; scripts stay linked because
-      # they are executable helpers edited from the checkout.
-      entries = [ ".config/hypr/scripts" ];
-    }
-    {
-      name = "mpv";
-      # Static mpv config and script options are store-backed above; scripts
-      # and bin stay linked because they are helper/plugin trees.
-      entries = [
-        ".config/mpv/scripts"
-        ".config/mpv/bin"
-      ];
-    }
-  ] // {
-    ".XCompose" = {
-      source = ../../xcompose/.XCompose;
+    "hypr/scripts/hypr-mpv-pip-size" = {
+      source = ../../hypr/.config/hypr/scripts/hypr-mpv-pip-size;
       force = forceStowLinks;
     };
+
+    "mpv/bin/chromecast-cast" = {
+      source = ../../mpv/.config/mpv/bin/chromecast-cast;
+      force = forceStowLinks;
+    };
+    "mpv/bin/chromecast-common.rb" = {
+      source = ../../mpv/.config/mpv/bin/chromecast-common.rb;
+      force = forceStowLinks;
+    };
+    "mpv/bin/chromecast-control" = {
+      source = ../../mpv/.config/mpv/bin/chromecast-control;
+      force = forceStowLinks;
+    };
+    "mpv/bin/hypr-mpv-fullscreen-toggle" = {
+      source = ../../mpv/.config/mpv/bin/hypr-mpv-fullscreen-toggle;
+      force = forceStowLinks;
+    };
+    "mpv/scripts/chromecast-cast.lua" = {
+      source = ../../mpv/.config/mpv/scripts/chromecast-cast.lua;
+      force = forceStowLinks;
+    };
+    "mpv/scripts/pip-default-size.lua" = {
+      source = ../../mpv/.config/mpv/scripts/pip-default-size.lua;
+      force = forceStowLinks;
+    };
+    "mpv/scripts/playlist-toggle.lua" = {
+      source = ../../mpv/.config/mpv/scripts/playlist-toggle.lua;
+      force = forceStowLinks;
+    };
+  };
+
+  home.file.".XCompose" = {
+    source = ../../xcompose/.XCompose;
+    force = forceStowLinks;
   };
 }

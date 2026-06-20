@@ -138,9 +138,9 @@ Prefer small, shared, low-risk modules first.
     `programs.fish`.
   - [x] Move pure static functions (`fish_prompt`, `fish_greeting`, `cd`,
     `ls`, `l.`, `btmm`) to `programs.fish.functions`.
-  - [x] Keep remaining helper/plugin files (`bass`, `fisher`) plus completions
-    as explicit bridge links; keep `fish_variables` and `local.fish` as local
-    mutable bridge links rather than typed/generated config.
+  - [x] Store-back remaining helper/plugin files (`bass`, `fisher`) plus
+    completions; keep `fish_variables` and `local.fish` as local mutable bridge
+    links rather than typed/generated config.
   - [x] Keep machine-specific PATH or environment details explicit (PATH,
     Omarchy, Homebrew/CPATH, Obsidian, grok now expressed in
     `programs.fish.shellInit`).
@@ -187,7 +187,14 @@ Prefer small, shared, low-risk modules first.
     store-backed Home Manager file.
   - [x] Linux-only static one-file configs store-backed in `linux.nix`: Typora
     user config, `rtorrent.rc`, Makima TOMLs, mpv script options, and
-    Hypr/Omarchy `hypr/*.conf` files (scripts/helpers stay linked).
+    Hypr/Omarchy `hypr/*.conf` files.
+  - [x] Store-backed remaining low-risk static/helper trees: `~/bin` scripts,
+    Fish completions/helpers, Pi static config (`agents`, `themes`, `prompts`,
+    keybindings/models/presets), Neovim Lua config (but not `lazy-lock.json`),
+    Hypr helper scripts, and mpv `bin/` + `scripts/`.
+  - [x] Removed stale repo-only legacy configs that were no longer linked or
+    active: old `.bash_profile`, Python/Ruby dotfiles, and the obsolete
+    Obsidian custom-window-title plugin source.
 
 ### 4. Package Management Strategy
 
@@ -243,8 +250,8 @@ a system tool later, that becomes an explicit, separate decision.
 ### 5. Linux-Only Work
 
 - [x] Keep Omarchy/Hyprland config under `linux.nix`.
-  - [x] Static `hypr/*.conf` files are store-backed via `xdg.configFile`;
-    `hypr/scripts` remains an out-of-store bridge link.
+  - [x] Static `hypr/*.conf` files and helper scripts are store-backed via
+    `xdg.configFile`.
 - [ ] Keep Linux-only apps out of common config:
   - Typora
   - mpv
@@ -350,13 +357,18 @@ a system tool later, that becomes an explicit, separate decision.
     `hypr/*.conf` files. Mutable/executable helper trees stay linked.
   - [x] Fourth batch: Claude `settings.json` and `commands/` are store-backed;
     app/plugin state remains outside this repo.
+  - [x] Fifth batch: `~/bin` scripts, Fish completions/helpers, Pi static
+    config, Neovim Lua config, Hypr helper scripts, and mpv helper trees are
+    store-backed. Mutable lock/state files remain linked.
   - [x] Linux activation tested (links resolve into `/nix/store`).
   - [x] macOS activation tested for the old shared `tmux/.tmux.conf` link
     before the later `programs.tmux` migration.
 - [ ] Keep out-of-store links for mutable directories such as Emacs packages,
   agent skills, app state, and plugin trees unless there is a better owner.
-  Claude settings/commands are now store-backed because they are static; keep
-  app-generated Claude state outside this repo.
+  Claude settings/commands and other static helpers are now store-backed; keep
+  app-generated state outside this repo. Remaining intentional bridge links are
+  mostly mutable/plugin-like: `.emacs.d`, Fish `fish_variables`/`local.fish`,
+  Neovim `lazy-lock.json`, agent skills, and mutable Pi settings/extensions/skills.
 - [x] Consider adding a small check script that runs:
 
   ```sh
@@ -388,9 +400,9 @@ a system tool later, that becomes an explicit, separate decision.
 5. [x] Portable CLI packages: Nix-own additive cross-platform tools such as
    `sesh`, `tree`, `pwgen`, `calc`, `fzf`, `fd`, `ripgrep`, and `jq` while
    preserving the native-tool PATH priority rule.
-6. [x] Hypr/Omarchy configs: first store-back static `hypr/*.conf` from
-   `linux.nix` and leave scripts out-of-store; avoid full typed Hyprland until
-   it is clear it will not fight Omarchy defaults/updates.
+6. [x] Hypr/Omarchy configs: store-back static `hypr/*.conf` and helper
+   scripts from `linux.nix`; avoid full typed Hyprland until it is clear it
+   will not fight Omarchy defaults/updates.
 
 For each step: build/evaluate both hosts, activate one machine at a time, test
 interactive behavior, then commit the logical migration before continuing.
