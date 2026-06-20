@@ -15,7 +15,6 @@ brew 'wifi-password'
 brew 'zoxide'
 
 cask 'dropbox'
-cask 'elgato-wave-link'
 cask 'hazel'
 cask 'karabiner-elements'
 cask 'linearmouse'
