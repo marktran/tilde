@@ -8,11 +8,6 @@
 # List what's explicit but missing here:
 #   comm -23 <(pacman -Qqen | sort) <(grep -v '^#' packages.txt | sort -u)
 
-aspell
-aspell-en
-enchant
-words
-
 pam-u2f
 fprintd
 

@@ -89,9 +89,10 @@ Shared typed config (both hosts) includes `programs.tmux`: Home Manager
 generates `~/.config/tmux/tmux.conf`, tmux itself stays native/Homebrew-owned,
 and tmux plugins come from Nix `pkgs.tmuxPlugins` rather than TPM checkouts.
 Home Manager also owns shared portable CLI tools (`sesh`, `tree`, `pwgen`,
-`calc`, `fzf`, `fd`, `ripgrep`, `jq`) with the Nix profile pinned last in PATH,
-plus shared store-backed helpers/config such as `~/bin`, Fish completions,
-Claude settings/commands, Pi static config, and Neovim Lua config.
+`calc`, `fzf`, `fd`, `ripgrep`, `jq`), spellcheck command packages, Neovim, and
+mise with the Nix profile pinned last in PATH, plus shared store-backed
+helpers/config such as `~/bin`, Fish completions, Claude settings/commands, Pi
+static config, and Neovim Lua config.
 
 The macOS host is a nix-darwin system (`nix/darwin/configuration.nix`) with
 Home Manager folded in. nix-darwin declares the Homebrew brews/casks/taps

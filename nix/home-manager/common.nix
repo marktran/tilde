@@ -35,12 +35,16 @@ in
   # Manager profile last, so native packages still win where they exist, but
   # these tools are present on both hosts from the flake.
   home.packages = with pkgs; [
+    aspell
+    aspellDicts.en
     calc
+    enchant
     fd
     fzf
     jq
     pwgen
     ripgrep
+    scowl
     sesh
     tree
   ];
@@ -54,6 +58,18 @@ in
     enable = true;
     enableFishIntegration = true;
     options = [ "--cmd" "j" ];
+  };
+
+  programs.mise = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+
+  programs.neovim = {
+    enable = true;
+    defaultEditor = false;
+    viAlias = true;
+    vimAlias = true;
   };
 
   programs.fish = {
@@ -172,9 +188,13 @@ in
       set -g __fish_git_prompt_showdirtystate 'yes'
 
       test -e "$HOME/.config/fish/local.fish"; and source "$HOME/.config/fish/local.fish"
+    '';
 
-      type -q mise; and mise activate fish | source
+    interactiveShellInit = ''
+      type -q gcal; and alias cal gcal
+    '';
 
+    shellInitLast = ''
       # On macOS, nix-darwin provides system tools (e.g. darwin-rebuild) under
       # /run/current-system/sw/bin. The explicit PATH above drops it, so add it
       # back -- pinned low, like the Home Manager profile, so Nix never shadows
@@ -183,20 +203,15 @@ in
           set -gx PATH (string match -v -- /run/current-system/sw/bin $PATH) /run/current-system/sw/bin
       end
 
-      # Pin the Home Manager profile (~/.nix-profile/bin) at the lowest PATH
-      # priority so it never shadows system tools (fish, man, brew, pacman);
-      # it only provides tools the OS does not (e.g. direnv). mise rewrites
-      # PATH during activation, so assert this afterwards -- it then survives
-      # mise's per-prompt hooks.
-      set -gx PATH (string match -v -- $HOME/.nix-profile/bin $PATH) $HOME/.nix-profile/bin
-
       if test (uname) = Darwin
           source ~/.orbstack/shell/init2.fish 2>/dev/null || :
       end
-    '';
 
-    interactiveShellInit = ''
-      type -q gcal; and alias cal gcal
+      # Pin the Home Manager profile (~/.nix-profile/bin) at the lowest PATH
+      # priority so it never shadows system tools (fish, man, brew, pacman).
+      # mise rewrites PATH during activation, so assert this after Home
+      # Manager's typed shell integrations have run.
+      set -gx PATH (string match -v -- $HOME/.nix-profile/bin $PATH) $HOME/.nix-profile/bin
     '';
   };
 

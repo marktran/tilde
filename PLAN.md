@@ -169,9 +169,10 @@ Prefer small, shared, low-risk modules first.
     `home.sessionVariables`.
   - [x] Keep PATH and OS-specific startup logic in Fish, but generated from
     `programs.fish` rather than a linked file.
-  - [x] Move direnv and zoxide Fish hooks to typed modules
-    (`programs.direnv`, `programs.zoxide` with `--cmd j`).
-  - [x] Keep mise/orbstack startup in `programs.fish.shellInit`.
+  - [x] Move direnv, zoxide, and mise Fish hooks to typed modules
+    (`programs.direnv`, `programs.zoxide` with `--cmd j`, `programs.mise`).
+  - [x] Keep Orbstack startup plus final PATH priority enforcement in
+    `programs.fish.shellInitLast`, after typed shell integrations run.
   - [x] Linux activation tested.
   - [x] macOS activation tested.
 
@@ -213,7 +214,8 @@ PATH ordering is asymmetric, so this matters when choosing what Nix should own:
   **do** shadow Homebrew there.
 
 Decision: pin `~/.nix-profile/bin` at the **lowest** PATH priority on both
-machines (asserted in fish after `mise activate`, since mise rewrites PATH).
+machines (asserted in Fish `shellInitLast` after typed shell integrations such
+as mise, since mise rewrites PATH).
 This is consistent and safe: the Home Manager profile (which also contains
 `fish`, `man`, etc.) never shadows system tools, and `home.packages` is purely
 additive -- it only provides tools the OS does not (e.g. `direnv`). To override
@@ -237,6 +239,14 @@ a system tool later, that becomes an explicit, separate decision.
     `calc`, `fzf`, `fd`, `ripgrep`, and `jq`. Removed now-Nix-owned entries
     from native inventories where this repo declared them (`packages.txt`,
     `aur.txt`, nix-darwin Homebrew brews).
+  - [x] Spellcheck command packages moved to Home Manager: `aspell`, English
+    aspell dictionary, `enchant`, and `scowl`; removed now-Nix-owned spellcheck
+    packages from Linux native inventory and macOS Homebrew.
+  - [x] `programs.neovim` enabled; Nix provides Neovim while the PATH rule still
+    lets native Neovim win where present. Removed Homebrew Neovim declaration on
+    macOS.
+  - [x] `programs.mise` enabled; final Fish PATH pin runs after mise activation
+    so the Nix profile remains lowest priority.
 - [x] Keep OS integration packages in the native package manager when that is
   more practical:
   - Linux system/desktop packages can remain in `packages.txt` and `aur.txt`
@@ -395,16 +405,16 @@ a system tool later, that becomes an explicit, separate decision.
    `fish_prompt`, `fish_greeting`, `cd`, `ls`, `l.`, and `btmm` to
    `programs.fish.functions`; keep `fish_variables` and `local.fish` as local
    mutable bridge links.
-3. [x] Typed shell tool modules: convert manual hooks to `programs.direnv` and
-   `programs.zoxide` (with `--cmd j`); evaluate `programs.mise` only after PATH
-   ordering is rechecked.
+3. [x] Typed shell tool modules: convert manual hooks to `programs.direnv`,
+   `programs.zoxide` (with `--cmd j`), and `programs.mise`; final PATH
+   ordering is enforced after these integrations run.
 4. [x] Small static one-file configs: store-back or type-manage low-risk files
    such as `.hunspell_default`, `rtorrent.rc`, Typora user config,
    Makima TOMLs, mpv script options, Hypr/Omarchy `hypr/*.conf` files, and
    Claude settings/commands.
-5. [x] Portable CLI packages: Nix-own additive cross-platform tools such as
-   `sesh`, `tree`, `pwgen`, `calc`, `fzf`, `fd`, `ripgrep`, and `jq` while
-   preserving the native-tool PATH priority rule.
+5. [x] Portable CLI/packages: Nix-own additive cross-platform tools such as
+   `sesh`, `tree`, `pwgen`, `calc`, `fzf`, `fd`, `ripgrep`, `jq`, spellcheck
+   tools, Neovim, and mise while preserving the native-tool PATH priority rule.
 6. [x] Hypr/Omarchy configs: store-back static `hypr/*.conf` and helper
    scripts from `linux.nix`; avoid full typed Hyprland until it is clear it
    will not fight Omarchy defaults/updates.
