@@ -9,6 +9,11 @@ let
     if pkgs.stdenv.hostPlatform.isDarwin
     then "!/opt/homebrew/bin/gh auth git-credential"
     else "!/usr/bin/gh auth git-credential";
+
+  nativeFishShell =
+    if pkgs.stdenv.hostPlatform.isDarwin
+    then "/opt/homebrew/bin/fish"
+    else "/usr/bin/fish";
 in
 {
   home.username = username;
@@ -124,6 +129,7 @@ in
     # Preserve the native tmux socket behavior instead of Home Manager's Linux
     # default of exporting TMUX_TMPDIR=/run/user/...
     secureSocket = false;
+    shell = nativeFishShell;
 
     baseIndex = 1;
     mouse = true;
@@ -149,10 +155,6 @@ in
     ];
 
     extraConfig = ''
-      # Init shell
-      set-option -g default-shell "/bin/sh"
-      run-shell "tmux set-option -g default-shell $(command -v fish)"
-
       # Re-number windows with 1-based indexing
       set-option -g renumber-windows on
 
