@@ -32,21 +32,24 @@
     enable = true;
 
     onActivation = {
-      # Conservative first cut: never auto-update, upgrade, or uninstall on
-      # switch. Once the declared lists are confirmed to match the machine,
-      # tighten `cleanup` to "uninstall" to make the state fully declarative.
+      # Fully declarative: anything installed but not declared below (and not a
+      # dependency of something declared) is uninstalled on switch, and undeclared
+      # taps are removed. `brew bundle cleanup` was dry-run first to confirm the
+      # removal set. Keep `autoUpdate`/`upgrade` off so switches stay predictable.
       autoUpdate = false;
       upgrade = false;
-      cleanup = "none";
+      cleanup = "uninstall";
     };
 
+    # NOTE: Homebrew's tap-trust security model is machine-local state that
+    # nix-darwin cannot manage. `cleanup = "uninstall"` runs `brew bundle
+    # --cleanup`, which loads every declared formula and will FAIL on an
+    # untrusted third-party tap. On a new machine, trust the taps below once:
+    #   brew trust d12frosted/emacs-plus dopplerhq/cli oven-sh/bun
     taps = [
       "d12frosted/emacs-plus"
       "dopplerhq/cli"
-      "openclaw/tap"
-      "openhue/cli"
       "oven-sh/bun"
-      "steipete/tap"
     ];
 
     brews = [
@@ -54,7 +57,6 @@
       "autoconf"
       "awk"
       "awscli"
-      "cloudflared"
       "coreutils"
       "d12frosted/emacs-plus/emacs-plus@30"
       "dopplerhq/cli/doppler"
@@ -66,7 +68,6 @@
       "gnu-sed"
       "gnu-tar"
       "go"
-      "googleworkspace-cli"
       "grep"
       "hub"
       "libffi"
@@ -74,32 +75,19 @@
       "mise"
       "mpv"
       "neovim"
-      "node@22"
       "openai-whisper"
-      "openclaw/tap/gogcli"
-      "openclaw/tap/goplaces"
       "opencode"
-      "openhue/cli/openhue-cli"
       "oven-sh/bun/bun"
       "pgcli"
       "pkgconf"
       "pwgen"
       "redis"
-      "snowflake-cli"
-      "steipete/tap/gifgrep"
-      "steipete/tap/imsg"
-      "steipete/tap/peekaboo"
-      "steipete/tap/sag"
-      "stow"
-      "summarize"
       "texinfo"
       "tmux"
       "tree"
       "uv"
-      "volta"
       "wget"
       "wifi-password"
-      "yamllint"
       "zoxide"
     ];
 
@@ -121,9 +109,6 @@
       "signal"
       "spotify"
       "tableplus"
-      "transmission"
-      "typora"
-      "warp"
     ];
   };
 }
