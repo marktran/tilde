@@ -6,6 +6,24 @@ let
   };
 in
 {
+  # Linux/Hyprland-specific Ghostty settings. Shared settings are in common.nix.
+  programs.ghostty.settings = {
+    gtk-toolbar-style = "flat";
+
+    # fix general slowness on hyprland
+    # (https://github.com/ghostty-org/ghostty/discussions/3224)
+    async-backend = "epoll";
+
+    keybind = [
+      "shift+insert=paste_from_clipboard"
+      "control+insert=copy_to_clipboard"
+      "super+control+shift+alt+arrow_down=resize_split:down,100"
+      "super+control+shift+alt+arrow_up=resize_split:up,100"
+      "super+control+shift+alt+arrow_left=resize_split:left,100"
+      "super+control+shift+alt+arrow_right=resize_split:right,100"
+    ];
+  };
+
   home.file = stow.linksFor [
     {
       name = "hypr";

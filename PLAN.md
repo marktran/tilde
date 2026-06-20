@@ -152,8 +152,11 @@ Prefer small, shared, low-risk modules first.
   - Good candidates are small static config files with no app-managed state.
   - [x] Ghostty migrated to typed `programs.ghostty` (`package = null`, systemd
     and shell integration disabled); linked `ghostty/config` removed.
+    - [x] Shared settings in `common.nix`; Linux/Hyprland-only settings
+      (`gtk-toolbar-style`, `async-backend = epoll`, keybinds) in `linux.nix`
+      so they no longer land on macOS.
     - [x] Linux activation tested (`ghostty +validate-config` passes).
-    - [ ] macOS activation pending.
+    - [x] macOS activation tested (`ghostty +validate-config` passes).
 
 ### 4. Package Management Strategy
 
