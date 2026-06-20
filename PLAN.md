@@ -180,8 +180,9 @@ a system tool later, that becomes an explicit, separate decision.
   hooks and directory changes.
   - [x] Linux activation tested (`~/.nix-profile/bin` is last; `fish`/`man`
     resolve from the system; `direnv` still resolves from Nix).
-  - [ ] macOS activation pending (confirm Nix profile is last and no longer
-    shadows Homebrew `fish`).
+  - [x] macOS activation tested. Notably this fixed a real bug: `fish`
+    previously resolved from `~/.nix-profile/bin/fish`; it now resolves from
+    Homebrew, with the Nix profile near the end of PATH.
 
 - [x] Decide which CLI tools should be installed by Home Manager as
   `home.packages`. Started `home.packages` in `common.nix`.
