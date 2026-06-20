@@ -1,42 +1,47 @@
 # tilde
 
-My dotfiles, managed with [GNU Stow](https://www.gnu.org/software/stow/).
+My dotfiles, managed with [Nix](https://nixos.org/) and
+[Home Manager](https://github.com/nix-community/home-manager).
 
-## Layout rule
+See [`nix/README.md`](nix/README.md) for the Nix/Home Manager setup, concepts,
+and activation steps.
 
-- **Each top-level directory is a Stow package**; its contents mirror the target tree.
-- **User-config packages stow into `$HOME`** (the default).
-- **`system/` is the one exception — it stows into `/`** (system files under
-  `/etc`) and needs `sudo`.
+## Layout
 
-That's the whole rule. There are **no platform sub-namespaces**: just install the
-packages that apply to a given machine (skip `macos` on Linux; skip `hypr`,
-`makima`, etc. on macOS).
+- `flake.nix` defines the Home Manager configurations.
+- `nix/home-manager/common.nix` links shared home config.
+- `nix/home-manager/linux.nix` links Linux/Omarchy-only home config.
+- `nix/home-manager/darwin.nix` links macOS-only home config.
+- Existing top-level directories such as `fish/`, `emacs/`, `hypr/`, and
+  `agents/` still mirror their target paths. Home Manager links entries from
+  those directories into `$HOME`.
+- `system/` contains privileged Linux `/etc` files and is not managed by Home
+  Manager.
 
 ## Usage
 
+Linux / Omarchy:
+
 ```sh
-# user config -> ~
-stow -t ~ <package>...          # e.g. stow -t ~ nvim fish hypr
-
-# system config -> / (Linux only)
-sudo stow -t / system
-
-# re-link after changes / remove links
-stow -R -t ~ <package>          # restow
-stow -D -t ~ <package>          # unstow
+home-manager switch --flake ~/src/mark/tilde#linux
 ```
 
-Edit files **here** and (re)stow — never edit the symlinked copies in `$HOME`
-directly.
+macOS:
+
+```sh
+home-manager switch --flake ~/src/mark/tilde#mac
+```
+
+Edit files here, then switch with Home Manager. Do not edit generated symlinks
+in `$HOME` directly.
+
+Home Manager owns the home-directory links. Do not use `stow` for `$HOME`.
 
 ## Notes
 
 - `packages.txt` — official-repo package inventory (install with `pacman -S --needed - < packages.txt`; not a Stow package).
 - `aur.txt` — AUR package inventory (install with `paru -S --needed - < aur.txt`; not a Stow package).
-- Linux-only packages: `hypr`, `makima`, `voxtype`, `elephant`, `wireplumber`,
-  `xcompose`, `rtorrent`. macOS-only: `macos`. Stow only what applies.
-- `system/` has its own `README.md` describing its `/etc` files and which are
-  live symlinks vs. reference backups.
+- `system/` has its own `README.md` describing its `/etc` files. These are
+  privileged Linux system files and remain outside standalone Home Manager.
 - Submodules: `emacs/.emacs.d`, `tmux/.tmux/plugins/tpm`
   (run `git submodule update --init --recursive` on a fresh clone).
