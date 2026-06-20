@@ -1,10 +1,8 @@
-{ config, lib, pkgs, username, homeDirectory, stateVersion, checkoutPath, forceStowLinks, ... }:
+{ config, pkgs, username, homeDirectory, stateVersion, checkoutPath, forceStowLinks, ... }:
 
 let
   outOfStore = relativePath:
     config.lib.file.mkOutOfStoreSymlink "${checkoutPath}/${relativePath}";
-
-  relativeCheckoutPath = lib.removePrefix "${homeDirectory}/" checkoutPath;
 
   ghCredentialHelper =
     if pkgs.stdenv.hostPlatform.isDarwin
@@ -33,31 +31,6 @@ in
     _ZO_ECHO = "1";
   };
 
-  home.activation.removeLegacyStowDotfileLinks = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
-    for legacyPath in \
-      "${homeDirectory}/.pythonrc" \
-      "${homeDirectory}/.gemrc" \
-      "${homeDirectory}/.irbrc" \
-      "${homeDirectory}/.rspec"
-    do
-      if [ -L "$legacyPath" ]; then
-        target="$(readlink "$legacyPath")"
-        case "$target" in
-          "${checkoutPath}/python/.pythonrc"|\
-          "${checkoutPath}/ruby/.gemrc"|\
-          "${checkoutPath}/ruby/.irbrc"|\
-          "${checkoutPath}/ruby/.rspec"|\
-          "${relativeCheckoutPath}/python/.pythonrc"|\
-          "${relativeCheckoutPath}/ruby/.gemrc"|\
-          "${relativeCheckoutPath}/ruby/.irbrc"|\
-          "${relativeCheckoutPath}/ruby/.rspec")
-            ''${DRY_RUN_CMD:-} rm "$legacyPath"
-            ;;
-        esac
-      fi
-    done
-  '';
-
   # Portable CLI tools owned by Home Manager. The fish PATH pins the Home
   # Manager profile last, so native packages still win where they exist, but
   # these tools are present on both hosts from the flake.
@@ -71,27 +44,6 @@ in
     sesh
     tree
   ];
-
-  home.activation.removeLegacyCommonConfigLinks = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
-    for legacyPath in \
-      "${homeDirectory}/bin" \
-      "${config.xdg.configHome}/fish/completions" \
-      "${config.xdg.configHome}/fish/functions" \
-      "${config.xdg.configHome}/nvim"
-    do
-      if [ -L "$legacyPath" ]; then
-        target="$(readlink "$legacyPath")"
-        case "$target" in
-          /nix/store/*-home-manager-files/bin|\
-          /nix/store/*-home-manager-files/.config/fish/completions|\
-          /nix/store/*-home-manager-files/.config/fish/functions|\
-          /nix/store/*-home-manager-files/.config/nvim)
-            ''${DRY_RUN_CMD:-} rm "$legacyPath"
-            ;;
-        esac
-      fi
-    done
-  '';
 
   programs.direnv = {
     enable = true;

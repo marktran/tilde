@@ -1,4 +1,4 @@
-{ config, lib, forceStowLinks, ... }:
+{ forceStowLinks, ... }:
 
 {
   # Linux/Hyprland-specific Ghostty settings. Shared settings are in common.nix.
@@ -41,31 +41,6 @@
 
     Install.WantedBy = [ "graphical-session.target" ];
   };
-
-  home.activation.removeLegacyStaticConfigLinks = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
-    for legacyPath in \
-      "${config.xdg.configHome}/makima" \
-      "${config.xdg.configHome}/rtorrent" \
-      "${config.xdg.configHome}/hypr/scripts" \
-      "${config.xdg.configHome}/mpv/bin" \
-      "${config.xdg.configHome}/mpv/scripts" \
-      "${config.xdg.configHome}/mpv/script-opts"
-    do
-      if [ -L "$legacyPath" ]; then
-        target="$(readlink "$legacyPath")"
-        case "$target" in
-          /nix/store/*-home-manager-files/.config/makima|\
-          /nix/store/*-home-manager-files/.config/rtorrent|\
-          /nix/store/*-home-manager-files/.config/hypr/scripts|\
-          /nix/store/*-home-manager-files/.config/mpv/bin|\
-          /nix/store/*-home-manager-files/.config/mpv/scripts|\
-          /nix/store/*-home-manager-files/.config/mpv/script-opts)
-            ''${DRY_RUN_CMD:-} rm "$legacyPath"
-            ;;
-        esac
-      fi
-    done
-  '';
 
   # Store-backed copies of genuinely static, non-app-edited configs.
   # Editing these requires a rebuild rather than a live checkout edit, which
