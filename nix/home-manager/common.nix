@@ -603,8 +603,28 @@ in
       source = outOfStore "nix/files/nvim/lazy-lock.json";
       force = true;
     };
-    ".agents/skills" = {
-      source = outOfStore "agents/.agents/skills";
+    # Per-skill out-of-store links so platform-specific skills (e.g. the
+    # Linux-only omarchy skill, added in linux.nix) can be layered into the
+    # same ~/.agents/skills directory. Each skill stays live-editable from the
+    # checkout.
+    ".agents/skills/defuddle" = {
+      source = outOfStore "nix/files/agents/skills/defuddle";
+      force = true;
+    };
+    ".agents/skills/json-canvas" = {
+      source = outOfStore "nix/files/agents/skills/json-canvas";
+      force = true;
+    };
+    ".agents/skills/obsidian-bases" = {
+      source = outOfStore "nix/files/agents/skills/obsidian-bases";
+      force = true;
+    };
+    ".agents/skills/obsidian-cli" = {
+      source = outOfStore "nix/files/agents/skills/obsidian-cli";
+      force = true;
+    };
+    ".agents/skills/obsidian-markdown" = {
+      source = outOfStore "nix/files/agents/skills/obsidian-markdown";
       force = true;
     };
     ".pi/agent/settings.json" = {

@@ -384,6 +384,10 @@ a system tool later, that becomes an explicit, separate decision.
   app-generated state outside this repo. Remaining intentional bridge links are
   mostly mutable/plugin-like: `.emacs.d`, Fish `fish_variables`/`local.fish`,
   Neovim `lazy-lock.json`, agent skills, and mutable Pi settings/extensions/skills.
+  Agent skills live under `nix/files/agents/skills/` as per-skill out-of-store
+  links (shared in `common.nix`); the Linux-only Omarchy skill is a generated
+  `mkOutOfStoreSymlink` in `linux.nix` pointing at
+  `~/.local/share/omarchy/default/omarchy-skill`, so it is absent on macOS.
 - [x] Consider adding a small check script that runs:
 
   ```sh
