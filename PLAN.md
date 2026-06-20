@@ -122,7 +122,7 @@ Prefer small, shared, low-risk modules first.
     explicit Fish file/directory links.
   - [x] Move `config.fish` plus simple aliases/abbreviations to
     `programs.fish`.
-  - [ ] Keep machine-specific PATH or environment details explicit.
+  - [x] Keep machine-specific PATH or environment details explicit.
   - [ ] Avoid breaking interactive startup; test by opening a new shell after
     activation.
     - [x] Linux activation tested.
@@ -134,8 +134,12 @@ Prefer small, shared, low-risk modules first.
   - This may stay as a link if plugin state makes typed config less useful.
 
 - [ ] Shell environment:
-  - Move simple exported variables to `home.sessionVariables` where portable.
-  - Keep app-specific startup logic in fish if Home Manager would obscure it.
+  - [x] Move portable static editor/pager/color/zoxide variables to
+    `home.sessionVariables`.
+  - [x] Keep PATH and OS-specific startup logic in Fish for now.
+  - [x] Linux activation tested.
+  - [ ] macOS activation pending.
+  - [ ] Keep app-specific startup logic in fish if Home Manager would obscure it.
 
 - [ ] Simple one-file configs:
   - Convert files only when generated Nix is easier to read than the original.

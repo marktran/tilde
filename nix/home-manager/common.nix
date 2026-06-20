@@ -17,6 +17,16 @@ in
 
   programs.home-manager.enable = true;
 
+  home.sessionVariables = {
+    ALTERNATE_EDITOR = "";
+    EDITOR = "nvim";
+    LESS = "-R";
+    LS_COLORS = "di=32:fi=0:ln=35:pi=5:so=5:bd=5:cd=5:or=31";
+    LSCOLORS = "cxfxcxdxbxegedabagacad";
+    PAGER = "less";
+    _ZO_ECHO = "1";
+  };
+
   programs.fish = {
     enable = true;
     generateCompletions = false;
