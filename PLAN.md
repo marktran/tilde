@@ -122,11 +122,15 @@ Prefer small, shared, low-risk modules first.
     explicit Fish file/directory links.
   - [x] Move `config.fish` plus simple aliases/abbreviations to
     `programs.fish`.
-  - [x] Keep machine-specific PATH or environment details explicit.
-  - [ ] Avoid breaking interactive startup; test by opening a new shell after
+  - [x] Keep machine-specific PATH or environment details explicit (PATH,
+    Omarchy, Homebrew/CPATH, Obsidian, grok now expressed in
+    `programs.fish.shellInit`).
+  - [x] Inline `exports.fish` and `colors.fish` into `programs.fish` and drop
+    those linked files.
+  - [x] Avoid breaking interactive startup; test by opening a new shell after
     activation.
     - [x] Linux activation tested.
-    - [x] macOS activation tested.
+    - [ ] macOS activation pending re-test after inlining exports/colors.
 
 - [ ] Tmux:
   - Evaluate `programs.tmux`.
@@ -136,10 +140,12 @@ Prefer small, shared, low-risk modules first.
 - [ ] Shell environment:
   - [x] Move portable static editor/pager/color/zoxide variables to
     `home.sessionVariables`.
-  - [x] Keep PATH and OS-specific startup logic in Fish for now.
+  - [x] Keep PATH and OS-specific startup logic in Fish, but generated from
+    `programs.fish` rather than a linked file.
   - [x] Linux activation tested.
   - [x] macOS activation tested.
-  - [ ] Keep app-specific startup logic in fish if Home Manager would obscure it.
+  - [x] App-specific startup (zoxide/mise/direnv/orbstack) lives in
+    `programs.fish.shellInit`.
 
 - [ ] Simple one-file configs:
   - Convert files only when generated Nix is easier to read than the original.

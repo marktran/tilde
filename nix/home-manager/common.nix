@@ -48,8 +48,34 @@ in
     };
 
     shellInit = ''
-      source "$HOME/.config/fish/exports.fish"
-      source "$HOME/.config/fish/colors.fish"
+      set -gx PATH ./node_modules/.bin $HOME/.nix-profile/bin $HOME/.opencode/bin $HOME/.cargo/bin $HOME/bin $HOME/.local/bin /opt/homebrew/bin /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/sbin
+
+      if test (uname) = Linux; and test -d $HOME/.local/share/omarchy/bin
+          set -gx OMARCHY_PATH $HOME/.local/share/omarchy
+          set -gx PATH $OMARCHY_PATH/bin $PATH
+      end
+
+      if test (uname) = Darwin
+          set -gx CPATH /opt/homebrew/include $CPATH
+          set -gx HOMEBREW_NO_ANALYTICS 1
+
+          if test -x /Applications/Obsidian.app/Contents/MacOS/obsidian
+              contains -- /Applications/Obsidian.app/Contents/MacOS $PATH
+              or set -gx PATH /Applications/Obsidian.app/Contents/MacOS $PATH
+          end
+      end
+
+      fish_add_path $HOME/.grok/bin
+
+      set fish_color_error normal
+      set fish_color_command 99ad6a
+      set fish_color_param fad07a
+      set fish_color_quote de5577
+      set fish_color_redirection 8fbfdc
+      set fish_color_valid_path normal
+      set fish_pager_color_prefix fad07a
+      set fish_pager_color_progress fad07a
+      set fish_color_search_match --background=ffffff
 
       test -e "$HOME/.config/fish/local.fish"; and source "$HOME/.config/fish/local.fish"
 
@@ -179,8 +205,6 @@ in
     {
       name = "fish";
       entries = [
-        ".config/fish/colors.fish"
-        ".config/fish/exports.fish"
         ".config/fish/completions"
         ".config/fish/functions"
         ".config/fish/fish_variables"
