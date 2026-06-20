@@ -8,12 +8,31 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ home-manager, nixpkgs, ... }:
+  outputs = inputs@{ home-manager, nixpkgs, nix-darwin, ... }:
     let
       username = "mark";
       stateVersion = "26.05";
+
+      # Shared specialArgs for the Home Manager modules. Used both standalone
+      # and when Home Manager is folded into nix-darwin.
+      homeExtraArgs = { homeDirectory, forceStowLinks }: {
+        inherit inputs username homeDirectory stateVersion forceStowLinks;
+        checkoutPath = "${homeDirectory}/src/mark/tilde";
+      };
+
+      # macOS Home Manager module list (common + darwin + host).
+      macHomeModules = [
+        ./nix/home-manager/common.nix
+        ./nix/home-manager/darwin.nix
+        ./nix/hosts/macbook-air/home.nix
+      ];
 
       mkHome = { system, homeDirectory, forceStowLinks ? false, modules ? [ ] }:
         home-manager.lib.homeManagerConfiguration {
@@ -22,10 +41,7 @@
             config.allowUnfree = true;
           };
 
-          extraSpecialArgs = {
-            inherit inputs username homeDirectory stateVersion forceStowLinks;
-            checkoutPath = "${homeDirectory}/src/mark/tilde";
-          };
+          extraSpecialArgs = homeExtraArgs { inherit homeDirectory forceStowLinks; };
 
           modules = [
             ./nix/home-manager/common.nix
@@ -42,6 +58,10 @@
         ];
       };
 
+      # Standalone Home Manager config for macOS. Kept as a rollback path: on
+      # macOS the primary workflow is now `darwin-rebuild switch` (Home Manager
+      # is folded into nix-darwin below). Do not run this standalone config
+      # while nix-darwin owns the Home Manager profile.
       macConfig = mkHome {
         system = "aarch64-darwin";
         homeDirectory = "/Users/mark";
@@ -50,17 +70,44 @@
           ./nix/hosts/macbook-air/home.nix
         ];
       };
+
+      # nix-darwin system config for macOS, with Home Manager folded in so a
+      # single `darwin-rebuild switch` activates both system and user env.
+      macDarwin = nix-darwin.lib.darwinSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./nix/darwin/configuration.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = homeExtraArgs {
+              homeDirectory = "/Users/mark";
+              forceStowLinks = false;
+            };
+            home-manager.users.${username}.imports = macHomeModules;
+          }
+        ];
+      };
     in
     {
       homeConfigurations = {
         # Primary, stable public names used in the daily workflow.
         linux = linuxConfig;
+
+        # macOS standalone Home Manager kept for evaluation/rollback only.
         mac = macConfig;
 
         # Host-specific aliases. Identical to linux/mac; provided so the
         # actual machines can be referenced by name.
         x1-carbon = linuxConfig;
         macbook-air = macConfig;
+      };
+
+      darwinConfigurations = {
+        # Primary macOS workflow: `darwin-rebuild switch --flake .#mac`.
+        mac = macDarwin;
+        macbook-air = macDarwin;
       };
     };
 }
