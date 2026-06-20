@@ -11,8 +11,6 @@ in
       name = "macos";
       entries = [
         "Brewfile"
-        "Elgato Wave XLR.wavelink"
-        "Pastels.terminal"
       ];
     }
   ];
