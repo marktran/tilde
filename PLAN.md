@@ -126,7 +126,7 @@ Prefer small, shared, low-risk modules first.
   - [ ] Avoid breaking interactive startup; test by opening a new shell after
     activation.
     - [x] Linux activation tested.
-    - [ ] macOS activation pending.
+    - [x] macOS activation tested.
 
 - [ ] Tmux:
   - Evaluate `programs.tmux`.
