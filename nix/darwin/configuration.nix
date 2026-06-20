@@ -130,15 +130,12 @@
       "oven-sh/bun/bun"
       "pgcli"
       "pkgconf"
-      "pwgen"
       "redis"
       "texinfo"
       "tmux"
-      "tree"
       "uv"
       "wget"
       "wifi-password"
-      "zoxide"
     ];
 
     casks = [

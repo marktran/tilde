@@ -17,5 +17,3 @@ pam-u2f
 fprintd
 
 acpid
-calc
-tree

@@ -32,6 +32,20 @@ in
     _ZO_ECHO = "1";
   };
 
+  # Portable CLI tools owned by Home Manager. The fish PATH pins the Home
+  # Manager profile last, so native packages still win where they exist, but
+  # these tools are present on both hosts from the flake.
+  home.packages = with pkgs; [
+    calc
+    fd
+    fzf
+    jq
+    pwgen
+    ripgrep
+    sesh
+    tree
+  ];
+
   home.activation.removeLegacyFishFunctionsLink = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
     legacyFishFunctions="${homeDirectory}/.config/fish/functions"
     if [ -L "$legacyFishFunctions" ]; then
@@ -470,17 +484,6 @@ in
       entries = [ ".config/nvim" ];
     }
     {
-      name = "claude";
-      entries = [
-        {
-          source = ".claude/settings.json";
-          target = ".claude/settings.json";
-          force = true;
-        }
-        ".claude/commands"
-      ];
-    }
-    {
       name = "agents";
       entries = [
         {
@@ -505,6 +508,14 @@ in
       ];
     }
   ] // {
+    ".claude/settings.json" = {
+      source = ../../claude/.claude/settings.json;
+      force = true;
+    };
+    ".claude/commands" = {
+      source = ../../claude/.claude/commands;
+      force = true;
+    };
     ".hunspell_default" = {
       source = ../../emacs/.hunspell_default;
       force = true;

@@ -14,4 +14,3 @@
 
 brave-origin-beta-bin
 google-cloud-cli
-sesh-bin

@@ -30,19 +30,21 @@ directories such as `.emacs.d` and `.config/fish`, so the first pass uses
 Home Manager's out-of-store symlinks. That keeps behavior close to Stow:
 
 ```text
-~/.config/fish -> ~/src/mark/tilde/fish/.config/fish
-~/.claude/settings.json -> ~/src/mark/tilde/claude/.claude/settings.json
+~/.config/fish/completions -> ~/src/mark/tilde/fish/.config/fish/completions
+~/.pi/agent/extensions -> ~/src/mark/tilde/pi/.pi/agent/extensions
 ```
 
 Individual configs can move from file links to typed Home Manager options, for
 example `programs.git`, `programs.fish`, or `programs.tmux`. Git, Fish,
-Ghostty, and tmux now use typed Home Manager config where it is clearer than
-file links.
+Ghostty, tmux, direnv, and zoxide now use typed Home Manager config where it is
+clearer than file links.
 
 This bridge intentionally follows the current live Stow granularity. Some
 targets are whole-directory links, while stateful directories such as
-`~/.claude`, `~/.pi/agent`, `~/.config/hypr`, and `~/.config/mpv` keep their real
-parent directories and only link selected children.
+`~/.pi/agent`, `~/.config/hypr`, and `~/.config/mpv` keep their real parent
+directories and only link selected children. Claude settings and commands are
+store-backed because they are static; app-generated Claude state stays outside
+this repo.
 
 ## Hosts
 
@@ -86,6 +88,8 @@ checkout, while static files are typed or store-backed:
 Shared typed config (both hosts) includes `programs.tmux`: Home Manager
 generates `~/.config/tmux/tmux.conf`, tmux itself stays native/Homebrew-owned,
 and tmux plugins come from Nix `pkgs.tmuxPlugins` rather than TPM checkouts.
+Home Manager also owns shared portable CLI tools (`sesh`, `tree`, `pwgen`,
+`calc`, `fzf`, `fd`, `ripgrep`, `jq`) with the Nix profile pinned last in PATH.
 
 The macOS host is a nix-darwin system (`nix/darwin/configuration.nix`) with
 Home Manager folded in. nix-darwin declares the Homebrew brews/casks/taps

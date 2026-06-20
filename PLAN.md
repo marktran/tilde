@@ -221,6 +221,10 @@ a system tool later, that becomes an explicit, separate decision.
   - [x] `zoxide` Fish integration is owned by `programs.zoxide` with
     `--cmd j`; the Nix profile stays last so interactive command lookup still
     prefers native packages when present.
+  - [x] Portable CLI tools in `home.packages`: `sesh`, `tree`, `pwgen`,
+    `calc`, `fzf`, `fd`, `ripgrep`, and `jq`. Removed now-Nix-owned entries
+    from native inventories where this repo declared them (`packages.txt`,
+    `aur.txt`, nix-darwin Homebrew brews).
 - [x] Keep OS integration packages in the native package manager when that is
   more practical:
   - Linux system/desktop packages can remain in `packages.txt` and `aur.txt`
@@ -344,11 +348,15 @@ a system tool later, that becomes an explicit, separate decision.
   - [x] Third batch: shared `.hunspell_default`; Linux-only Typora user config,
     `rtorrent.rc`, Makima TOMLs, mpv `script-opts/*.conf`, and Hypr/Omarchy
     `hypr/*.conf` files. Mutable/executable helper trees stay linked.
+  - [x] Fourth batch: Claude `settings.json` and `commands/` are store-backed;
+    app/plugin state remains outside this repo.
   - [x] Linux activation tested (links resolve into `/nix/store`).
   - [x] macOS activation tested for the old shared `tmux/.tmux.conf` link
     before the later `programs.tmux` migration.
 - [ ] Keep out-of-store links for mutable directories such as Emacs packages,
   agent skills, app state, and plugin trees unless there is a better owner.
+  Claude settings/commands are now store-backed because they are static; keep
+  app-generated Claude state outside this repo.
 - [x] Consider adding a small check script that runs:
 
   ```sh
@@ -375,12 +383,11 @@ a system tool later, that becomes an explicit, separate decision.
    ordering is rechecked.
 4. [x] Small static one-file configs: store-back or type-manage low-risk files
    such as `emacs/.hunspell_default`, `rtorrent.rc`, Typora user config,
-   Makima TOMLs, mpv script options, and Hypr/Omarchy `hypr/*.conf` files.
-   Claude settings/commands remain a future candidate if the app does not
-   mutate them.
-5. [ ] Portable CLI packages: consider Nix-owning additive cross-platform tools
-   such as `sesh`, `zoxide`, `tree`, `pwgen`, `calc`, `fzf`, `fd`, `ripgrep`,
-   and `jq` while preserving the native-tool PATH priority rule.
+   Makima TOMLs, mpv script options, Hypr/Omarchy `hypr/*.conf` files, and
+   Claude settings/commands.
+5. [x] Portable CLI packages: Nix-own additive cross-platform tools such as
+   `sesh`, `tree`, `pwgen`, `calc`, `fzf`, `fd`, `ripgrep`, and `jq` while
+   preserving the native-tool PATH priority rule.
 6. [x] Hypr/Omarchy configs: first store-back static `hypr/*.conf` from
    `linux.nix` and leave scripts out-of-store; avoid full typed Hyprland until
    it is clear it will not fight Omarchy defaults/updates.
