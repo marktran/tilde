@@ -22,14 +22,6 @@ in
 
   programs.home-manager.enable = true;
 
-  # Portable CLI tools owned by Home Manager (same on Linux and macOS).
-  # Start conservative: only tools that are safe to have Nix provide.
-  # direnv is referenced by the fish startup below but was not installed on
-  # Linux, so this is purely additive there.
-  home.packages = [
-    pkgs.direnv
-  ];
-
   home.sessionVariables = {
     ALTERNATE_EDITOR = "";
     EDITOR = "nvim";
@@ -38,6 +30,29 @@ in
     LSCOLORS = "cxfxcxdxbxegedabagacad";
     PAGER = "less";
     _ZO_ECHO = "1";
+  };
+
+  home.activation.removeLegacyFishFunctionsLink = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
+    legacyFishFunctions="${homeDirectory}/.config/fish/functions"
+    if [ -L "$legacyFishFunctions" ]; then
+      target="$(readlink "$legacyFishFunctions")"
+      case "$target" in
+        /nix/store/*-home-manager-files/.config/fish/functions)
+          ''${DRY_RUN_CMD:-} rm "$legacyFishFunctions"
+          ;;
+      esac
+    fi
+  '';
+
+  programs.direnv = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+
+  programs.zoxide = {
+    enable = true;
+    enableFishIntegration = true;
+    options = [ "--cmd" "j" ];
   };
 
   programs.fish = {
@@ -58,6 +73,67 @@ in
       s = "sesh";
       t = "tmux";
       vi = "nvim";
+    };
+
+    functions = {
+      fish_prompt = ''
+        set_pwd_color
+        printf '%s' (prompt_pwd)
+        set_color normal
+        printf '%s ' (__fish_git_prompt)
+      '';
+
+      set_pwd_color = ''
+        if test -n "$SSH_CLIENT"
+          set_color blue
+        else
+          set_color magenta
+        end
+      '';
+
+      fish_greeting = ''
+        echo
+
+        if type -q fortune
+          fortune
+        else if test -x /usr/games/fortune
+          /usr/games/fortune
+        end
+      '';
+
+      cd = ''
+        builtin cd $argv; and ls
+      '';
+
+      ls = ''
+        if command ls --version 1>/dev/null 2>/dev/null
+          # GNU ls
+          set -l param --color=auto
+          if isatty 1
+            set param $param --indicator-style=classify
+          end
+
+          if not set -q LS_COLORS; and type -f dircolors >/dev/null
+            eval (dircolors -c)
+          end
+
+          command ls -N -F $param $argv
+        else if command ls -G / 1>/dev/null 2>/dev/null
+          # BSD/macOS ls
+          command ls -FG $argv
+        else
+          command ls $argv
+        end
+      '';
+
+      "l." = ''
+        set -l files .*
+        set -q files[1]; and ls -d $files
+      '';
+
+      btmm = ''
+        echo show Setup:/Network/BackToMyMac | scutil | sed -n 's/.* : *\(.*\).$/\1/p'
+      '';
     };
 
     shellInit = ''
@@ -90,9 +166,12 @@ in
       set fish_pager_color_progress fad07a
       set fish_color_search_match --background=ffffff
 
+      set -g __fish_git_prompt_char_dirtystate '±'
+      set -g __fish_git_prompt_color_branch yellow
+      set -g __fish_git_prompt_showdirtystate 'yes'
+
       test -e "$HOME/.config/fish/local.fish"; and source "$HOME/.config/fish/local.fish"
 
-      zoxide init --cmd j fish | source
       type -q mise; and mise activate fish | source
 
       # On macOS, nix-darwin provides system tools (e.g. darwin-rebuild) under
@@ -109,8 +188,6 @@ in
       # PATH during activation, so assert this afterwards -- it then survives
       # mise's per-prompt hooks.
       set -gx PATH (string match -v -- $HOME/.nix-profile/bin $PATH) $HOME/.nix-profile/bin
-
-      type -q direnv; and eval (direnv hook fish)
 
       if test (uname) = Darwin
           source ~/.orbstack/shell/init2.fish 2>/dev/null || :
@@ -341,6 +418,14 @@ in
     ];
   };
 
+  xdg.configFile."fish/functions/btmm.fish".force = true;
+  xdg.configFile."fish/functions/cd.fish".force = true;
+  xdg.configFile."fish/functions/fish_greeting.fish".force = true;
+  xdg.configFile."fish/functions/fish_prompt.fish".force = true;
+  xdg.configFile."fish/functions/l..fish".force = true;
+  xdg.configFile."fish/functions/ls.fish".force = true;
+  xdg.configFile."fish/functions/set_pwd_color.fish".force = true;
+
   xdg.configFile."git/config".force = forceStowLinks;
   xdg.configFile."git/ignore".force = forceStowLinks;
   xdg.configFile."git/allowed_signers" = {
@@ -364,7 +449,21 @@ in
       name = "fish";
       entries = [
         ".config/fish/completions"
-        ".config/fish/functions"
+        {
+          source = ".config/fish/functions/__bass.py";
+          target = ".config/fish/functions/__bass.py";
+          force = true;
+        }
+        {
+          source = ".config/fish/functions/bass.fish";
+          target = ".config/fish/functions/bass.fish";
+          force = true;
+        }
+        {
+          source = ".config/fish/functions/fisher.fish";
+          target = ".config/fish/functions/fisher.fish";
+          force = true;
+        }
         ".config/fish/fish_variables"
         ".config/fish/local.fish"
       ];

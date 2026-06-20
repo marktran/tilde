@@ -131,11 +131,16 @@ If the dry run is clean, activate:
 
 Prefer small, shared, low-risk modules first.
 
-- [ ] Fish:
+- [x] Fish:
   - [x] Split the bridge from one whole `.config/fish` directory link to
     explicit Fish file/directory links.
   - [x] Move `config.fish` plus simple aliases/abbreviations to
     `programs.fish`.
+  - [x] Move pure static functions (`fish_prompt`, `fish_greeting`, `cd`,
+    `ls`, `l.`, `btmm`) to `programs.fish.functions`.
+  - [x] Keep remaining helper/plugin files (`bass`, `fisher`) plus completions
+    as explicit bridge links; keep `fish_variables` and `local.fish` as local
+    mutable bridge links rather than typed/generated config.
   - [x] Keep machine-specific PATH or environment details explicit (PATH,
     Omarchy, Homebrew/CPATH, Obsidian, grok now expressed in
     `programs.fish.shellInit`).
@@ -157,15 +162,16 @@ Prefer small, shared, low-risk modules first.
     `~/.tmux.conf`/`~/.tmux` links removed, XDG tmux config parses).
   - [ ] macOS activation tested.
 
-- [ ] Shell environment:
+- [x] Shell environment:
   - [x] Move portable static editor/pager/color/zoxide variables to
     `home.sessionVariables`.
   - [x] Keep PATH and OS-specific startup logic in Fish, but generated from
     `programs.fish` rather than a linked file.
+  - [x] Move direnv and zoxide Fish hooks to typed modules
+    (`programs.direnv`, `programs.zoxide` with `--cmd j`).
+  - [x] Keep mise/orbstack startup in `programs.fish.shellInit`.
   - [x] Linux activation tested.
   - [x] macOS activation tested.
-  - [x] App-specific startup (zoxide/mise/direnv/orbstack) lives in
-    `programs.fish.shellInit`.
 
 - [ ] Simple one-file configs:
   - Convert files only when generated Nix is easier to read than the original.
@@ -204,10 +210,12 @@ a system tool later, that becomes an explicit, separate decision.
     previously resolved from `~/.nix-profile/bin/fish`; it now resolves from
     Homebrew, with the Nix profile near the end of PATH.
 
-- [x] Decide which CLI tools should be installed by Home Manager as
-  `home.packages`. Started `home.packages` in `common.nix`.
-  - [x] `direnv` (referenced by fish startup; was missing on Linux, so purely
-    additive there).
+- [x] Decide which CLI tools should be installed by Home Manager modules.
+  - [x] `direnv` is owned by `programs.direnv` (referenced by fish startup; was
+    missing on Linux, so purely additive there).
+  - [x] `zoxide` Fish integration is owned by `programs.zoxide` with
+    `--cmd j`; the Nix profile stays last so interactive command lookup still
+    prefers native packages when present.
 - [x] Keep OS integration packages in the native package manager when that is
   more practical:
   - Linux system/desktop packages can remain in `packages.txt` and `aur.txt`
@@ -348,10 +356,11 @@ a system tool later, that becomes an explicit, separate decision.
 
 1. [x] Tmux: migrate `.tmux.conf` to `programs.tmux`, keep `package = null`,
    and replace TPM plugins with Nix-provided tmux plugins.
-2. [ ] Remaining Fish static functions: move pure functions such as
+2. [x] Remaining Fish static functions: move pure functions such as
    `fish_prompt`, `fish_greeting`, `cd`, `ls`, `l.`, and `btmm` to
-   `programs.fish.functions`; keep `fish_variables` and `local.fish` unmanaged.
-3. [ ] Typed shell tool modules: convert manual hooks to `programs.direnv` and
+   `programs.fish.functions`; keep `fish_variables` and `local.fish` as local
+   mutable bridge links.
+3. [x] Typed shell tool modules: convert manual hooks to `programs.direnv` and
    `programs.zoxide` (with `--cmd j`); evaluate `programs.mise` only after PATH
    ordering is rechecked.
 4. [ ] Small static one-file configs: store-back or type-manage low-risk files
