@@ -27,11 +27,13 @@ HASH       := \#
 FLAKE      := .
 ACTIVATION := $(FLAKE)$(HASH)homeConfigurations.$(HOST).activationPackage
 
-.DEFAULT_GOAL := help
+# Default to a safe, informational action: build + dry-run activation (applies
+# nothing). Run `make help` to list targets, `make switch` to apply.
+.DEFAULT_GOAL := dry-run
 
 .PHONY: help switch build dry-run check update update-switch rollback generations pkgs pkgs-diff
 
-help: ## Show this help (default)
+help: ## Show this help
 	@echo "Platform: $(UNAME_S) -> host '$(HOST)' ($(PLATFORM))"
 	@echo
 	@echo "Targets:"
@@ -49,7 +51,7 @@ endif
 build: ## Build the activation package (no changes applied)
 	nix build $(ACTIVATION)
 
-dry-run: build ## Build, then dry-run activation (prints actions, applies nothing)
+dry-run: build ## Build, then dry-run activation, applies nothing (default)
 	DRY_RUN=1 VERBOSE=1 ./result/activate
 
 check: ## Sanity-check both hosts (build native, eval the other)
