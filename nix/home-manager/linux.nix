@@ -1,4 +1,4 @@
-{ config, homeDirectory, forceStowLinks, ... }:
+{ config, homeDirectory, forceLinks, ... }:
 
 {
   # Linux/Hyprland-specific Ghostty settings. Shared settings are in common.nix.
@@ -48,147 +48,147 @@
   xdg.configFile = {
     "voxtype/config.toml" = {
       source = ../files/voxtype/config.toml;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "elephant/websearch.toml" = {
       source = ../files/elephant/websearch.toml;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "elephant/google-favicon.png" = {
       source = ../files/elephant/google-favicon.png;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "wireplumber/wireplumber.conf.d/51-shure-mv7-mic-only.conf" = {
       source = ../files/wireplumber/wireplumber.conf.d/51-shure-mv7-mic-only.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
 
     "Typora/conf/conf.user.json" = {
       source = ../files/typora/conf.user.json;
-      force = forceStowLinks;
+      force = forceLinks;
     };
 
     "rtorrent/rtorrent.rc" = {
       source = ../files/rtorrent/rtorrent.rc;
-      force = forceStowLinks;
+      force = forceLinks;
     };
 
     "makima/AT Translated Set 2 keyboard.toml" = {
       source = ../files/makima + "/AT Translated Set 2 keyboard.toml";
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "makima/Intel HID events.toml" = {
       source = ../files/makima + "/Intel HID events.toml";
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "makima/ThinkPad Extra Buttons.toml" = {
       source = ../files/makima + "/ThinkPad Extra Buttons.toml";
-      force = forceStowLinks;
+      force = forceLinks;
     };
 
     "mpv/mpv.conf" = {
       source = ../files/mpv/mpv.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "mpv/input.conf" = {
       source = ../files/mpv/input.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "mpv/script-opts/chromecast-cast.conf" = {
       source = ../files/mpv/script-opts/chromecast-cast.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "mpv/script-opts/osc.conf" = {
       source = ../files/mpv/script-opts/osc.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "mpv/script-opts/pip-default-size.conf" = {
       source = ../files/mpv/script-opts/pip-default-size.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
 
     "hypr/autostart.conf" = {
       source = ../files/hypr/autostart.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "hypr/bindings.conf" = {
       source = ../files/hypr/bindings.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "hypr/hypridle.conf" = {
       source = ../files/hypr/hypridle.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "hypr/hyprland.conf" = {
       source = ../files/hypr/hyprland.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "hypr/hyprlock.conf" = {
       source = ../files/hypr/hyprlock.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "hypr/hyprsunset.conf" = {
       source = ../files/hypr/hyprsunset.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "hypr/input.conf" = {
       source = ../files/hypr/input.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "hypr/looknfeel.conf" = {
       source = ../files/hypr/looknfeel.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "hypr/monitors.conf" = {
       source = ../files/hypr/monitors.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "hypr/windows.conf" = {
       source = ../files/hypr/windows.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "hypr/xdph.conf" = {
       source = ../files/hypr/xdph.conf;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "hypr/scripts/hypr-mpv-pip-size" = {
       source = ../files/hypr/scripts/hypr-mpv-pip-size;
-      force = forceStowLinks;
+      force = forceLinks;
     };
 
     "mpv/bin/chromecast-cast" = {
       source = ../files/mpv/bin/chromecast-cast;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "mpv/bin/chromecast-common.rb" = {
       source = ../files/mpv/bin/chromecast-common.rb;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "mpv/bin/chromecast-control" = {
       source = ../files/mpv/bin/chromecast-control;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "mpv/bin/hypr-mpv-fullscreen-toggle" = {
       source = ../files/mpv/bin/hypr-mpv-fullscreen-toggle;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "mpv/scripts/chromecast-cast.lua" = {
       source = ../files/mpv/scripts/chromecast-cast.lua;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "mpv/scripts/pip-default-size.lua" = {
       source = ../files/mpv/scripts/pip-default-size.lua;
-      force = forceStowLinks;
+      force = forceLinks;
     };
     "mpv/scripts/playlist-toggle.lua" = {
       source = ../files/mpv/scripts/playlist-toggle.lua;
-      force = forceStowLinks;
+      force = forceLinks;
     };
   };
 
   home.file.".XCompose" = {
     source = ../files/xcompose/XCompose;
-    force = forceStowLinks;
+    force = forceLinks;
   };
 
   # Linux-only agent skill provided by Omarchy. Layered into the shared skill

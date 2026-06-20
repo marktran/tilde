@@ -22,8 +22,12 @@
 
       # Shared specialArgs for the Home Manager modules. Used both standalone
       # and when Home Manager is folded into nix-darwin.
-      homeExtraArgs = { homeDirectory, forceStowLinks }: {
-        inherit inputs username homeDirectory stateVersion forceStowLinks;
+      #
+      # forceLinks: when true, Home Manager overwrites pre-existing files at a
+      # link target instead of erroring. Enabled on Linux (the targets were
+      # audited); kept conservative (false) on macOS.
+      homeExtraArgs = { homeDirectory, forceLinks }: {
+        inherit inputs username homeDirectory stateVersion forceLinks;
         checkoutPath = "${homeDirectory}/src/mark/tilde";
       };
 
@@ -34,14 +38,14 @@
         ./nix/hosts/macbook-air/home.nix
       ];
 
-      mkHome = { system, homeDirectory, forceStowLinks ? false, modules ? [ ] }:
+      mkHome = { system, homeDirectory, forceLinks ? false, modules ? [ ] }:
         home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             inherit system;
             config.allowUnfree = true;
           };
 
-          extraSpecialArgs = homeExtraArgs { inherit homeDirectory forceStowLinks; };
+          extraSpecialArgs = homeExtraArgs { inherit homeDirectory forceLinks; };
 
           modules = [
             ./nix/home-manager/common.nix
@@ -51,7 +55,7 @@
       linuxConfig = mkHome {
         system = "x86_64-linux";
         homeDirectory = "/home/mark";
-        forceStowLinks = true;
+        forceLinks = true;
         modules = [
           ./nix/home-manager/linux.nix
           ./nix/hosts/x1-carbon/home.nix
@@ -88,7 +92,7 @@
             home-manager.useUserPackages = false;
             home-manager.extraSpecialArgs = homeExtraArgs {
               homeDirectory = "/Users/mark";
-              forceStowLinks = false;
+              forceLinks = false;
             };
             home-manager.users.${username}.imports = macHomeModules;
           }

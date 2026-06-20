@@ -1,4 +1,4 @@
-{ config, lib, pkgs, username, homeDirectory, stateVersion, checkoutPath, forceStowLinks, ... }:
+{ config, lib, pkgs, username, homeDirectory, stateVersion, checkoutPath, forceLinks, ... }:
 
 let
   outOfStore = relativePath:
@@ -584,10 +584,10 @@ in
   xdg.configFile."fish/functions/ls.fish".force = true;
   xdg.configFile."fish/functions/set_pwd_color.fish".force = true;
 
-  xdg.configFile."git/config".force = forceStowLinks;
-  xdg.configFile."git/ignore".force = forceStowLinks;
+  xdg.configFile."git/config".force = forceLinks;
+  xdg.configFile."git/ignore".force = forceLinks;
   xdg.configFile."git/allowed_signers" = {
-    force = forceStowLinks;
+    force = forceLinks;
     text = "mark.tran@gmail.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK6j5pkvHqP1YRODd00yh5FM7YGuozykifYWYYuQeMuu\n";
   };
 
@@ -596,7 +596,7 @@ in
     # generated from the Nix store; these stay live-editable from the checkout.
     ".emacs.d" = {
       source = outOfStore "emacs.d";
-      force = forceStowLinks;
+      force = forceLinks;
     };
     # NOTE: ~/.config/fish/fish_variables (fish universal vars) and local.fish
     # (machine-local, may hold secrets) are intentionally NOT managed here.
@@ -608,15 +608,15 @@ in
     };
     ".pi/agent/settings.json" = {
       source = outOfStore "nix/files/pi/agent/settings.json";
-      force = forceStowLinks;
+      force = forceLinks;
     };
     ".pi/agent/extensions" = {
       source = outOfStore "nix/files/pi/agent/extensions";
-      force = forceStowLinks;
+      force = forceLinks;
     };
     ".pi/agent/skills" = {
       source = outOfStore "nix/files/pi/agent/skills";
-      force = forceStowLinks;
+      force = forceLinks;
     };
 
     "bin/op-ssh-sign-wrapper" = {
