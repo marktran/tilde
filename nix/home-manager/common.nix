@@ -583,14 +583,10 @@ in
       source = outOfStore "emacs/.emacs.d";
       force = forceStowLinks;
     };
-    ".config/fish/fish_variables" = {
-      source = outOfStore "nix/files/fish/fish_variables";
-      force = forceStowLinks;
-    };
-    ".config/fish/local.fish" = {
-      source = outOfStore "nix/files/fish/local.fish";
-      force = forceStowLinks;
-    };
+    # NOTE: ~/.config/fish/fish_variables (fish universal vars) and local.fish
+    # (machine-local, may hold secrets) are intentionally NOT managed here.
+    # fish owns them natively as real files under ~/.config/fish, kept out of
+    # this repo. config.fish sources local.fish by path if it exists.
     ".config/nvim/lazy-lock.json" = {
       source = outOfStore "nix/files/nvim/lazy-lock.json";
       force = true;

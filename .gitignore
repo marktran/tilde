@@ -1,5 +1,3 @@
-nix/files/fish/fish_variables
-nix/files/fish/local.fish
 fish/.config/fish/conf.d/fish_frozen_key_bindings.fish
 result
 result-*
