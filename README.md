@@ -12,28 +12,40 @@ and activation steps.
 - `nix/home-manager/common.nix` links shared home config.
 - `nix/home-manager/linux.nix` links Linux/Omarchy-only home config.
 - `nix/home-manager/darwin.nix` links macOS-only home config.
-- Existing top-level directories such as `fish/`, `emacs/`, `hypr/`, and
-  `agents/` still mirror their target paths. Home Manager links entries from
-  those directories into `$HOME`.
+- `nix/files/` holds repo-managed config files that Home Manager links into
+  `$HOME` (e.g. `nix/files/fish`, `nix/files/hypr`, `nix/files/mpv`,
+  `nix/files/agents/skills`).
+- `emacs/` still mirrors its target path as a live out-of-store tree.
 - `system/` contains privileged Linux `/etc` files and is not managed by Home
   Manager.
 
 ## Usage
 
-Linux / Omarchy:
+A `Makefile` wraps the platform-specific workflow and auto-detects the host.
+Run targets from the repo root:
 
 ```sh
+make            # list targets
+make switch     # build + activate this machine's config
+make dry-run    # build + dry-run activation (applies nothing)
+make check      # sanity-check both hosts
+make update     # update flake inputs (flake.lock)
+make rollback   # roll back to the previous generation
+```
+
+Underneath, `make switch` runs the right command per platform:
+
+```sh
+# Linux / Omarchy (standalone Home Manager)
 home-manager switch --flake ~/src/mark/tilde#linux
+
+# macOS (nix-darwin; activates system + Home Manager, needs root)
+sudo darwin-rebuild switch --flake ~/src/mark/tilde#mac
 ```
 
-macOS:
-
-```sh
-home-manager switch --flake ~/src/mark/tilde#mac
-```
-
-Edit files here, then switch with Home Manager. Do not edit generated symlinks
-in `$HOME` directly.
+Do not run `home-manager switch ...#mac` while nix-darwin owns the Home Manager
+profile. Edit files here, then switch. Do not edit generated symlinks in
+`$HOME` directly.
 
 Home Manager owns the home-directory links. Do not use `stow` for `$HOME`.
 
