@@ -47,21 +47,28 @@ parent directories and only link selected children.
 
 ## Hosts
 
-The flake exposes two standalone Home Manager configurations. These names are
-the stable, primary entry points used in the daily workflow:
+The daily workflow differs by platform:
 
-```sh
-home-manager switch --flake ~/src/mark/tilde#linux
-home-manager switch --flake ~/src/mark/tilde#mac
-```
+- **Linux** uses standalone Home Manager:
+
+  ```sh
+  home-manager switch --flake ~/src/mark/tilde#linux
+  ```
+
+- **macOS** uses nix-darwin, which folds Home Manager in, so one command
+  activates both the system (Homebrew, etc.) and the user environment:
+
+  ```sh
+  darwin-rebuild switch --flake ~/src/mark/tilde#mac
+  ```
 
 Host-specific aliases are also provided and are identical to the primaries, so
-each machine can be referenced by name:
+each machine can be referenced by name (`#x1-carbon` == `#linux`,
+`#macbook-air` == `#mac`).
 
-```sh
-home-manager switch --flake ~/src/mark/tilde#x1-carbon    # == linux
-home-manager switch --flake ~/src/mark/tilde#macbook-air  # == mac
-```
+The `homeConfigurations.mac` / `#macbook-air` standalone entries are kept for
+flake evaluation and as a rollback path. Do not run them with
+`home-manager switch` while nix-darwin owns the Home Manager profile.
 
 The Linux host imports shared config plus Linux-only config. Some of this is
 still linked from the checkout (`hypr`, `makima`, `rtorrent`, `typora`, `mpv`),
@@ -79,7 +86,13 @@ while other pieces are now typed or store-backed:
 Shared store-backed static files (both hosts): `tmux/.tmux.conf` (the `.tmux`
 directory stays linked because TPM writes plugins into it).
 
-The macOS host imports shared config plus `macos`.
+The macOS host is a nix-darwin system (`nix/darwin/configuration.nix`) with
+Home Manager folded in. nix-darwin declares the Homebrew brews/casks/taps
+(replacing the old linked `macos/Brewfile`). Conservative defaults for the
+first migration: `nix.enable = false` (the upstream installer keeps managing
+the nix-daemon and `/etc/nix/nix.conf`), `homebrew.onActivation.cleanup =
+"none"` (no surprise uninstalls), and fish stays Homebrew-managed as the login
+shell.
 
 ## Quick Check
 

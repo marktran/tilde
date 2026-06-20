@@ -10,7 +10,15 @@ Home Manager across:
 
 - Nix is installed on both machines.
 - Flakes are enabled on both machines.
-- Standalone Home Manager works on both machines.
+- Linux uses standalone Home Manager.
+- macOS uses nix-darwin with Home Manager folded in (one `darwin-rebuild
+  switch` activates system + user env). Homebrew brews/casks/taps are declared
+  in `nix/darwin/configuration.nix`. Conservative defaults: `nix.enable =
+  false`, `homebrew.onActivation.cleanup = "none"`, fish stays Homebrew-managed
+  as the login shell.
+- A standalone macOS Home Manager config (`#mac` / `#macbook-air`) is kept for
+  evaluation and rollback only; do not `home-manager switch` it while
+  nix-darwin owns the profile.
 - Home Manager owns `$HOME` config links; Stow is no longer part of the normal
   home-directory workflow.
 - `system/` is still the Linux `/etc` exception and remains outside standalone
@@ -25,11 +33,12 @@ Home Manager across:
 
 ## Daily Workflow
 
-Use the machine-specific Home Manager config:
+Use the machine-specific config. Linux is standalone Home Manager; macOS is
+nix-darwin:
 
 ```sh
 home-manager switch --flake ~/src/mark/tilde#linux
-home-manager switch --flake ~/src/mark/tilde#mac
+darwin-rebuild switch --flake ~/src/mark/tilde#mac
 ```
 
 Run `home-manager switch` after changing this repo, pulling changes from another
@@ -192,8 +201,9 @@ a system tool later, that becomes an explicit, separate decision.
   more practical:
   - Linux system/desktop packages can remain in `packages.txt` and `aur.txt`
     until there is a clear reason to move them.
-  - macOS GUI/Homebrew-managed apps can remain in `macos/Brewfile` until
-    nix-darwin is introduced.
+  - macOS GUI/Homebrew-managed apps are now declared via nix-darwin's
+    `homebrew` module in `nix/darwin/configuration.nix` (brews/casks/taps).
+    Homebrew still installs them; nix-darwin just makes the list declarative.
 - [x] Start with portable CLI tools that are the same on Linux and macOS.
 - [x] Avoid changing the owner of critical tools like `git`, `gh`, shells, or
   desktop services until the tradeoff is explicit.
@@ -230,14 +240,26 @@ a system tool later, that becomes an explicit, separate decision.
 
 ### 6. macOS-Only Work
 
-- [ ] Keep `macos/Brewfile` linked until there is a clear nix-darwin plan.
-- [ ] Decide whether to add nix-darwin for:
-  - Homebrew orchestration
-  - macOS defaults
-  - Dock/Finder/keyboard settings
-  - launchd services
-- [ ] If nix-darwin is introduced, keep it separate from standalone Home
-  Manager at first and migrate one concern at a time.
+- [x] Introduce nix-darwin (`nix/darwin/configuration.nix`), with Home Manager
+  folded in via `home-manager.darwinModules.home-manager`.
+  - [x] Homebrew orchestration: brews/casks/taps declared from the real
+    installed inventory; old linked `macos/Brewfile` removed.
+  - [x] macOS activation tested (`darwin-rebuild switch --flake .#mac`):
+    `brew bundle` is a no-op, direnv resolves from `~/.nix-profile/bin`,
+    `darwin-rebuild` from `/run/current-system/sw/bin`, fish stays Homebrew.
+  - [ ] macOS defaults / Dock / Finder / keyboard: not set yet.
+  - [ ] launchd services: not migrated yet.
+- [x] Conservative first cut to limit blast radius:
+  - `nix.enable = false` (upstream installer keeps managing the nix-daemon and
+    `/etc/nix/nix.conf`).
+  - `homebrew.onActivation.cleanup = "none"` (no surprise uninstalls).
+  - `home-manager.useUserPackages = false` so `home.packages` stay in
+    `~/.nix-profile/bin`, matching Linux and the fish PATH design.
+  - fish stays Homebrew-managed as the login shell; nix-darwin does not touch
+    `/etc/shells`.
+- [ ] Next: consider tightening `homebrew.onActivation.cleanup` to
+  `"uninstall"` once the declared lists are confirmed to match the machine,
+  then optionally add `system.defaults`.
 
 ### 7. Improve Host Structure
 
