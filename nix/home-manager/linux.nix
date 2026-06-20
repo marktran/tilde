@@ -108,51 +108,51 @@
     };
 
     "hypr/autostart.conf" = {
-      source = ../../hypr/.config/hypr/autostart.conf;
+      source = ../files/hypr/autostart.conf;
       force = forceStowLinks;
     };
     "hypr/bindings.conf" = {
-      source = ../../hypr/.config/hypr/bindings.conf;
+      source = ../files/hypr/bindings.conf;
       force = forceStowLinks;
     };
     "hypr/hypridle.conf" = {
-      source = ../../hypr/.config/hypr/hypridle.conf;
+      source = ../files/hypr/hypridle.conf;
       force = forceStowLinks;
     };
     "hypr/hyprland.conf" = {
-      source = ../../hypr/.config/hypr/hyprland.conf;
+      source = ../files/hypr/hyprland.conf;
       force = forceStowLinks;
     };
     "hypr/hyprlock.conf" = {
-      source = ../../hypr/.config/hypr/hyprlock.conf;
+      source = ../files/hypr/hyprlock.conf;
       force = forceStowLinks;
     };
     "hypr/hyprsunset.conf" = {
-      source = ../../hypr/.config/hypr/hyprsunset.conf;
+      source = ../files/hypr/hyprsunset.conf;
       force = forceStowLinks;
     };
     "hypr/input.conf" = {
-      source = ../../hypr/.config/hypr/input.conf;
+      source = ../files/hypr/input.conf;
       force = forceStowLinks;
     };
     "hypr/looknfeel.conf" = {
-      source = ../../hypr/.config/hypr/looknfeel.conf;
+      source = ../files/hypr/looknfeel.conf;
       force = forceStowLinks;
     };
     "hypr/monitors.conf" = {
-      source = ../../hypr/.config/hypr/monitors.conf;
+      source = ../files/hypr/monitors.conf;
       force = forceStowLinks;
     };
     "hypr/windows.conf" = {
-      source = ../../hypr/.config/hypr/windows.conf;
+      source = ../files/hypr/windows.conf;
       force = forceStowLinks;
     };
     "hypr/xdph.conf" = {
-      source = ../../hypr/.config/hypr/xdph.conf;
+      source = ../files/hypr/xdph.conf;
       force = forceStowLinks;
     };
     "hypr/scripts/hypr-mpv-pip-size" = {
-      source = ../../hypr/.config/hypr/scripts/hypr-mpv-pip-size;
+      source = ../files/hypr/scripts/hypr-mpv-pip-size;
       force = forceStowLinks;
     };
 
