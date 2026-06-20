@@ -130,7 +130,7 @@ Prefer small, shared, low-risk modules first.
   - [x] Avoid breaking interactive startup; test by opening a new shell after
     activation.
     - [x] Linux activation tested.
-    - [ ] macOS activation pending re-test after inlining exports/colors.
+    - [x] macOS activation tested.
 
 - [ ] Tmux:
   - Evaluate `programs.tmux`.
@@ -150,6 +150,10 @@ Prefer small, shared, low-risk modules first.
 - [ ] Simple one-file configs:
   - Convert files only when generated Nix is easier to read than the original.
   - Good candidates are small static config files with no app-managed state.
+  - [x] Ghostty migrated to typed `programs.ghostty` (`package = null`, systemd
+    and shell integration disabled); linked `ghostty/config` removed.
+    - [x] Linux activation tested (`ghostty +validate-config` passes).
+    - [ ] macOS activation pending.
 
 ### 4. Package Management Strategy
 

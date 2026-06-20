@@ -93,6 +93,52 @@ in
     '';
   };
 
+  programs.ghostty = {
+    enable = true;
+    # ghostty itself is provided by Omarchy on Linux and Homebrew on macOS.
+    package = null;
+    systemd.enable = false;
+    enableBashIntegration = false;
+    enableFishIntegration = false;
+
+    settings = {
+      theme = "iTerm2 Pastel Dark Background";
+
+      font-family = "Berkeley Mono";
+      font-size = 10;
+
+      window-theme = "ghostty";
+      window-padding-x = 14;
+      window-padding-y = 14;
+      confirm-close-surface = false;
+      resize-overlay = "never";
+      gtk-toolbar-style = "flat";
+
+      cursor-style = "block";
+      cursor-style-blink = true;
+      mouse-hide-while-typing = true;
+
+      # all shell integration options must be passed together
+      shell-integration-features = "no-cursor,ssh-env";
+
+      keybind = [
+        "shift+insert=paste_from_clipboard"
+        "control+insert=copy_to_clipboard"
+        "super+control+shift+alt+arrow_down=resize_split:down,100"
+        "super+control+shift+alt+arrow_up=resize_split:up,100"
+        "super+control+shift+alt+arrow_left=resize_split:left,100"
+        "super+control+shift+alt+arrow_right=resize_split:right,100"
+      ];
+
+      # slow down mouse scrolling
+      mouse-scroll-multiplier = "0.95";
+
+      # fix general slowness on hyprland
+      # (https://github.com/ghostty-org/ghostty/discussions/3224)
+      async-backend = "epoll";
+    };
+  };
+
   programs.git = {
     enable = true;
     package = null;
@@ -210,10 +256,6 @@ in
         ".config/fish/fish_variables"
         ".config/fish/local.fish"
       ];
-    }
-    {
-      name = "ghostty";
-      entries = [ ".config/ghostty/config" ];
     }
     {
       name = "nvim";
