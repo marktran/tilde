@@ -48,11 +48,13 @@ else
 	sudo darwin-rebuild switch --flake $(FLAKE)$(HASH)$(HOST)
 endif
 
-build: ## Build the activation package (no changes applied)
+build: ## Build the activation package, leaving a ./result symlink to inspect
 	nix build $(ACTIVATION)
 
-dry-run: build ## Build, then dry-run activation, applies nothing (default)
-	DRY_RUN=1 VERBOSE=1 ./result/activate
+dry-run: ## Build, then dry-run activation, applies nothing (default)
+	# Build to the store path directly so no ./result symlink is left behind.
+	@out=$$(nix build --no-link --print-out-paths $(ACTIVATION)) \
+		&& DRY_RUN=1 VERBOSE=1 "$$out/activate"
 
 check: ## Sanity-check both hosts (build native, eval the other)
 	nix/check.sh
