@@ -548,10 +548,6 @@ in
     source = ../files/fish/completions/docker.fish;
     force = true;
   };
-  xdg.configFile."fish/completions/fzf_configure_bindings.fish" = {
-    source = ../files/fish/completions/fzf_configure_bindings.fish;
-    force = true;
-  };
   xdg.configFile."fish/completions/grok.fish" = {
     source = ../files/fish/completions/grok.fish;
     force = true;
