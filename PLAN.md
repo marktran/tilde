@@ -213,15 +213,16 @@ Do not blindly move every package into Nix.
 
 ### 7. Improve Host Structure
 
-- [ ] Decide whether `linux` and `mac` should stay as the public config names.
-- [ ] Optionally add host-specific aliases later:
-  - `x1-carbon`
-  - `macbook-air`
-- [ ] Keep common config in `nix/home-manager/common.nix`.
-- [ ] Keep OS-level home config in:
+- [x] Decide whether `linux` and `mac` should stay as the public config names.
+  Kept as the stable, primary names for the daily workflow.
+- [x] Optionally add host-specific aliases later:
+  - `x1-carbon` (identical to `linux`)
+  - `macbook-air` (identical to `mac`)
+- [x] Keep common config in `nix/home-manager/common.nix`.
+- [x] Keep OS-level home config in:
   - `nix/home-manager/linux.nix`
   - `nix/home-manager/darwin.nix`
-- [ ] Keep host-specific overrides in:
+- [x] Keep host-specific overrides in:
   - `nix/hosts/x1-carbon/home.nix`
   - `nix/hosts/macbook-air/home.nix`
 
@@ -236,7 +237,7 @@ Do not blindly move every package into Nix.
     TPM plugins) and `mpv/mpv.conf` + `mpv/input.conf` (Linux; `scripts/`,
     `bin/`, `script-opts/` stay linked).
   - [x] Linux activation tested (links resolve into `/nix/store`).
-  - [ ] macOS activation pending for the shared `tmux/.tmux.conf`.
+  - [x] macOS activation tested for the shared `tmux/.tmux.conf`.
 - [ ] Keep out-of-store links for mutable directories such as Emacs packages,
   agent skills, app state, and plugin trees unless there is a better owner.
 - [x] Consider adding a small check script that runs:

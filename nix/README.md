@@ -47,11 +47,20 @@ parent directories and only link selected children.
 
 ## Hosts
 
-The flake exposes two standalone Home Manager configurations:
+The flake exposes two standalone Home Manager configurations. These names are
+the stable, primary entry points used in the daily workflow:
 
 ```sh
 home-manager switch --flake ~/src/mark/tilde#linux
 home-manager switch --flake ~/src/mark/tilde#mac
+```
+
+Host-specific aliases are also provided and are identical to the primaries, so
+each machine can be referenced by name:
+
+```sh
+home-manager switch --flake ~/src/mark/tilde#x1-carbon    # == linux
+home-manager switch --flake ~/src/mark/tilde#macbook-air  # == mac
 ```
 
 The Linux host imports shared config plus Linux-only config. Some of this is

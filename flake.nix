@@ -31,27 +31,36 @@
             ./nix/home-manager/common.nix
           ] ++ modules;
         };
+
+      linuxConfig = mkHome {
+        system = "x86_64-linux";
+        homeDirectory = "/home/mark";
+        forceStowLinks = true;
+        modules = [
+          ./nix/home-manager/linux.nix
+          ./nix/hosts/x1-carbon/home.nix
+        ];
+      };
+
+      macConfig = mkHome {
+        system = "aarch64-darwin";
+        homeDirectory = "/Users/mark";
+        modules = [
+          ./nix/home-manager/darwin.nix
+          ./nix/hosts/macbook-air/home.nix
+        ];
+      };
     in
     {
       homeConfigurations = {
-        linux = mkHome {
-          system = "x86_64-linux";
-          homeDirectory = "/home/mark";
-          forceStowLinks = true;
-          modules = [
-            ./nix/home-manager/linux.nix
-            ./nix/hosts/x1-carbon/home.nix
-          ];
-        };
+        # Primary, stable public names used in the daily workflow.
+        linux = linuxConfig;
+        mac = macConfig;
 
-        mac = mkHome {
-          system = "aarch64-darwin";
-          homeDirectory = "/Users/mark";
-          modules = [
-            ./nix/home-manager/darwin.nix
-            ./nix/hosts/macbook-air/home.nix
-          ];
-        };
+        # Host-specific aliases. Identical to linux/mac; provided so the
+        # actual machines can be referenced by name.
+        x1-carbon = linuxConfig;
+        macbook-air = macConfig;
       };
     };
 }
