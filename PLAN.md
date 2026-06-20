@@ -252,7 +252,11 @@ a system tool later, that becomes an explicit, separate decision.
   - [x] macOS activation tested (`darwin-rebuild switch --flake .#mac`):
     `brew bundle` is a no-op, direnv resolves from `~/.nix-profile/bin`,
     `darwin-rebuild` from `/run/current-system/sw/bin`, fish stays Homebrew.
-  - [ ] macOS defaults / Dock / Finder / keyboard: not set yet.
+  - [x] macOS defaults / Dock / Finder / keyboard / trackpad: declared via
+    `system.defaults`, capturing the machine's current intentional settings
+    (interface style, key repeat, Dock autohide/tilesize/recents, Finder view
+    and desktop icons, trackpad tap/right-click). Values mirror current state,
+    so activation was a no-op baseline. Tested clean.
   - [ ] launchd services: not migrated yet.
 - [x] Conservative first cut to limit blast radius:
   - `nix.enable = false` (upstream installer keeps managing the nix-daemon and
@@ -276,7 +280,8 @@ a system tool later, that becomes an explicit, separate decision.
     installed (the real `sdl2` keg, used by mpv/ffmpeg/openai-whisper, is
     retained), so it is a harmless no-op. Resolve later by migrating the keg
     (e.g. reinstall mpv/ffmpeg/openai-whisper).
-- [ ] Next: optionally add `system.defaults` (Dock/Finder/keyboard).
+- [ ] Next: optionally migrate launchd user services, or expand
+  `system.defaults` coverage as preferences change.
 
 ### 7. Improve Host Structure
 
