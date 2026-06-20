@@ -235,12 +235,15 @@ Do not blindly move every package into Nix.
   - [x] Linux activation tested (links resolve into `/nix/store`).
 - [ ] Keep out-of-store links for mutable directories such as Emacs packages,
   agent skills, app state, and plugin trees unless there is a better owner.
-- [ ] Consider adding a small check script that runs:
+- [x] Consider adding a small check script that runs:
 
   ```sh
   nix build .#homeConfigurations.linux.activationPackage
   nix eval .#homeConfigurations.linux.config.home.stateVersion
   ```
+
+  - [x] Added `nix/check.sh`: builds the native host's activation package,
+    eval-checks the other host, and prints `stateVersion` for both.
 
 - [ ] Consider a CI check later, but only after the flake can evaluate cleanly
   for both Linux and macOS in the chosen environment.

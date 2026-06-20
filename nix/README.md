@@ -54,19 +54,33 @@ home-manager switch --flake ~/src/mark/tilde#linux
 home-manager switch --flake ~/src/mark/tilde#mac
 ```
 
-The Linux host imports shared config plus Linux-only packages:
+The Linux host imports shared config plus Linux-only config. Some of this is
+still linked from the checkout (`hypr`, `makima`, `rtorrent`, `typora`, `mpv`),
+while other pieces are now typed or store-backed:
 
-- `hypr`
-- `makima`
-- `voxtype`
-- `elephant`
-- `wireplumber`
-- `xcompose`
-- `rtorrent`
-- `typora`
-- `mpv`
+- `programs.ghostty` Linux-only settings (keybinds, `gtk-toolbar-style`,
+  `async-backend`).
+- `systemd.user.services.voxtype` (typed user service; binary stays
+  system-installed).
+- Store-backed static files: `.XCompose`, `voxtype/config.toml`,
+  `elephant/websearch.toml`, `elephant/google-favicon.png`, and the WirePlumber
+  Shure MV7 override.
 
 The macOS host imports shared config plus `macos`.
+
+## Quick Check
+
+Before switching, sanity-check the flake with the repo-local script:
+
+```sh
+nix/check.sh        # both hosts (default)
+nix/check.sh linux  # only linux
+nix/check.sh mac    # only mac
+```
+
+It builds the activation package for the *native* host and evaluates the other
+host (eval-only, so it catches evaluation/type errors without needing a
+cross-platform builder), then prints `home.stateVersion` for each.
 
 ## Step 1: Install Nix On Omarchy
 
