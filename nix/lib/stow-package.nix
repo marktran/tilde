@@ -5,11 +5,15 @@ let
     let
       sourcePath = if builtins.isString entry then entry else entry.source;
       targetPath = if builtins.isString entry then entry else entry.target;
+      forceLink =
+        if builtins.isAttrs entry && builtins.hasAttr "force" entry
+        then entry.force
+        else forceStowLinks;
     in
     {
       name = targetPath;
       value = {
-        force = forceStowLinks;
+        force = forceLink;
         source =
           config.lib.file.mkOutOfStoreSymlink
             "${checkoutPath}/${packageName}/${sourcePath}";

@@ -54,13 +54,23 @@ in
     {
       name = "claude";
       entries = [
-        ".claude/settings.json"
+        {
+          source = ".claude/settings.json";
+          target = ".claude/settings.json";
+          force = true;
+        }
         ".claude/commands"
       ];
     }
     {
       name = "agents";
-      entries = [ ".agents/skills" ];
+      entries = [
+        {
+          source = ".agents/skills";
+          target = ".agents/skills";
+          force = true;
+        }
+      ];
     }
     {
       name = "pi";
