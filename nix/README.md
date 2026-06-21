@@ -285,12 +285,56 @@ events are symlinked; `etc/pam.d/sudo` is a reviewed manual step. See
 Those files can eventually move into NixOS modules if the ThinkPad moves to
 NixOS. Until then, keep them explicit and privileged.
 
-## Migration Order After the Bridge Works
+## Design Notes
 
-1. Keep out-of-store links for large mutable app directories.
-2. Move simple static files to store-backed `home.file` links when you want more
-   reproducibility.
-3. Move app configs to typed Home Manager modules only when the module improves
-   clarity.
-4. Add package management gradually through `home.packages`.
-5. Add nix-darwin later for macOS system settings and Homebrew orchestration.
+Durable decisions worth keeping in mind when changing this config.
+
+### PATH ordering: Nix profile pinned last
+
+Native PATH ordering is asymmetric:
+
+- **Linux:** `~/.nix-profile/bin` is already last, so Nix tools cannot shadow
+  `/usr/bin` (pacman) or Homebrew.
+- **macOS:** `~/.nix-profile/bin` comes *before* `/opt/homebrew/bin`, so Nix
+  tools would shadow Homebrew.
+
+To make this consistent and safe, Fish pins `~/.nix-profile/bin` at the
+**lowest** PATH priority on both machines, in `programs.fish.shellInitLast`
+(after typed shell integrations like mise, which rewrite PATH). The Home
+Manager profile (which also contains `fish`, `man`, etc.) therefore never
+shadows system tools, and `home.packages` is purely additive -- it only
+provides tools the OS lacks (e.g. `direnv`). Overriding a system tool later is
+then an explicit, separate decision.
+
+The `Makefile` separately appends the Nix profile locations to PATH so `nix` /
+`home-manager` / `darwin-rebuild` are found in its non-interactive recipe
+shell (also appended, never shadowing system tools).
+
+### macOS Homebrew quirks
+
+- **Tap-trust is machine-local** and not managed by nix-darwin. With
+  `homebrew.onActivation.cleanup = "uninstall"`, the declared third-party taps
+  must be trusted once per machine or `darwin-rebuild switch` fails:
+  `brew trust d12frosted/emacs-plus dopplerhq/cli oven-sh/bun`.
+- **`sdl2` -> `sdl2-compat` cosmetic churn:** each switch may print
+  "Uninstalled 1 formula" because Homebrew renamed `sdl2` but the keg is still
+  installed under the old name (`Cellar/sdl2`, used by mpv/ffmpeg/whisper).
+  Cleanup mis-reports removing it, but it persists and everything keeps
+  working. Clear the noise with `brew upgrade sdl2-compat` (a one-time keg
+  rename migration) if it bothers you.
+
+### macOS Touch ID for sudo
+
+`security.pam.services.sudo_local.touchIdAuth = true` plus `reattach = true`
+(pam_reattach) so the prompt also works inside tmux/screen. `/etc/pam.d/sudo`
+already includes `sudo_local`.
+
+### Open follow-ups
+
+- [ ] macOS: confirm `programs.tmux` after a `darwin-rebuild switch` (Linux is
+  verified; the Mac just needs a tmux launch).
+
+---
+
+The full historical GNU Stow -> Nix migration plan lived in `PLAN.md`; the
+migration is complete, so it was removed (see git history for the record).
