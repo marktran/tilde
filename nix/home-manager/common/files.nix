@@ -13,17 +13,11 @@
     # fish owns them natively as real files under ~/.config/fish, kept out of
     # this repo. config.fish sources local.fish by path if it exists.
 
-    # ~/bin scripts (static, store-backed).
+    # Cross-platform git SSH signing wrapper (branches on darwin/linux).
+    # Linux-only ~/bin scripts (spotify-control, toggle-color-scheme) live in
+    # linux.nix.
     "bin/op-ssh-sign-wrapper" = {
       source = ../../files/bin/op-ssh-sign-wrapper;
-      force = true;
-    };
-    "bin/spotify-control" = {
-      source = ../../files/bin/spotify-control;
-      force = true;
-    };
-    "bin/toggle-color-scheme" = {
-      source = ../../files/bin/toggle-color-scheme;
       force = true;
     };
 

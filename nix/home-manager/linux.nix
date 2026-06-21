@@ -191,6 +191,18 @@
     force = forceLinks;
   };
 
+  # Linux/Omarchy-only ~/bin scripts: spotify-control uses swayosd/keyd;
+  # toggle-color-scheme uses gsettings/omarchy and is run by the ThinkPad
+  # acpid Mode-key event.
+  home.file."bin/spotify-control" = {
+    source = ../files/bin/spotify-control;
+    force = true;
+  };
+  home.file."bin/toggle-color-scheme" = {
+    source = ../files/bin/toggle-color-scheme;
+    force = true;
+  };
+
   # Linux-only agent skill provided by Omarchy. Layered into the shared skill
   # dirs alongside the per-skill links from common.nix. Points directly at the
   # Omarchy-managed skill, so it is absent on macOS. force overwrites any
