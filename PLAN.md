@@ -1,6 +1,13 @@
 # Nix/Home Manager Migration Plan
 
-This is the working plan for finishing the migration from GNU Stow to Nix +
+> **Status: migration complete.** GNU Stow is fully retired. All `$HOME` config
+> is Home Manager (`nix/files/` + the `emacs.d` submodule); Linux/Omarchy host
+> provisioning (packages, `/etc`) lives in `linux/` outside Nix; everything is
+> fronted by the `Makefile`. The remaining unchecked boxes below are either
+> ongoing principles or deliberately deferred/optional future work, not pending
+> tasks. Kept as a historical record.
+
+This was the working plan for the migration from GNU Stow to Nix +
 Home Manager across:
 
 - `linux`: ThinkPad X1 Carbon Gen 13, Omarchy Linux
@@ -125,7 +132,9 @@ If the dry run is clean, activate:
   ```
 
 - [x] For each migrated package, remove its entries from the old Stow bridge.
-- [ ] Prefer typed Home Manager modules when they make the config clearer.
+- [~] Ongoing principle: prefer typed Home Manager modules when they make the
+  config clearer (done so far: git, fish, tmux, ghostty, neovim, direnv,
+  zoxide, mise).
 - [x] Keep file links for large mutable app configs where typed modules would
   add noise.
 
@@ -176,7 +185,7 @@ Prefer small, shared, low-risk modules first.
   - [x] Linux activation tested.
   - [x] macOS activation tested.
 
-- [ ] Simple one-file configs:
+- [x] Simple one-file configs:
   - Convert files only when generated Nix is easier to read than the original.
   - Good candidates are small static config files with no app-managed state.
   - [x] Ghostty migrated to typed `programs.ghostty` (`package = null`, systemd
@@ -267,7 +276,8 @@ a system tool later, that becomes an explicit, separate decision.
 - [x] Keep Omarchy/Hyprland config under `linux.nix`.
   - [x] Static `hypr/*.conf` files and helper scripts are store-backed via
     `xdg.configFile`.
-- [ ] Keep Linux-only apps out of common config:
+- [x] Keep Linux-only apps out of common config (all live in `linux.nix`, not
+  `common.nix`):
   - Typora
   - mpv
   - Hyprland
@@ -287,8 +297,8 @@ a system tool later, that becomes an explicit, separate decision.
   `make system` / inspect with `make system-diff`. This removed the last GNU
   Stow usage in the repo.
 
-- [ ] Longer-term option: move Linux system config to NixOS only if the laptop
-  moves from Omarchy/Arch to NixOS.
+- [ ] (Future / conditional) Move Linux system config to NixOS only if the
+  laptop moves from Omarchy/Arch to NixOS.
 
 ### 6. macOS-Only Work
 
@@ -339,7 +349,7 @@ a system tool later, that becomes an explicit, separate decision.
     installed (the real `sdl2` keg, used by mpv/ffmpeg/openai-whisper, is
     retained), so it is a harmless no-op. Resolve later by migrating the keg
     (e.g. reinstall mpv/ffmpeg/openai-whisper).
-- [ ] Next: optionally migrate launchd user services, or expand
+- [ ] (Optional / as-needed) Migrate launchd user services, or expand
   `system.defaults` coverage as preferences change.
 
 ### 7. Improve Host Structure
@@ -378,8 +388,9 @@ a system tool later, that becomes an explicit, separate decision.
   - [x] Linux activation tested (links resolve into `/nix/store`).
   - [x] macOS activation tested for the old shared `tmux/.tmux.conf` link
     before the later `programs.tmux` migration.
-- [ ] Keep out-of-store links for mutable directories such as Emacs packages,
-  agent skills, app state, and plugin trees unless there is a better owner.
+- [~] Ongoing principle: keep out-of-store links for mutable directories such
+  as Emacs packages, agent skills, app state, and plugin trees unless there is
+  a better owner.
   Claude settings/commands and other static helpers are now store-backed; keep
   app-generated state outside this repo. Remaining intentional bridge links are
   mostly mutable/plugin-like: `.emacs.d`, Fish `fish_variables`/`local.fish`,
@@ -398,8 +409,8 @@ a system tool later, that becomes an explicit, separate decision.
   - [x] Added `nix/check.sh`: builds the native host's activation package,
     eval-checks the other host, and prints `stateVersion` for both.
 
-- [ ] Consider a CI check later, but only after the flake can evaluate cleanly
-  for both Linux and macOS in the chosen environment.
+- [ ] (Optional / future) Add a CI check, but only after the flake can evaluate
+  cleanly for both Linux and macOS in the chosen environment.
 
 ## Recommended Migration Sequence
 
