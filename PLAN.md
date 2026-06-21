@@ -26,7 +26,7 @@ Home Manager across:
   nix-darwin owns the profile.
 - Home Manager owns `$HOME` config links; Stow is no longer part of the normal
   home-directory workflow.
-- `system/` is still the Linux `/etc` exception and remains outside standalone
+- `linux/etc/` is the Linux `/etc` exception and remains outside standalone
   Home Manager.
 - `programs.git` is migrated to typed Home Manager config.
 - Git config is generated at `~/.config/git/config`.
@@ -80,7 +80,7 @@ If the dry run is clean, activate:
   after auditing or intentionally deleting the conflicting file.
 - Linux bridge links currently use `force = true` because the original Stow
   symlinks were audited on the ThinkPad.
-- Keep privileged Linux `/etc` files explicit. `system/` is not managed by
+- Keep privileged Linux `/etc` files explicit. `linux/etc/` is not managed by
   standalone Home Manager.
 - Commit logical steps before moving to the next migration stage.
 
@@ -281,8 +281,8 @@ a system tool later, that becomes an explicit, separate decision.
     binary stays system-installed (`/usr/lib/voxtype`). Linked unit file
     removed.
   - [x] Linux activation tested (service enabled, active, restarts cleanly).
-- [x] Document the remaining `system/` workflow for `/etc` clearly. Replaced
-  GNU Stow with `system/install.sh` (real files for early-boot/security,
+- [x] Document the remaining `linux/etc/` workflow for `/etc` clearly. Replaced
+  GNU Stow with `linux/install.sh` (real files for early-boot/security,
   symlinks for acpid, `pam.d/sudo` a reviewed manual step). Deploy with
   `make system` / inspect with `make system-diff`. This removed the last GNU
   Stow usage in the repo.

@@ -11,8 +11,8 @@
 # lock out sudo); it is a reviewed manual step, surfaced below.
 #
 # Usage:
-#   sudo system/install.sh           # deploy (real files + acpid symlinks)
-#   system/install.sh --check        # dry run: show changes, write nothing
+#   sudo linux/install.sh           # deploy (real files + acpid symlinks)
+#   linux/install.sh --check        # dry run: show changes, write nothing
 #   (or: make system / make system-diff)
 set -euo pipefail
 

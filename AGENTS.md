@@ -27,10 +27,11 @@
   dotfiles. Check there first before assuming a config is missing or editing a
   file under `$HOME`. Shared settings live in `common.nix`; platform-specific
   settings live in `darwin.nix` (macOS) and `linux.nix`.
-- `system/` contains privileged Linux `/etc` files and remains outside
-  standalone Home Manager. Deploy with `make system` (wraps
-  `sudo system/install.sh`); `make system-diff` shows drift. GNU Stow is no
-  longer used anywhere in this repo.
+- `linux/` holds Linux/Omarchy host provisioning kept outside Nix: native
+  package inventories (`packages.txt`/`aur.txt`, via `make pkgs`) and
+  privileged `/etc` files (`linux/etc/`, deployed with `make system` which
+  wraps `sudo linux/install.sh`; `make system-diff` shows drift). GNU Stow is
+  no longer used anywhere in this repo.
 - No platform sub-namespaces — the flake selects shared, Linux-only, and macOS-only
   modules.
 - `linux/packages.txt` (official-repo) and `linux/aur.txt` (AUR) are Linux-only

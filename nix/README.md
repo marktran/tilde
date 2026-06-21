@@ -258,8 +258,8 @@ home-manager switch --flake ~/src/mark/tilde#linux
 Do not run `stow -D` after Home Manager owns the links; Stow can remove links
 that Home Manager just created because both point to the same checkout files.
 At that point "no Stow" means stop using Stow for `$HOME` and let Home Manager
-own future changes. The only remaining Stow workflow is the privileged
-`system/` package for Linux `/etc` files.
+own future changes. GNU Stow is no longer used anywhere; privileged Linux
+`/etc` files are deployed by `linux/install.sh` (see below).
 
 ## Step 6: Roll Back If Needed
 
@@ -270,17 +270,17 @@ home-manager switch --rollback
 
 ## System-Level Linux Files
 
-The `system/` files target `/etc` and remain outside Home Manager on
-Omarchy/Arch. Deploy them with the install script (no longer GNU Stow):
+Linux `/etc` files live in `linux/etc/` and remain outside Home Manager on
+Omarchy/Arch. Deploy them with the install script:
 
 ```sh
-sudo system/install.sh      # deploy (or: make system)
-system/install.sh --check   # dry run / show drift (or: make system-diff)
+sudo linux/install.sh      # deploy (or: make system)
+linux/install.sh --check   # dry run / show drift (or: make system-diff)
 ```
 
 Early-boot and security files are installed as real copies; runtime acpid
 events are symlinked; `etc/pam.d/sudo` is a reviewed manual step. See
-`system/README.md`.
+`linux/README.md`.
 
 Those files can eventually move into NixOS modules if the ThinkPad moves to
 NixOS. Until then, keep them explicit and privileged.

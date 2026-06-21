@@ -1,12 +1,38 @@
-# system
+# linux
 
-System-level (`/etc`) files for this machine (Lenovo ThinkPad X1 Carbon).
-These target the filesystem **root**, which standalone Home Manager cannot own
-on Omarchy/Arch, so they are deployed by `system/install.sh`:
+Linux/Omarchy host provisioning that Home Manager does **not** own. Home
+Manager manages `$HOME`; this directory covers the rest of an Arch/Omarchy
+machine (this one: a Lenovo ThinkPad X1 Carbon) and stays outside Nix:
+
+- **Packages** — native `pacman` / AUR inventories (`packages.txt`, `aur.txt`).
+- **System `/etc` files** — privileged config under `etc/`, deployed by
+  `install.sh` (needs `sudo`).
+
+The `Makefile` wraps both with convenience targets.
+
+## Packages
+
+Curated bootstrap inventories (not full snapshots):
 
 ```sh
-sudo system/install.sh      # deploy (or: make system)
-system/install.sh --check   # dry run, show drift (or: make system-diff)
+make pkgs        # install official-repo (pacman) + AUR packages
+make pkgs-diff   # list explicitly-installed packages not yet curated here
+```
+
+- `packages.txt` — official-repo packages
+  (`sudo pacman -S --needed - < linux/packages.txt`).
+- `aur.txt` — AUR packages (`paru -S --needed - < linux/aur.txt`).
+
+Each file's header comments document how to regenerate and diff it.
+
+## System `/etc` files
+
+These target the filesystem **root**, which standalone Home Manager cannot own
+on Omarchy/Arch, so they are deployed by `install.sh`:
+
+```sh
+sudo linux/install.sh      # deploy (or: make system)
+linux/install.sh --check   # dry run, show drift (or: make system-diff)
 ```
 
 The script deploys each file by the right mechanism for when it is read:
@@ -20,10 +46,9 @@ The script deploys each file by the right mechanism for when it is read:
   overwrites it (a broken PAM config can lock out sudo); it prints a diff +
   apply command when it drifts.
 
-This replaced the old `sudo stow -t / system` workflow; GNU Stow is no longer
-used anywhere in this repo.
+GNU Stow is no longer used anywhere in this repo.
 
-## Contents
+### Contents
 
 ThinkPad F8 / "Mode" key → light/dark toggle (handled in userspace via acpid):
 
@@ -45,7 +70,7 @@ Other files:
 - `etc/systemd/system/makima.service.d/override.conf` — runs the `makima` input
   remapper as user `mark` / group `input` with `MAKIMA_CONFIG`.
 
-## Notes
+### Notes
 
 - `install.sh` is idempotent: re-running only changes files that drifted, and
   reminds you to `systemctl restart acpid` / `daemon-reload` when relevant.

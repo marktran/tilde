@@ -15,9 +15,11 @@ and activation steps.
 - `nix/files/` holds repo-managed config files that Home Manager links into
   `$HOME` (e.g. `nix/files/fish`, `nix/files/hypr`, `nix/files/mpv`,
   `nix/files/agents/skills`).
-- `emacs/` still mirrors its target path as a live out-of-store tree.
-- `system/` contains privileged Linux `/etc` files and is not managed by Home
-  Manager.
+- `emacs.d/` is the Emacs config submodule, linked to `~/.emacs.d` as a live
+  out-of-store tree.
+- `linux/` holds Linux/Omarchy host provisioning kept outside Nix: native
+  package inventories (`packages.txt`, `aur.txt`) and privileged `/etc` files
+  (`etc/`, deployed by `install.sh`). See `linux/README.md`.
 
 ## Usage
 
@@ -56,8 +58,9 @@ Home Manager owns the home-directory links. Do not use `stow` for `$HOME`.
 - `linux/aur.txt` — AUR package inventory (install with `make pkgs`, or
   `paru -S --needed - < linux/aur.txt`).
 - `make pkgs-diff` lists explicitly-installed packages not yet curated into
-  those files. Both are Linux-only bootstrapping lists, not Stow packages.
-- `system/` has its own `README.md` describing its `/etc` files. These are
-  privileged Linux system files and remain outside standalone Home Manager.
+  those files.
+- Privileged Linux `/etc` files live in `linux/etc/` and are deployed with
+  `make system` (wraps `sudo linux/install.sh`); `make system-diff` shows
+  drift. See `linux/README.md`. These remain outside Home Manager.
 - Submodule: `emacs.d` (the Emacs config repo, linked to `~/.emacs.d`).
   Run `git submodule update --init --recursive` on a fresh clone.

@@ -104,14 +104,14 @@ endif
 
 system: ## (Linux) Deploy privileged /etc files (needs sudo)
 ifeq ($(PLATFORM),linux)
-	sudo system/install.sh
+	sudo linux/install.sh
 else
 	@echo "system: Linux-only"
 endif
 
 system-diff: ## (Linux) Show what make system would change in /etc (no writes)
 ifeq ($(PLATFORM),linux)
-	@system/install.sh --check
+	@linux/install.sh --check
 else
 	@echo "system-diff: Linux-only"
 endif
