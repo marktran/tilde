@@ -53,7 +53,10 @@ install_real() {
     echo "would install (real file): $dst"
     return 0
   fi
-  install -D -m 644 "$src" "$dst"
+  # Use mkdir -p (tolerates an existing dir or symlink-to-dir) rather than
+  # install -D, whose internal mkdir errors "File exists" on a symlinked parent.
+  mkdir -p "$(dirname "$dst")"
+  install -m 644 "$src" "$dst"
   echo "installed (real file): $dst"
 }
 
