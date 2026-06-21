@@ -53,9 +53,14 @@ install_real() {
     echo "would install (real file): $dst"
     return 0
   fi
-  # Use mkdir -p (tolerates an existing dir or symlink-to-dir) rather than
-  # install -D, whose internal mkdir errors "File exists" on a symlinked parent.
-  mkdir -p "$(dirname "$dst")"
+  # Clear stale Stow-era symlinks on the path: `stow` folded whole dirs (e.g.
+  # /etc/systemd/system/makima.service.d) and files into symlinks into the
+  # checkout, which now dangle. Replace them with a real dir + real file.
+  local dir
+  dir="$(dirname "$dst")"
+  [ -L "$dir" ] && rm -f "$dir"
+  [ -L "$dst" ] && rm -f "$dst"
+  mkdir -p "$dir"
   install -m 644 "$src" "$dst"
   echo "installed (real file): $dst"
 }
@@ -72,7 +77,10 @@ link_file() {
     echo "would symlink: $dst -> $src"
     return 0
   fi
-  mkdir -p "$(dirname "$dst")"
+  local dir
+  dir="$(dirname "$dst")"
+  [ -L "$dir" ] && rm -f "$dir"
+  mkdir -p "$dir"
   ln -sfn "$src" "$dst"
   echo "symlinked: $dst -> $src"
 }
