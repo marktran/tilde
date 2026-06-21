@@ -104,8 +104,9 @@ fi
 
 if [ "$changed" -eq 1 ]; then
   echo
-  echo "Done. If acpid rules changed:   sudo systemctl restart acpid"
-  echo "      If the makima override changed: sudo systemctl daemon-reload && sudo systemctl restart makima"
+  echo "Done. Reload any affected service that changed:"
+  echo "  acpid    sudo systemctl restart acpid"
+  echo "  makima   sudo systemctl daemon-reload && sudo systemctl restart makima"
 else
   echo "/etc already up to date; nothing to do."
 fi
