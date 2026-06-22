@@ -48,5 +48,6 @@
     scowl
     sesh
     tree
+    zig_0_15
   ];
 }
