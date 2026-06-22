@@ -45,6 +45,10 @@ in
       source = ../../files/pi/agent/presets.json;
       force = true;
     };
+    ".pi/agent/settings.default.json" = {
+      source = ../../files/pi/agent/settings.default.json;
+      force = true;
+    };
     ".pi/agent/prompts" = {
       source = ../../files/pi/agent/prompts;
       force = true;
@@ -54,11 +58,10 @@ in
       force = true;
     };
 
-    # pi: mutable/app-written state (live-editable bridge links).
-    ".pi/agent/settings.json" = {
-      source = outOfStore "nix/files/pi/agent/settings.json";
-      force = forceLinks;
-    };
+    # pi: mutable/app-written resources (live-editable bridge links).
+    # settings.json is intentionally not managed: Pi rewrites model defaults,
+    # thinking level, changelog state, etc. Keep settings.default.json above as
+    # a repo-tracked bootstrap reference and let the live settings file flap.
     ".pi/agent/extensions" = {
       source = outOfStore "nix/files/pi/agent/extensions";
       force = forceLinks;
@@ -71,4 +74,14 @@ in
   # Shared agent skills, layered into both pi's and Claude Code's skill dirs.
   // agentSkillLinks ".agents/skills"
   // agentSkillLinks ".claude/skills";
+
+  home.activation.initPiSettings = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    settings="$HOME/.pi/agent/settings.json"
+    defaults="$HOME/.pi/agent/settings.default.json"
+    if [ ! -e "$settings" ] && [ -e "$defaults" ]; then
+      $DRY_RUN_CMD cp "$defaults" "$settings"
+      $DRY_RUN_CMD chmod u+w "$settings"
+    fi
+  '';
+
 }
