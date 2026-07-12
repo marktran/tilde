@@ -77,8 +77,8 @@ The first `notmuch-sync` downloads the complete Gmail mailbox. It may take a
 while and use substantial disk space. Running it manually is useful for seeing
 initial progress.
 
-Restart Emacs after the initial installation, then use `SPC m` to open
-Notmuch.
+Restart Emacs after the initial installation, then use `SPC m` to open the
+Notmuch Inbox directly. Run `M-x notmuch` when the Dashboard is needed.
 
 ### Routine synchronization
 
