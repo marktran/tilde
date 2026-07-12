@@ -92,8 +92,12 @@ To synchronize immediately:
 - Press `G` in a Notmuch buffer, which runs `notmuch-sync` and refreshes the
   current view.
 
-Tag changes made in Emacs remain local until synchronization. Lieer then pushes
-supported Notmuch tags to Gmail labels and pulls remote changes.
+Tag changes made in Emacs normally remain local until synchronization. Archive
+(`e`), Trash (`#`), Spam (`!`), and Starred (`s`) actions each request a
+debounced background sync immediately; rapid operations are combined, and
+another sync is queued when one is already running. Lieer pushes the local
+tags to Gmail first and then pulls remote changes. If the systemd timer is
+using the repository, Emacs retries after its lock is released.
 
 Gmail's system labels map to these Notmuch tags:
 
@@ -107,9 +111,11 @@ Gmail's system labels map to these Notmuch tags:
 | `SPAM` | `spam` |
 | `TRASH` | `trash` |
 
-Archiving removes `inbox`. Deleting from the configured Notmuch tag menu adds
-`trash` rather than Notmuch's local-only `deleted` tag, allowing the operation
-to propagate to Gmail.
+Archiving removes `inbox` and is bound only to `e`. Deleting from the
+configured Notmuch tag menu adds
+`trash` rather than Notmuch's internal `deleted` tag, allowing the operation to
+propagate to Gmail. Lieer ignores `deleted` so superseded Notmuch drafts do not
+create a non-standard Gmail label.
 
 ### Sending mail
 

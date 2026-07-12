@@ -95,6 +95,9 @@ in
       notmuch.enable = true;
       lieer = {
         enable = true;
+        # Notmuch uses `deleted' internally for superseded drafts. Do not
+        # create a non-standard Gmail label for that implementation tag.
+        settings.ignore_tags = [ "deleted" ];
         sync = {
           enable = true;
           frequency = "*:0/5";
