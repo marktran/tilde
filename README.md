@@ -51,6 +51,11 @@ profile. Edit files here, then switch. Do not edit generated symlinks in
 
 Home Manager owns the home-directory links. Do not use `stow` for `$HOME`.
 
+## Gmail and Notmuch
+
+See [`docs/EMACS.md`](docs/EMACS.md) for the Linux Gmail, Lieer, Notmuch, and
+Emacs setup.
+
 ## Notes
 
 - `linux/packages.txt` — official-repo package inventory (install with

@@ -1,6 +1,8 @@
-{ config, homeDirectory, forceLinks, ... }:
+{ config, lib, homeDirectory, forceLinks, ... }:
 
 {
+  imports = [ ./linux-mail.nix ];
+
   # Linux/Hyprland-specific Ghostty settings. Shared settings are in common.nix.
   programs.ghostty.settings = {
     gtk-toolbar-style = "flat";
@@ -41,6 +43,12 @@
 
     Install.WantedBy = [ "graphical-session.target" ];
   };
+
+  # Skip scheduled Gmail syncs until the one-time OAuth flow has written its
+  # machine-local credentials.
+  services.lieer.enable = true;
+  systemd.user.services.lieer-gmail.Unit.ConditionPathExists = lib.mkForce
+    "${homeDirectory}/Maildir/gmail/.credentials.gmailieer.json";
 
   # Store-backed copies of genuinely static, non-app-edited configs.
   # Editing these requires a rebuild rather than a live checkout edit, which
