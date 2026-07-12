@@ -69,11 +69,11 @@ function parseArgs(argv) {
 
 function usage() {
 	return `Usage:
-  node search.mjs "<query>" [--purpose "<why>"] [--provider openai-codex|anthropic] [--model <id>] [--json]
+  node search.mjs "<query>" [--purpose "<why>"] [--provider openai|anthropic] [--model <id>] [--json]
 
 Examples:
   node search.mjs "latest python release" --purpose "update dependency notes"
-  node search.mjs "HTTP/3 browser support 2026" --provider openai-codex
+  node search.mjs "HTTP/3 browser support 2026" --provider openai
   node search.mjs "vite 7 breaking changes" --json`;
 }
 
@@ -119,7 +119,7 @@ function normalizeProvider(provider) {
 	if (!provider) return undefined;
 	const p = String(provider).toLowerCase().trim();
 	if (p.includes("anthropic") || p.includes("claude")) return "anthropic";
-	if (p.includes("codex") || p === "openai" || p.startsWith("openai")) return "openai-codex";
+	if (p.includes("openai") || p.includes("codex")) return "openai";
 	return undefined;
 }
 
@@ -128,24 +128,12 @@ function pickProvider(argProvider, settings, auth) {
 	if (forced) return forced;
 
 	const fromSettings = normalizeProvider(settings?.defaultProvider);
-	if (fromSettings) return fromSettings;
+	if (fromSettings && auth?.[fromSettings]) return fromSettings;
 
-	if (auth?.["openai-codex"]) return "openai-codex";
+	if (auth?.openai) return "openai";
 	if (auth?.anthropic) return "anthropic";
 
-	throw new Error("Could not determine provider. Pass --provider openai-codex|anthropic");
-}
-
-function decodeJwtAccountId(jwt) {
-	if (!jwt || typeof jwt !== "string") return undefined;
-	try {
-		const parts = jwt.split(".");
-		if (parts.length !== 3) return undefined;
-		const payload = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf8"));
-		return payload?.["https://api.openai.com/auth"]?.chatgpt_account_id;
-	} catch {
-		return undefined;
-	}
+	throw new Error("Could not determine provider. Pass --provider openai|anthropic");
 }
 
 function findPiExecutable() {
@@ -295,38 +283,19 @@ function getCachedOAuthAccess(entry, now = Date.now()) {
 
 	if (now + 30_000 >= expiresAt) return undefined;
 
-	return {
-		apiKey,
-		accountId: entry.accountId,
-	};
+	return { apiKey };
 }
 
-function pickFastModel(provider, requestedModel, piAi) {
+function pickModel(provider, requestedModel, piAi) {
+	const defaults =
+		provider === "openai"
+			? { id: "gpt-5.6-luna", baseUrl: "https://api.openai.com/v1" }
+			: { id: "claude-haiku-4-5", baseUrl: "https://api.anthropic.com" };
+	const modelId = requestedModel || defaults.id;
 	const models = typeof piAi.getModels === "function" ? piAi.getModels(provider) : [];
-	if (!Array.isArray(models) || models.length === 0) {
-		if (requestedModel) return { id: requestedModel, baseUrl: undefined };
-		if (provider === "openai-codex") return { id: "gpt-5.4-mini", baseUrl: "https://chatgpt.com/backend-api" };
-		return { id: "claude-haiku-4-5", baseUrl: "https://api.anthropic.com" };
-	}
+	const exact = Array.isArray(models) ? models.find((model) => model.id === modelId) : undefined;
 
-	if (requestedModel) {
-		const exact = models.find((m) => m.id === requestedModel);
-		if (exact) return exact;
-		return { ...models[0], id: requestedModel };
-	}
-
-	const preferredIds =
-		provider === "openai-codex"
-			? ["gpt-5.4-mini", "gpt-5.3-codex-spark", "gpt-5.1", "gpt-5.1-codex-mini"]
-			: ["claude-haiku-4-5", "claude-3-5-haiku-latest", "claude-3-5-haiku-20241022"];
-
-	for (const id of preferredIds) {
-		const found = models.find((m) => m.id === id);
-		if (found) return found;
-	}
-
-	const heuristic = models.find((m) => /mini|haiku|spark|flash|fast/i.test(m.id));
-	return heuristic || models[0];
+	return exact || { ...defaults, id: modelId };
 }
 
 async function resolveApiKey(provider, auth, authPath, piAi) {
@@ -340,7 +309,7 @@ async function resolveApiKey(provider, auth, authPath, piAi) {
 	if (inferredType === "api_key") {
 		const key = resolveConfigValue(entry.key);
 		if (!key) throw new Error(`API key for ${provider} is empty or unresolved.`);
-		return { apiKey: key, accountId: entry.accountId };
+		return { apiKey: key };
 	}
 
 	if (inferredType !== "oauth") {
@@ -379,10 +348,7 @@ async function resolveApiKey(provider, auth, authPath, piAi) {
 	auth[provider] = mergedCred;
 	writeJson(authPath, auth);
 
-	return {
-		apiKey: refreshed.apiKey,
-		accountId: mergedCred.accountId,
-	};
+	return { apiKey: refreshed.apiKey };
 }
 
 function buildUserPrompt(query, purpose) {
@@ -393,11 +359,10 @@ function buildSystemPrompt() {
 	return "You are a fast web research assistant. Always produce practical summaries and include full source URLs (no shortened links).";
 }
 
-function resolveCodexUrl(baseUrl = "https://chatgpt.com/backend-api") {
-	const normalized = String(baseUrl || "https://chatgpt.com/backend-api").replace(/\/+$/, "");
-	if (normalized.endsWith("/codex/responses")) return normalized;
-	if (normalized.endsWith("/codex")) return `${normalized}/responses`;
-	return `${normalized}/codex/responses`;
+function resolveOpenAIUrl(baseUrl = "https://api.openai.com/v1") {
+	const normalized = String(baseUrl || "https://api.openai.com/v1").replace(/\/+$/, "");
+	if (normalized.endsWith("/responses")) return normalized;
+	return `${normalized}/responses`;
 }
 
 function extractEventData(chunk) {
@@ -411,12 +376,7 @@ function extractEventData(chunk) {
 	return payload;
 }
 
-async function runCodexSearch({ model, apiKey, accountId, query, purpose, timeoutMs, baseUrl }) {
-	const tokenAccountId = accountId || decodeJwtAccountId(apiKey);
-	if (!tokenAccountId) {
-		throw new Error("Could not determine ChatGPT account ID for openai-codex token.");
-	}
-
+async function runOpenAISearch({ model, apiKey, query, purpose, timeoutMs, baseUrl }) {
 	const body = {
 		model,
 		store: false,
@@ -427,18 +387,15 @@ async function runCodexSearch({ model, apiKey, accountId, query, purpose, timeou
 		tool_choice: "auto",
 	};
 
-	const endpoint = resolveCodexUrl(baseUrl);
+	const endpoint = resolveOpenAIUrl(baseUrl);
 	const signal = typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(timeoutMs) : undefined;
 
 	const res = await fetch(endpoint, {
 		method: "POST",
 		headers: {
 			authorization: `Bearer ${apiKey}`,
-			"chatgpt-account-id": tokenAccountId,
 			"content-type": "application/json",
 			accept: "text/event-stream",
-			"OpenAI-Beta": "responses=experimental",
-			originator: "pi-native-web-search-skill",
 		},
 		body: JSON.stringify(body),
 		signal,
@@ -446,10 +403,10 @@ async function runCodexSearch({ model, apiKey, accountId, query, purpose, timeou
 
 	if (!res.ok) {
 		const detail = await res.text();
-		throw new Error(`Codex request failed (${res.status}): ${detail}`);
+		throw new Error(`OpenAI request failed (${res.status}): ${detail}`);
 	}
 	if (!res.body) {
-		throw new Error("Codex response had no body");
+		throw new Error("OpenAI response had no body");
 	}
 
 	const reader = res.body.getReader();
@@ -493,18 +450,18 @@ async function runCodexSearch({ model, apiKey, accountId, query, purpose, timeou
 			}
 
 			if (event.type === "error") {
-				throw new Error(event.message || "Codex stream failed");
+				throw new Error(event.message || "OpenAI stream failed");
 			}
 
 			if (event.type === "response.failed") {
-				throw new Error(event.response?.error?.message || "Codex response failed");
+				throw new Error(event.response?.error?.message || "OpenAI response failed");
 			}
 		}
 	}
 
 	const finalText = (text || fallbackText || "").trim();
 	if (!finalText) {
-		throw new Error("Codex returned an empty response");
+		throw new Error("OpenAI returned an empty response");
 	}
 	return finalText;
 }
@@ -590,15 +547,14 @@ async function main() {
 
 	const provider = pickProvider(args.provider, settings, auth);
 	const piAi = await loadPiAi();
-	const model = pickFastModel(provider, args.model, piAi);
-	const { apiKey, accountId } = await resolveApiKey(provider, auth, authPath, piAi);
+	const model = pickModel(provider, args.model, piAi);
+	const { apiKey } = await resolveApiKey(provider, auth, authPath, piAi);
 
 	const text =
-		provider === "openai-codex"
-			? await runCodexSearch({
+		provider === "openai"
+			? await runOpenAISearch({
 					model: model.id,
 					apiKey,
-					accountId,
 					query: args.query,
 					purpose: args.purpose,
 					timeoutMs: args.timeoutMs,

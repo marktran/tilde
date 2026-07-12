@@ -28,8 +28,8 @@ node search.mjs "vite 7 breaking changes" --purpose "prepare migration checklist
 
 Optional flags:
 
-- `--provider openai-codex|anthropic`
-- `--model <model-id>`
+- `--provider openai|anthropic`
+- `--model <model-id>` (defaults to OpenAI's fast `gpt-5.6-luna`; use `gpt-5.6-terra` or `gpt-5.6-sol` to override)
 - `--timeout <ms>`
 - `--json`
 
