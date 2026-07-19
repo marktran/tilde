@@ -1,0 +1,26 @@
+#!/bin/bash
+set -euo pipefail
+
+# Re-apply the monitor rules from monitors.conf after suspend/DPMS wake.
+#
+# Workaround for Hyprland failing to replay wl_surface.enter events when
+# outputs come back, which leaves GTK3 apps (Emacs PGTK, Firefox, ...)
+# with a stale GDK buffer scale -> blurry windows on scaled displays.
+# Re-applying the monitor rules forces Hyprland to re-announce the
+# outputs so GDK recomputes the scale.
+#
+# See https://github.com/hyprwm/Hyprland/issues/6560 (fixed 2024-10,
+# later regressed) and
+# https://github.com/hyprwm/Hyprland/discussions/12439.
+# Companion Emacs-side hack: emacs.d/lisp/hacks/wayland-resume-hack.el.
+
+conf="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/monitors.conf"
+
+# Give slow panels a moment to finish waking before re-announcing.
+sleep "${HYPR_REAPPLY_MONITORS_DELAY:-1}"
+
+grep -E '^[[:space:]]*monitor[[:space:]]*=' "$conf" |
+  sed -E 's/^[[:space:]]*monitor[[:space:]]*=[[:space:]]*//' |
+  while IFS= read -r rule; do
+    hyprctl keyword monitor "$rule" >/dev/null
+  done

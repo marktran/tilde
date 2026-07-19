@@ -163,6 +163,10 @@
       source = ../files/hypr/scripts/hypr-mpv-pip-size;
       force = forceLinks;
     };
+    "hypr/scripts/hypr-reapply-monitors" = {
+      source = ../files/hypr/scripts/hypr-reapply-monitors;
+      force = forceLinks;
+    };
 
     "mpv/bin/chromecast-cast" = {
       source = ../files/mpv/bin/chromecast-cast;
