@@ -37,7 +37,9 @@ wk.add({
   { "<leader>sg", Snacks.picker.grep, desc = "Live Grep" },
 
   { "<leader>t", group = "Toggles" },
+  { "<leader>tt", Snacks.picker.colorschemes, desc = "Switch Theme" },
 
-  { "<leader>E", group = "Neovim" },
-  { "<leader>Eq", "<cmd>wqa<cr>", desc = "Quit All" },
+  { "<leader>q", group = "Neovim" },
+  { "<leader>qq", "<cmd>wqa<cr>", desc = "Quit All" },
+  { "<leader>qr", "<cmd>restart<cr>", desc = "Restart" },
 })
