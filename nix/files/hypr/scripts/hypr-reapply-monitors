@@ -14,9 +14,12 @@ set -euo pipefail
 # https://github.com/hyprwm/Hyprland/discussions/12439.
 # Companion Emacs-side hack: emacs.d/lisp/hacks/wayland-resume-hack.el.
 #
-# Status 2026-07-19: could not reproduce the blur on Hyprland 0.55.2
-# (incl. a raw 8 h overnight suspend with all workarounds disabled);
-# the bug appears fixed upstream in 0.53-0.55.  Kept as cheap insurance:
+# Status 2026-07-19: fixed upstream.  Root cause was aquamarine
+# calling impl->reset() (full CRTC deactivation) in restoreAfterVT()
+# on every resume; removed in aquamarine d83c97f (v0.11.0, installed
+# 2026-05-09).  Verified unreproducible on Hyprland 0.55.2/aq 0.12.0,
+# incl. a raw 8 h overnight suspend and a synthetic morning-wake repro
+# with all workarounds disabled.  Kept as cheap insurance:
 # with unchanged rules Hyprland short-circuits before applyMonitorRule
 # and only re-sends xdg_output state + wl_output.done, which nudges
 # GDK to recompute window scales.  See the elisp file for the full
