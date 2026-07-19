@@ -17,6 +17,13 @@
         }
       }
     },
+    "xai": {
+      "modelOverrides": {
+        "grok-4.5": {
+          "name": "grok 4.5"
+        }
+      }
+    },
     "fireworks": {
       "modelOverrides": {
         "accounts/fireworks/models/kimi-k2p7-code": {
