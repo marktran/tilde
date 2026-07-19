@@ -9,6 +9,7 @@
     ./common/neovim.nix
     ./common/agents.nix
     ./common/files.nix
+    ./common/obsidian.nix
   ];
 
   # Shared helper exposed to all modules: an out-of-store symlink into the

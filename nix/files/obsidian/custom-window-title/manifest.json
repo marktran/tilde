@@ -1,0 +1,9 @@
+{
+  "id": "custom-window-title",
+  "name": "Custom Window Title",
+  "version": "0.0.1",
+  "minAppVersion": "1.0.0",
+  "description": "Customizes the desktop window title and removes the Obsidian version number.",
+  "author": "Mark",
+  "isDesktopOnly": true
+}
