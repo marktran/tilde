@@ -12,7 +12,6 @@ set -euo pipefail
 # See https://github.com/hyprwm/Hyprland/issues/6560 (fixed 2024-10,
 # later regressed) and
 # https://github.com/hyprwm/Hyprland/discussions/12439.
-# Companion Emacs-side hack: emacs.d/lisp/hacks/wayland-resume-hack.el.
 #
 # Status 2026-07-19: fixed upstream.  Root cause was aquamarine
 # calling impl->reset() (full CRTC deactivation) in restoreAfterVT()
@@ -22,8 +21,12 @@ set -euo pipefail
 # with all workarounds disabled.  Kept as cheap insurance:
 # with unchanged rules Hyprland short-circuits before applyMonitorRule
 # and only re-sends xdg_output state + wl_output.done, which nudges
-# GDK to recompute window scales.  See the elisp file for the full
-# investigation notes.
+# GDK to recompute window scales.
+#
+# The companion Emacs-side hack (emacs.d/lisp/hacks/
+# wayland-resume-hack.el: manual frame-replacement recovery plus the
+# full investigation notes) was removed 2026-07 once the upstream fix
+# held; recover it from git history if blur ever returns.
 
 conf="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/monitors.conf"
 
