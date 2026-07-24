@@ -29,10 +29,6 @@ in
     };
 
     # pi: static config (store-backed).
-    ".pi/agent/agents" = {
-      source = ../../files/pi/agent/agents;
-      force = true;
-    };
     ".pi/agent/keybindings.json" = {
       source = ../../files/pi/agent/keybindings.json;
       force = true;
@@ -47,10 +43,6 @@ in
     };
     ".pi/agent/settings.default.json" = {
       source = ../../files/pi/agent/settings.default.json;
-      force = true;
-    };
-    ".pi/agent/prompts" = {
-      source = ../../files/pi/agent/prompts;
       force = true;
     };
     ".pi/agent/themes" = {
