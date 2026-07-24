@@ -918,19 +918,11 @@ function createSettingsPanel(
 export default function (pi: ExtensionAPI) {
   ensureDataDirs();
 
-  let warnedMissingPacks = false;
   let warnedMissingPlayer = false;
   let warnedFallbackPack = false;
   let installing = false;
 
   function maybeWarnAboutSetup(ctx: any, config: PeonConfig): void {
-    const packs = listInstalledPacks();
-
-    if (packs.length === 0 && !warnedMissingPacks) {
-      warnedMissingPacks = true;
-      report(ctx, "peon-ping: no sound packs installed. Run /peon install", "warning");
-    }
-
     if (detectPlatform() === "linux" && !detectLinuxPlayer() && !warnedMissingPlayer) {
       warnedMissingPlayer = true;
       report(ctx, "peon-ping: no supported audio player found", "warning");
@@ -972,7 +964,6 @@ export default function (pi: ExtensionAPI) {
   }
 
   pi.on("session_start", async (_event, ctx) => {
-    warnedMissingPacks = false;
     warnedMissingPlayer = false;
     warnedFallbackPack = false;
 
