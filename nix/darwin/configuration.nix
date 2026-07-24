@@ -38,6 +38,24 @@
     reattach = true;
   };
 
+  # Kandji (MDM) enforces this "WorkOS Socket Firewall" block in /etc/zshenv:
+  # if its markers are missing it appends them, which used to break the next
+  # `darwin-rebuild switch` ("Unexpected files in /etc" -- nix-darwin refuses
+  # to overwrite /etc files it did not generate). Baking the block, markers
+  # included, into nix-darwin's generated zshenv keeps Kandji's idempotency
+  # check satisfied so it never modifies the file, and activation stays clean.
+  # If Kandji ever changes the block's content, update this copy to match.
+  programs.zsh.shellInit = ''
+    # >>> WorkOS Socket Firewall (managed by Kandji) >>>
+    export NPM_CONFIG_REGISTRY="https://socket-firewall.workos.dev/"
+    export YARN_REGISTRY="https://socket-firewall.workos.dev/"
+    export YARN_NPM_REGISTRY_SERVER="https://socket-firewall.workos.dev/"
+    export COREPACK_NPM_REGISTRY="https://socket-firewall.workos.dev/"
+    export BUN_CONFIG_REGISTRY="https://socket-firewall.workos.dev/"
+    export NPM_CONFIG_GLOBALCONFIG="/Library/Application Support/WorkOS/socket-firewall-npmrc"
+    # <<< WorkOS Socket Firewall (managed by Kandji) <<<
+  '';
+
   # macOS preferences. Values mirror the machine's current settings, so the
   # first activation does not change behavior -- it just makes them declarative.
   # Some keys only take effect after a logout/restart (nix-darwin restarts Dock
