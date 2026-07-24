@@ -1,14 +1,15 @@
 {
   "theme": "modern-dark",
   "enabledModels": [
-    "claude-opus-4-8",
-    "claude-fable-5",
-    "openai/gpt-5.6-sol",
-    "xai/grok-4.5",
-    "fireworks/accounts/fireworks/models/kimi-k2p7-code",
-    "fireworks/accounts/fireworks/models/minimax-m3",
-    "fireworks/accounts/fireworks/models/glm-5p2",
-    "fireworks/accounts/fireworks/models/deepseek-v4-pro"
+    "cloudflare-ai-gateway/gpt-5.6-sol",
+    "cloudflare-ai-gateway/claude-opus-4-8",
+    "cloudflare-ai-gateway/claude-fable-5",
+    "cloudflare-ai-gateway/grok-4.5",
+    "cloudflare-ai-gateway/accounts/fireworks/models/kimi-k2p7-code",
+    "cloudflare-ai-gateway/accounts/fireworks/models/glm-5p2",
+    "cloudflare-ai-gateway/accounts/fireworks/models/deepseek-v4-pro",
+    "cloudflare-ai-gateway/accounts/fireworks/models/qwen3p7-max",
+    "cloudflare-ai-gateway/accounts/fireworks/models/minimax-m3"
   ],
   "extensions": [
     "extensions/answer.ts",
