@@ -38,14 +38,12 @@
     reattach = true;
   };
 
-  # Kandji (MDM) contract for /etc/zshenv, agreed with IT: Kandji manages its
-  # "WorkOS Socket Firewall" env block in /etc/zshenv.local only, and leaves
-  # /etc/zshenv alone whenever it already sources zshenv.local -- which
-  # nix-darwin's generated zshenv always does. Do NOT bake the block into
-  # programs.zsh.shellInit here: it would duplicate the exports and drift when
-  # IT updates the block. If activation ever aborts with "Unexpected files in
-  # /etc: /etc/zshenv" again, something modified the generated file; move it
-  # aside and check the Kandji library item before working around it here.
+  # /etc/zshenv is generated and hash-checked by nix-darwin; any outside edit
+  # aborts activation ("Unexpected files in /etc"). Machine-local or externally
+  # managed shell env (e.g. MDM) belongs in /etc/zshenv.local, which the
+  # generated zshenv sources -- not baked into programs.zsh.shellInit, where it
+  # would duplicate and drift. If activation aborts on /etc/zshenv, find what
+  # modified it and point that tool at zshenv.local instead.
 
   # macOS preferences. Values mirror the machine's current settings, so the
   # first activation does not change behavior -- it just makes them declarative.
