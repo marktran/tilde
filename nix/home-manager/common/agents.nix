@@ -5,12 +5,16 @@ let
   # (e.g. ~/.agents/skills for pi, ~/.claude/skills for Claude Code) so the
   # Linux-only Omarchy skill (see linux.nix) can be layered into the same dir.
   # Each skill stays live-editable from the checkout.
+  # open-prose is vendored third-party content (MIT): skills/open-prose from
+  # github.com/openprose/prose, v0.15.0 at aad1b43fd373d3cce3fea2109b413c4cd0673f51.
+  # Keep the tree pristine so refreshes are a clean re-extract + diff.
   sharedAgentSkills = [
     "defuddle"
     "json-canvas"
     "obsidian-bases"
     "obsidian-cli"
     "obsidian-markdown"
+    "open-prose"
   ];
   agentSkillLinks = dir: lib.listToAttrs (map (skill: {
     name = "${dir}/${skill}";
