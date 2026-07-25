@@ -24,12 +24,12 @@
     "extensions/preset.ts",
     "extensions/protected-paths.ts",
     "extensions/review.ts",
+    "extensions/web-search.ts",
     "extensions/whimsical.ts"
   ],
   "skills": [
     "skills/commit",
-    "skills/github",
-    "skills/native-web-search"
+    "skills/github"
   ],
   "packages": [],
   "hideThinkingBlock": false,
