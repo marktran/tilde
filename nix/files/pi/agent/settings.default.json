@@ -2,9 +2,9 @@
   "theme": "modern-dark",
   "enabledModels": [
     "cloudflare-ai-gateway/gpt-5.6-sol",
+    "cloudflare-ai-gateway/claude-sonnet-5",
     "cloudflare-ai-gateway/claude-opus-5",
     "cloudflare-ai-gateway/claude-fable-5",
-    "cloudflare-ai-gateway/claude-sonnet-5",
     "cloudflare-ai-gateway/grok-4.5",
     "cloudflare-ai-gateway/accounts/fireworks/models/kimi-k2p7-code",
     "cloudflare-ai-gateway/accounts/fireworks/models/glm-5p2",
