@@ -21,6 +21,14 @@
       force = true;
     };
 
+    # Shadows ~/.local/bin/claude ($HOME/bin comes first in PATH) to route
+    # Claude Code through the Cloudflare AI Gateway using the credential in
+    # ~/.pi/agent/auth.json instead of its own Anthropic login.
+    "bin/claude" = {
+      source = ../../files/bin/claude;
+      force = true;
+    };
+
     ".hunspell_default" = {
       source = ../../files/hunspell/default;
       force = true;

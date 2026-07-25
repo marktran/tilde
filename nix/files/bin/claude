@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+#
+# Route Claude Code through the Cloudflare AI Gateway.
+#
+# Claude Code's own login is unused. The gateway token (and the Anthropic keys
+# stored behind it) live in pi's credential store, so this wrapper reads them
+# from ~/.pi/agent/auth.json and exports the gateway environment before exec'ing
+# the real claude binary. Nothing here holds a secret, so it stays in the repo.
+#
+# Header behavior, verified against the gateway:
+#   - cf-aig-authorization carries the gateway token; Cloudflare injects the
+#     upstream provider key (stored BYOK).
+#   - ANTHROPIC_AUTH_TOKEN lands in "Authorization: Bearer", which the gateway
+#     ignores. Setting it is what stops Claude Code from showing the login
+#     screen, so the value itself is irrelevant.
+#   - ANTHROPIC_API_KEY must stay unset: Claude Code sends it as x-api-key,
+#     which the gateway forwards to Anthropic, and Anthropic rejects it (401).
+#   - settings.json apiKeyHelper is unusable for the same reason: it populates
+#     both Authorization and x-api-key.
+#
+# ~/bin precedes ~/.local/bin in PATH, so this shadows the real claude in every
+# shell, not just fish.
+#
+# Note: pointing ANTHROPIC_BASE_URL away from api.anthropic.com disables Claude
+# Code's Remote Control, and MCP tool search unless ENABLE_TOOL_SEARCH=true.
+
+set -euo pipefail
+
+readonly AUTH_FILE="${PI_AUTH_FILE:-$HOME/.pi/agent/auth.json}"
+readonly CREDENTIAL_ID="cloudflare-ai-gateway"
+
+die() {
+  printf 'claude (gateway wrapper): %s\n' "$1" >&2
+  exit 1
+}
+
+# Mirror pi's config-value syntax: a leading "!" runs a shell command, a leading
+# "$" reads an environment variable, anything else is a literal.
+resolve_value() {
+  local raw="$1" name
+  case "$raw" in
+    '!'*)
+      bash -c "${raw#!}" || die "credential command failed: ${raw#!}"
+      ;;
+    '$'*)
+      name="${raw#\$}"
+      name="${name#\{}"
+      name="${name%\}}"
+      printf '%s' "${!name-}"
+      ;;
+    *)
+      printf '%s' "$raw"
+      ;;
+  esac
+}
+
+# Resolve the real claude: first executable named claude on PATH that is not
+# this script, so upgrades that relocate the binary keep working.
+find_real_claude() {
+  local self candidate dir
+  self="$(realpath "${BASH_SOURCE[0]}" 2>/dev/null || printf '%s' "${BASH_SOURCE[0]}")"
+
+  while IFS= read -r -d ':' dir || [[ -n "$dir" ]]; do
+    [[ -n "$dir" ]] || continue
+    candidate="$dir/claude"
+    [[ -x "$candidate" && ! -d "$candidate" ]] || continue
+    [[ "$(realpath "$candidate" 2>/dev/null)" == "$self" ]] && continue
+    printf '%s' "$candidate"
+    return 0
+  done <<<"$PATH:"
+
+  return 1
+}
+
+[[ -r "$AUTH_FILE" ]] || die "cannot read $AUTH_FILE"
+command -v jq >/dev/null 2>&1 || die "jq is required"
+
+raw_key="$(jq -r --arg id "$CREDENTIAL_ID" '.[$id].key // empty' "$AUTH_FILE")"
+account="$(jq -r --arg id "$CREDENTIAL_ID" '.[$id].env.CLOUDFLARE_ACCOUNT_ID // empty' "$AUTH_FILE")"
+gateway="$(jq -r --arg id "$CREDENTIAL_ID" '.[$id].env.CLOUDFLARE_GATEWAY_ID // empty' "$AUTH_FILE")"
+
+[[ -n "$raw_key" ]] || die "no $CREDENTIAL_ID key in $AUTH_FILE"
+[[ -n "$account" ]] || die "no CLOUDFLARE_ACCOUNT_ID in the $CREDENTIAL_ID credential"
+[[ -n "$gateway" ]] || die "no CLOUDFLARE_GATEWAY_ID in the $CREDENTIAL_ID credential"
+
+token="$(resolve_value "$raw_key")"
+[[ -n "$token" ]] || die "resolved an empty $CREDENTIAL_ID token"
+
+export ANTHROPIC_BASE_URL="https://gateway.ai.cloudflare.com/v1/$account/$gateway/anthropic"
+export ANTHROPIC_CUSTOM_HEADERS="cf-aig-authorization: Bearer $token"
+export ANTHROPIC_AUTH_TOKEN="cloudflare-ai-gateway"
+unset ANTHROPIC_API_KEY
+
+# Claude Code's opus/sonnet/haiku aliases resolve through these; pin them to ids
+# the gateway actually serves rather than whatever ships as the built-in default.
+export ANTHROPIC_DEFAULT_OPUS_MODEL="${ANTHROPIC_DEFAULT_OPUS_MODEL:-claude-opus-5}"
+export ANTHROPIC_DEFAULT_SONNET_MODEL="${ANTHROPIC_DEFAULT_SONNET_MODEL:-claude-sonnet-5}"
+export ANTHROPIC_DEFAULT_HAIKU_MODEL="${ANTHROPIC_DEFAULT_HAIKU_MODEL:-claude-haiku-4-5}"
+export ANTHROPIC_DEFAULT_FABLE_MODEL="${ANTHROPIC_DEFAULT_FABLE_MODEL:-claude-fable-5}"
+
+real_claude="$(find_real_claude)" || die "no claude binary found on PATH besides this wrapper"
+exec "$real_claude" "$@"
