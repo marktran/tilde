@@ -98,5 +98,14 @@ export ANTHROPIC_DEFAULT_SONNET_MODEL="${ANTHROPIC_DEFAULT_SONNET_MODEL:-claude-
 export ANTHROPIC_DEFAULT_HAIKU_MODEL="${ANTHROPIC_DEFAULT_HAIKU_MODEL:-claude-haiku-4-5}"
 export ANTHROPIC_DEFAULT_FABLE_MODEL="${ANTHROPIC_DEFAULT_FABLE_MODEL:-claude-fable-5}"
 
+# Remote feature flags are fetched from api.anthropic.com with first-party auth,
+# which the gateway token cannot satisfy, so the fetch always fails here. Claude
+# Code then falls back to whatever flag snapshot is cached in ~/.claude.json,
+# which can be arbitrarily old: a June 2026 kill switch
+# (tengu-model-error-overrides) kept Fable 5 greyed out in /model for weeks
+# after Anthropic lifted the suspension. Disabling the flag client entirely
+# keeps the wrapper on built-in defaults instead of a stale snapshot.
+export DISABLE_GROWTHBOOK=1
+
 real_claude="$(find_real_claude)" || die "no claude binary found on PATH besides this wrapper"
 exec "$real_claude" "$@"
