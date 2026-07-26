@@ -41,6 +41,10 @@ in
       source = ../../files/pi/agent/models.json;
       force = true;
     };
+    ".pi/agent/openai-server-compaction.json" = {
+      source = ../../files/pi/agent/openai-server-compaction.json;
+      force = true;
+    };
     ".pi/agent/presets.json" = {
       source = ../../files/pi/agent/presets.json;
       force = true;
