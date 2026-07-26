@@ -98,14 +98,20 @@
       cleanup = "uninstall";
     };
 
-    # NOTE: Homebrew's tap-trust security model is machine-local state that
-    # nix-darwin cannot manage. `cleanup = "uninstall"` runs `brew bundle
-    # --cleanup`, which loads every declared formula and will FAIL on an
-    # untrusted third-party tap. On a new machine, trust the taps below once:
-    #   brew trust d12frosted/emacs-plus dopplerhq/cli oven-sh/bun
+    # NOTE: Homebrew's trust security model is machine-local state that
+    # nix-darwin cannot manage (~/.homebrew/trust.json). `cleanup =
+    # "uninstall"` runs `brew bundle --cleanup`, which loads every declared
+    # formula and will FAIL on an untrusted third-party tap; the outdated
+    # check also warns per formula. On a new machine, trust the third-party
+    # formulae below once:
+    #   brew trust --formula d12frosted/emacs-plus/emacs-plus@30 \
+    #     dopplerhq/doppler/doppler oven-sh/bun/bun
     taps = [
       "d12frosted/emacs-plus"
-      "dopplerhq/cli"
+      # Upstream renamed homebrew-cli -> homebrew-doppler; the old
+      # dopplerhq/cli name resolves but leaves an undeclared local tap that
+      # `cleanup = "uninstall"` then removes, uninstalling doppler each run.
+      "dopplerhq/doppler"
       "oven-sh/bun"
     ];
 
@@ -116,7 +122,7 @@
       "awscli"
       "coreutils"
       "d12frosted/emacs-plus/emacs-plus@30"
-      "dopplerhq/cli/doppler"
+      "dopplerhq/doppler/doppler"
       "enchant" # jinx (Emacs) compiles jinx-mod.dylib against enchant-2
       "fish"
       "fortune"
