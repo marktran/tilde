@@ -1,0 +1,7 @@
+# emacs-plus build configuration, read from ~/.config/emacs-plus/build.yml at
+# install and postinstall time. Icon names come from the tap's community
+# registry: https://github.com/d12frosted/homebrew-emacs-plus/tree/master/community/icons
+#
+# Apply icon changes without rebuilding Emacs:
+#   brew postinstall d12frosted/emacs-plus/emacs-plus@30 && killall Dock
+icon: liquid-glass
