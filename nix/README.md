@@ -312,16 +312,20 @@ shell (also appended, never shadowing system tools).
 
 ### macOS Homebrew quirks
 
-- **Tap-trust is machine-local** and not managed by nix-darwin. With
-  `homebrew.onActivation.cleanup = "uninstall"`, the declared third-party taps
-  must be trusted once per machine or `darwin-rebuild switch` fails:
-  `brew trust d12frosted/emacs-plus dopplerhq/cli oven-sh/bun`.
-- **`sdl2` -> `sdl2-compat` cosmetic churn:** each switch may print
-  "Uninstalled 1 formula" because Homebrew renamed `sdl2` but the keg is still
-  installed under the old name (`Cellar/sdl2`, used by mpv/ffmpeg/whisper).
-  Cleanup mis-reports removing it, but it persists and everything keeps
-  working. Clear the noise with `brew upgrade sdl2-compat` (a one-time keg
-  rename migration) if it bothers you.
+- **Trust is machine-local** and not managed by nix-darwin
+  (`~/.homebrew/trust.json`). With `homebrew.onActivation.cleanup =
+  "uninstall"`, the declared third-party formulae must be trusted once per
+  machine or `darwin-rebuild switch` fails/warns:
+  `brew trust --formula d12frosted/emacs-plus/emacs-plus@30 dopplerhq/doppler/doppler oven-sh/bun/bun`.
+- **Renamed formulae + outdated kegs can make cleanup uninstall needed
+  dependencies.** nix-darwin runs `brew bundle --no-upgrade --force-cleanup`;
+  brew bundle skips outdated formulae when computing which dependencies to
+  keep ("Skipping X: most recent version not installed"). When a transitive
+  dependency is also renamed upstream (e.g. `sdl2` -> `sdl2-compat`, needed
+  by mpv/ffmpeg), it falls out of the keep-set and gets uninstalled on every
+  switch. Fix by upgrading the affected chain, e.g.
+  `brew upgrade sdl2 ffmpeg mpv`, so dependency resolution works again.
+  Running `brew upgrade` occasionally prevents recurrence.
 
 ### macOS Touch ID for sudo
 
