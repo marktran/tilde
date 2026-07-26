@@ -117,6 +117,7 @@
       "coreutils"
       "d12frosted/emacs-plus/emacs-plus@30"
       "dopplerhq/cli/doppler"
+      "enchant" # jinx (Emacs) compiles jinx-mod.dylib against enchant-2
       "fish"
       "fortune"
       "gemini-cli"
