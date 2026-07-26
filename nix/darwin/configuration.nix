@@ -136,7 +136,6 @@
       "libffi"
       "make"
       "mpv"
-      "openai-whisper"
       "opencode"
       "oven-sh/bun/bun"
       "pgcli"
