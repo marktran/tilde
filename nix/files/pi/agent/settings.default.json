@@ -6,7 +6,7 @@
     "cloudflare-ai-gateway/claude-opus-5",
     "cloudflare-ai-gateway/claude-sonnet-5",
     "cloudflare-ai-gateway/grok-4.5",
-    "cloudflare-ai-gateway/accounts/fireworks/models/kimi-k2p7-code",
+    "cloudflare-ai-gateway/accounts/fireworks/models/kimi-k3",
     "cloudflare-ai-gateway/accounts/fireworks/models/glm-5p2",
     "cloudflare-ai-gateway/accounts/fireworks/models/deepseek-v4-pro",
     "cloudflare-ai-gateway/accounts/fireworks/models/qwen3p7-max",

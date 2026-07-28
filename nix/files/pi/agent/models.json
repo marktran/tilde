@@ -49,28 +49,30 @@
           }
         },
         {
-          "id": "accounts/fireworks/models/kimi-k2p7-code",
-          "name": "kimi k2.7",
-          "api": "anthropic-messages",
-          "baseUrl": "https://gateway.ai.cloudflare.com/v1/{CLOUDFLARE_ACCOUNT_ID}/{CLOUDFLARE_GATEWAY_ID}/custom-fireworks-ai",
+          "id": "accounts/fireworks/models/kimi-k3",
+          "name": "kimi k3",
+          "api": "openai-completions",
+          "baseUrl": "https://gateway.ai.cloudflare.com/v1/{CLOUDFLARE_ACCOUNT_ID}/{CLOUDFLARE_GATEWAY_ID}/custom-fireworks-ai/v1",
           "reasoning": true,
           "thinkingLevelMap": {
+            "off": null,
             "minimal": null,
             "low": "low",
             "medium": null,
             "high": "high",
-            "xhigh": null
+            "xhigh": null,
+            "max": "max"
           },
           "input": ["text", "image"],
-          "cost": { "input": 0.95, "output": 4, "cacheRead": 0.19, "cacheWrite": 0 },
-          "contextWindow": 262000,
-          "maxTokens": 262000,
+          "cost": { "input": 3, "output": 15, "cacheRead": 0.3, "cacheWrite": 0 },
+          "contextWindow": 1040000,
+          "maxTokens": 131072,
           "compat": {
             "sendSessionAffinityHeaders": true,
-            "supportsEagerToolInputStreaming": false,
-            "supportsCacheControlOnTools": false,
-            "supportsLongCacheRetention": false,
-            "allowEmptySignature": true
+            "supportsStore": false,
+            "supportsDeveloperRole": false,
+            "supportsReasoningEffort": true,
+            "supportsLongCacheRetention": false
           }
         },
         {

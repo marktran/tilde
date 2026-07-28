@@ -84,9 +84,9 @@ test("targets only Cloudflare's dedicated OpenAI Responses route", () => {
       route: "custom-fireworks-ai",
     }),
     cloudflareModel({
-      id: "accounts/fireworks/models/kimi-k2p7-code",
-      api: "anthropic-messages",
-      route: "custom-fireworks-ai",
+      id: "accounts/fireworks/models/kimi-k3",
+      api: "openai-completions",
+      route: "custom-fireworks-ai/v1",
     }),
     {
       ...cloudflareModel(),
