@@ -33,5 +33,13 @@
       source = ../../files/hunspell/default;
       force = true;
     };
+
+    # Enchant personal wordlists (used by Emacs jinx). Enchant appends words
+    # at runtime (jinx `$'), so it stays a live out-of-store link. Linked at
+    # the directory level so new wordlists/exclusion files land in the repo.
+    ".config/enchant" = {
+      source = outOfStore "nix/files/enchant";
+      force = forceLinks;
+    };
   };
 }
