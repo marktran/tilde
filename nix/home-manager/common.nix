@@ -49,6 +49,6 @@
     scowl
     sesh
     tree
-    zig_0_15
+    zig_0_16 # ghostel's build.zig.zon sets minimum_zig_version
   ];
 }
