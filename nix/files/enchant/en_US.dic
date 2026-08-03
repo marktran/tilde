@@ -977,6 +977,7 @@ dh
 dhcp
 dhparam
 di
+diag
 diags
 diarization
 diarize
@@ -1638,6 +1639,7 @@ incdec
 incrementable
 incrementor
 indexdb
+indy
 inetutils
 inferrable
 infilter
@@ -2922,6 +2924,7 @@ rebasing
 recaptcha
 recharts
 rechoir
+recode
 recurse
 recursed
 recurses
