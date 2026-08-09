@@ -1,4 +1,4 @@
-{ config, pkgs, username, homeDirectory, stateVersion, checkoutPath, ... }:
+{ config, inputs, pkgs, username, homeDirectory, stateVersion, checkoutPath, ... }:
 
 {
   imports = [
@@ -43,6 +43,7 @@
     enchant
     fd
     fzf
+    inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.herdr
     jq
     pwgen
     ripgrep
