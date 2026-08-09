@@ -40,6 +40,7 @@
     aspell
     aspellDicts.en
     calc
+    devbox
     enchant
     fd
     fzf
