@@ -1,6 +1,9 @@
 # Managed in ~/src/mark/tilde and linked into ~/.config/herdr by Home Manager.
 # Changes made through Herdr's settings UI are written back to this file.
 
+[keys]
+prefix = "backtick"
+
 [theme]
 name = "rose-pine"
 auto_switch = false
