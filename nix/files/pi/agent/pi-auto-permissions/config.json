@@ -1,0 +1,25 @@
+{
+  "rules": [
+    {
+      "pattern": "\\brm\\b[^\\n;&|]*?(?:-[a-z]*r[a-z]*|--recursive\\b)",
+      "flags": "i",
+      "level": "guarded",
+      "group": "recursive-delete",
+      "label": "Recursive deletion"
+    },
+    {
+      "pattern": "\\bsudo\\b",
+      "flags": "i",
+      "level": "guarded",
+      "group": "privilege-escalation",
+      "label": "Privileged command"
+    },
+    {
+      "pattern": "\\b(?:chmod|chown)\\b[^\\n;&|]*\\b777\\b",
+      "flags": "i",
+      "level": "guarded",
+      "group": "insecure-permissions",
+      "label": "World-writable permissions"
+    }
+  ]
+}

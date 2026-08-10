@@ -1,15 +1,17 @@
 { lib, outOfStore, forceLinks, ... }:
 
 let
-  # Agent skills shared across harnesses. Linked per-skill into a target dir
-  # (e.g. ~/.agents/skills for pi, ~/.claude/skills for Claude Code) so the
-  # Linux-only Omarchy skill (see linux.nix) can be layered into the same dir.
-  # Each skill stays live-editable from the checkout.
+  # Agent skills shared across harnesses. Linked per-skill into each harness's
+  # skill dir so the Linux-only Omarchy skill (see linux.nix) can be layered
+  # into the same dirs. Each skill stays live-editable from the checkout.
+  # herdr is the release-matched output of `herdr --skill` from v0.8.0
+  # (Apache-2.0), matching the Herdr flake input.
   # open-prose is vendored third-party content (MIT): skills/open-prose from
   # github.com/openprose/prose, v0.15.0 at aad1b43fd373d3cce3fea2109b413c4cd0673f51.
   # Keep the tree pristine so refreshes are a clean re-extract + diff.
   sharedAgentSkills = [
     "defuddle"
+    "herdr"
     "json-canvas"
     "obsidian-bases"
     "obsidian-cli"
@@ -45,6 +47,10 @@ in
       source = ../../files/pi/agent/openai-server-compaction.json;
       force = true;
     };
+    ".pi/agent/pi-auto-permissions/config.json" = {
+      source = ../../files/pi/agent/pi-auto-permissions/config.json;
+      force = true;
+    };
     ".pi/agent/presets.json" = {
       source = ../../files/pi/agent/presets.json;
       force = true;
@@ -62,6 +68,8 @@ in
     # settings.json is intentionally not managed: Pi rewrites model defaults,
     # thinking level, changelog state, etc. Keep settings.default.json above as
     # a repo-tracked bootstrap reference and let the live settings file flap.
+    # Herdr installs its Pi lifecycle integration into this linked directory as
+    # herdr-agent-state.ts, so upgrades update the repo-managed source directly.
     ".pi/agent/extensions" = {
       source = outOfStore "nix/files/pi/agent/extensions";
       force = forceLinks;
@@ -71,8 +79,9 @@ in
       force = forceLinks;
     };
   }
-  # Shared agent skills, layered into both pi's and Claude Code's skill dirs.
+  # Shared agent skills, layered into pi, Codex, and Claude Code skill dirs.
   // agentSkillLinks ".agents/skills"
+  // agentSkillLinks ".codex/skills"
   // agentSkillLinks ".claude/skills";
 
   home.activation.initPiSettings = lib.hm.dag.entryAfter [ "linkGeneration" ] ''

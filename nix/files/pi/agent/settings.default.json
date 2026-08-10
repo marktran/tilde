@@ -20,7 +20,6 @@
     "extensions/minimal.ts",
     "extensions/openai-server-compaction/index.ts",
     "extensions/peon-ping.ts",
-    "extensions/permission-gate.ts",
     "extensions/plan-mode.ts",
     "extensions/preset.ts",
     "extensions/protected-paths.ts",
@@ -32,7 +31,11 @@
     "skills/commit",
     "skills/github"
   ],
-  "packages": [],
+  "packages": [
+    "npm:@ogulcancelik/pi-auto-permissions",
+    "npm:@ogulcancelik/pi-codex-subagents",
+    "npm:@ogulcancelik/pi-herdr"
+  ],
   "hideThinkingBlock": false,
   "quietStartup": true,
   "warnings": {
