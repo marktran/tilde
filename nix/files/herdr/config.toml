@@ -3,6 +3,8 @@
 
 [keys]
 prefix = "backtick"
+previous_tab = "prefix+,"
+next_tab = "prefix+."
 
 [theme]
 name = "rose-pine"
