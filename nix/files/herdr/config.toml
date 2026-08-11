@@ -1,6 +1,8 @@
 # Managed in ~/src/mark/tilde and linked into ~/.config/herdr by Home Manager.
 # Changes made through Herdr's settings UI are written back to this file.
 
+onboarding = false
+
 [keys]
 prefix = "backtick"
 previous_tab = "prefix+,"
@@ -9,3 +11,7 @@ next_tab = "prefix+."
 [theme]
 name = "rose-pine"
 auto_switch = false
+
+[ui.toast]
+delivery = "system"
+delay_seconds = 1
