@@ -73,7 +73,7 @@ test("targets only Cloudflare's dedicated OpenAI Responses route", () => {
   }
 
   const rejected = [
-    cloudflareModel({ id: "grok-4.5", route: "grok" }),
+    cloudflareModel({ id: "grok-4.6", route: "grok" }),
     cloudflareModel({
       id: "accounts/fireworks/models/glm-5p2",
       api: "openai-completions",
