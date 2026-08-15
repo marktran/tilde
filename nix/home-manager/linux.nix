@@ -81,13 +81,10 @@
 
     # Makima (evdev remapper): Copilot key -> Right Ctrl, Bookmarks -> Compose,
     # Ctrl+Arrows -> spotify-control. These configs are read by a SYSTEM-level
-    # service that Nix cannot manage on Arch. One-time setup (and again after
-    # any Omarchy major upgrade, which retires makima):
-    #   sudo pacman -S makima-bin
-    #   sudo mkdir -p /etc/systemd/system/makima.service.d
-    #   printf '[Service]\nEnvironment=MAKIMA_CONFIG=%s/.config/makima\n' "$HOME" \
-    #     | sudo tee /etc/systemd/system/makima.service.d/override.conf
-    #   sudo systemctl daemon-reload && sudo systemctl enable --now makima.service
+    # service that Nix cannot manage on Arch. Setup (and recovery after any
+    # Omarchy major upgrade, which retires makima): run `restore-makima`
+    # (nix/files/bin/restore-makima) — it handles the package, the User/env
+    # drop-in, the uinput udev rule, and playerctl.
     "makima/AT Translated Set 2 keyboard.toml" = {
       source = ../files/makima + "/AT Translated Set 2 keyboard.toml";
       force = forceLinks;
