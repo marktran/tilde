@@ -58,14 +58,6 @@
       source = ../files/voxtype/config.toml;
       force = forceLinks;
     };
-    "elephant/websearch.toml" = {
-      source = ../files/elephant/websearch.toml;
-      force = forceLinks;
-    };
-    "elephant/google-favicon.png" = {
-      source = ../files/elephant/google-favicon.png;
-      force = forceLinks;
-    };
     "wireplumber/wireplumber.conf.d/51-shure-mv7-mic-only.conf" = {
       source = ../files/wireplumber/wireplumber.conf.d/51-shure-mv7-mic-only.conf;
       force = forceLinks;
@@ -112,59 +104,6 @@
     };
     "mpv/script-opts/pip-default-size.conf" = {
       source = ../files/mpv/script-opts/pip-default-size.conf;
-      force = forceLinks;
-    };
-
-    "hypr/autostart.conf" = {
-      source = ../files/hypr/autostart.conf;
-      force = forceLinks;
-    };
-    "hypr/bindings.conf" = {
-      source = ../files/hypr/bindings.conf;
-      force = forceLinks;
-    };
-    "hypr/hypridle.conf" = {
-      source = ../files/hypr/hypridle.conf;
-      force = forceLinks;
-    };
-    "hypr/hyprland.conf" = {
-      source = ../files/hypr/hyprland.conf;
-      force = forceLinks;
-    };
-    "hypr/hyprlock.conf" = {
-      source = ../files/hypr/hyprlock.conf;
-      force = forceLinks;
-    };
-    "hypr/hyprsunset.conf" = {
-      source = ../files/hypr/hyprsunset.conf;
-      force = forceLinks;
-    };
-    "hypr/input.conf" = {
-      source = ../files/hypr/input.conf;
-      force = forceLinks;
-    };
-    "hypr/looknfeel.conf" = {
-      source = ../files/hypr/looknfeel.conf;
-      force = forceLinks;
-    };
-    "hypr/monitors.conf" = {
-      source = ../files/hypr/monitors.conf;
-      force = forceLinks;
-    };
-    "hypr/windows.conf" = {
-      source = ../files/hypr/windows.conf;
-      force = forceLinks;
-    };
-    "hypr/xdph.conf" = {
-      source = ../files/hypr/xdph.conf;
-      force = forceLinks;
-    };
-    "hypr/scripts/hypr-mpv-pip-size" = {
-      source = ../files/hypr/scripts/hypr-mpv-pip-size;
-      force = forceLinks;
-    };
-    "hypr/scripts/hypr-reapply-monitors" = {
-      source = ../files/hypr/scripts/hypr-reapply-monitors;
       force = forceLinks;
     };
 
