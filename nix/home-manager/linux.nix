@@ -171,6 +171,18 @@
       force = forceLinks;
     };
 
+    # Omarchy shell (bar layout, widgets, idle/lock). Nix-owned on purpose:
+    # `omarchy bar ...`, `omarchy refresh shell`, and update migrations rewrite
+    # this file; they now fail loudly instead of mutating it silently
+    # (fix: materialize -> mutate/migrate -> re-adopt). The shell's hot-reload
+    # does NOT fire on rebuilds: activation swaps the symlink while the store
+    # file it resolves to never changes, so inotify sees nothing. After a
+    # `make switch` that touches this file, run `omarchy restart shell`.
+    "omarchy/shell.json" = {
+      source = ../files/omarchy/shell.json;
+      force = forceLinks;
+    };
+
     # System monospace = Berkeley Mono (read by the omarchy shell, Qt, and
     # anything resolving "monospace"). Nix-owned: `omarchy font set` would
     # rewrite this file; it now fails loudly instead.
