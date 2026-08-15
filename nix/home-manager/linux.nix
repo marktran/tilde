@@ -113,6 +113,66 @@
       force = forceLinks;
     };
 
+    # Omarchy Quattro Hyprland config (Lua), adopted post-upgrade. Nix-owned
+    # on purpose: a future Omarchy migration that edits these fails loudly
+    # instead of mutating them silently (fix: materialize -> migrate -> re-adopt).
+    "hypr/.luarc.json" = {
+      source = ../files/hypr/.luarc.json;
+      force = forceLinks;
+    };
+    "hypr/hyprland.lua" = {
+      source = ../files/hypr/hyprland.lua;
+      force = forceLinks;
+    };
+    "hypr/autostart.lua" = {
+      source = ../files/hypr/autostart.lua;
+      force = forceLinks;
+    };
+    "hypr/bindings.lua" = {
+      source = ../files/hypr/bindings.lua;
+      force = forceLinks;
+    };
+    "hypr/input.lua" = {
+      source = ../files/hypr/input.lua;
+      force = forceLinks;
+    };
+    "hypr/looknfeel.lua" = {
+      source = ../files/hypr/looknfeel.lua;
+      force = forceLinks;
+    };
+    "hypr/monitors.lua" = {
+      source = ../files/hypr/monitors.lua;
+      force = forceLinks;
+    };
+    "hypr/windows.lua" = {
+      source = ../files/hypr/windows.lua;
+      force = forceLinks;
+    };
+    "hypr/hyprsunset.conf" = {
+      source = ../files/hypr/hyprsunset.conf;
+      force = forceLinks;
+    };
+    "hypr/xdph.conf" = {
+      source = ../files/hypr/xdph.conf;
+      force = forceLinks;
+    };
+    "hypr/scripts/hypr-mpv-pip-size" = {
+      source = ../files/hypr/scripts/hypr-mpv-pip-size;
+      force = forceLinks;
+    };
+    "hypr/scripts/hypr-reapply-monitors" = {
+      source = ../files/hypr/scripts/hypr-reapply-monitors;
+      force = forceLinks;
+    };
+
+    # System monospace = Berkeley Mono (read by the omarchy shell, Qt, and
+    # anything resolving "monospace"). Nix-owned: `omarchy font set` would
+    # rewrite this file; it now fails loudly instead.
+    "fontconfig/fonts.conf" = {
+      source = ../files/fontconfig/fonts.conf;
+      force = forceLinks;
+    };
+
     "mpv/bin/chromecast-cast" = {
       source = ../files/mpv/bin/chromecast-cast;
       force = forceLinks;
