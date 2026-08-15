@@ -24,6 +24,12 @@ notify_scheme() {
   local label="$1"
   local icon="$2"
 
+  # Omarchy Quattro's Quickshell OSD (swayosd retired with Omarchy 3.x).
+  if command -v omarchy-osd >/dev/null 2>&1 && \
+    omarchy-osd --message "$label mode" >/dev/null 2>&1; then
+    return
+  fi
+
   if command -v swayosd-client >/dev/null 2>&1 && \
     swayosd-client --custom-message "$label mode" --custom-icon "$icon" >/dev/null 2>&1; then
     return
