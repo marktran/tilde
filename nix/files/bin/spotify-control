@@ -1,6 +1,11 @@
 #!/bin/bash
-# Wrapper for controlling Spotify via playerctl from keyd (running as root)
+# Control Spotify via playerctl. Invoked by makima [commands] (running as the
+# session user) or any non-interactive launcher, so bootstrap the session bus
+# instead of assuming it. Shows the Omarchy OSD as best-effort feedback.
 # Usage: spotify-control <previous|next|play-pause|stop>
 
-sudo -u mark DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus \
-  swayosd-client --player=spotify --playerctl "$1"
+export DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-unix:path=/run/user/$(id -u)/bus}"
+
+playerctl --player=spotify "$1" || exit 1
+
+command -v omarchy-osd >/dev/null 2>&1 && omarchy-osd -m "Spotify: $1" || true

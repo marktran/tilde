@@ -1,32 +1,51 @@
 #!/usr/bin/env bash
 # Restore the Makima remapping daemon after an Omarchy upgrade retires it.
 #
-# Omarchy Quattro's upgrade removed makima-bin, disabled the service, and
-# deleted the MAKIMA_CONFIG drop-in; future major upgrades will likely do the
-# same. The remap configs themselves (Copilot -> Right Ctrl, Bookmarks ->
-# Compose, Ctrl+Arrows -> spotify-control) are Home Manager-managed in
-# ~/.config/makima and survive; this script restores the system-level daemon
-# that reads them. Idempotent; requires sudo.
+# Omarchy Quattro's upgrade removed makima-bin and playerctl, disabled the
+# service, and deleted both the makima.service.d drop-ins and the uinput udev
+# rule. The remap configs (Copilot -> Right Ctrl, Bookmarks -> Compose,
+# Ctrl+Arrows -> spotify-control) are Home Manager-managed in ~/.config/makima
+# and survive; this restores everything system-level around them.
+#
+# The packaged unit is a template (empty User=, Group=input): makima refuses
+# to run as root and needs session env to detect Wayland, so the drop-in
+# supplies User, MAKIMA_CONFIG, and session variables. The udev rule opens
+# /dev/uinput to the input group so the unit's Group=input can create the
+# virtual output device. Idempotent; requires sudo.
 set -euo pipefail
 
-if ! command -v makima >/dev/null 2>&1; then
-  echo ">> Installing makima-bin"
-  sudo pacman -S --needed --noconfirm makima-bin
-fi
+user=$(id -un)
+uid=$(id -u)
 
-echo ">> Writing MAKIMA_CONFIG drop-in"
+echo ">> Installing makima-bin + playerctl (no-op if present)"
+sudo pacman -S --needed --noconfirm makima-bin playerctl
+
+echo ">> Writing systemd drop-in (User, config path, session env)"
 sudo mkdir -p /etc/systemd/system/makima.service.d
 sudo tee /etc/systemd/system/makima.service.d/override.conf >/dev/null <<EOF
 [Service]
-Environment=MAKIMA_CONFIG=${HOME}/.config/makima
+User=${user}
+Environment=MAKIMA_CONFIG=/home/${user}/.config/makima
+Environment=XDG_SESSION_TYPE=wayland
+Environment=XDG_RUNTIME_DIR=/run/user/${uid}
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${uid}/bus
 EOF
 
-echo ">> Enabling and starting makima.service"
-sudo systemctl daemon-reload
-sudo systemctl enable --now makima.service
+echo ">> Restoring uinput udev rule (input group access)"
+sudo tee /etc/udev/rules.d/99-uinput.rules >/dev/null <<'EOF'
+KERNEL=="uinput", MODE="0660", GROUP="input", OPTIONS+="static_node=uinput"
+EOF
+sudo udevadm control --reload
+sudo udevadm trigger --name-match=uinput 2>/dev/null || true
+# Apply immediately for the current boot in case the trigger doesn't re-perm.
+sudo chgrp input /dev/uinput && sudo chmod 660 /dev/uinput
 
-sleep 1
-systemctl status makima --no-pager | head -6
+echo ">> Enabling and (re)starting makima.service"
+sudo systemctl daemon-reload
+sudo systemctl enable makima.service >/dev/null 2>&1 || true
+sudo systemctl restart makima.service
+
+sleep 2
+systemctl status makima --no-pager | sed -n '1,6p'
 echo
-echo "Test: hold the Copilot key and tap an arrow (Spotify control),"
-echo "or check that the Copilot key now acts as Right Control."
+echo "Test: Copilot key = Right Control; Copilot(held)+arrows = Spotify."
