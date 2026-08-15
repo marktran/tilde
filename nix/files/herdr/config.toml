@@ -12,6 +12,10 @@ next_tab = "prefix+."
 name = "rose-pine"
 auto_switch = false
 
+[ui]
+sidebar_start_collapsed = true
+sidebar_max_width = 45
+
 [ui.toast]
 delivery = "system"
 delay_seconds = 1
