@@ -1,26 +1,27 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  exec "/Applications/1Password.app/Contents/MacOS/op-ssh-sign" "$@"
-elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  # Some shells/sessions (including automation contexts) do not export
-  # SSH_AUTH_SOCK, even though the 1Password agent socket exists.
-  if [[ -z "${SSH_AUTH_SOCK:-}" ]]; then
-    runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-    for sock in \
-      "$runtime_dir/1password/agent.sock" \
-      "$runtime_dir/s.sock" \
-      "$runtime_dir/1Password-BrowserSupport.sock" \
-      "$HOME/.1password/agent.sock"
-    do
-      if [[ -S "$sock" ]]; then
-        export SSH_AUTH_SOCK="$sock"
-        break
-      fi
-    done
-  fi
-  exec "/opt/1Password/op-ssh-sign" "$@"
-else
-  echo "Unsupported OS: $OSTYPE" >&2
+# Git's gpg.ssh.program: payload on stdin, armored signature on stdout.
+case "$OSTYPE" in
+darwin*)
+  bin="/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+  ;;
+linux-gnu*)
+  # op-ssh-sign resolves the 1Password agent socket itself when
+  # SSH_AUTH_SOCK is unset (verified); guessing sockets here only risks
+  # exporting the wrong one. An exported SSH_AUTH_SOCK is still honored
+  # as an intentional override.
+  bin="/opt/1Password/op-ssh-sign"
+  ;;
+*)
+  echo "${0##*/}: unsupported OS: $OSTYPE" >&2
+  exit 1
+  ;;
+esac
+
+if [[ ! -x $bin ]]; then
+  echo "${0##*/}: $bin not found — is 1Password installed?" >&2
   exit 1
 fi
+
+exec "$bin" "$@"
