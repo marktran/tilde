@@ -1,0 +1,4 @@
+# Terminal emulator preference order for xdg-terminal-exec.
+# Omarchy Quattro's system list (/usr/share/xdg-terminal-exec/) prefers foot;
+# this user-level list outranks it and keeps Ghostty as the default terminal.
+com.mitchellh.ghostty.desktop

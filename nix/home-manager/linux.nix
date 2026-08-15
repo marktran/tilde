@@ -58,6 +58,12 @@
       source = ../files/voxtype/config.toml;
       force = forceLinks;
     };
+    # Keep Ghostty as the xdg-terminal-exec default; Omarchy Quattro's
+    # system-level list prefers foot.
+    "xdg-terminals.list" = {
+      source = ../files/xdg-terminals.list;
+      force = forceLinks;
+    };
     "wireplumber/wireplumber.conf.d/51-shure-mv7-mic-only.conf" = {
       source = ../files/wireplumber/wireplumber.conf.d/51-shure-mv7-mic-only.conf;
       force = forceLinks;
