@@ -35,6 +35,14 @@
           "id": "omarchy.dropbox"
         },
         {
+          "id": "omarchy.agents",
+          "providers": {
+            "claude": { "enabled": false },
+            "codex": { "enabled": false },
+            "fireworks": { "enabled": false }
+          }
+        },
+        {
           "id": "omarchy.bluetooth"
         },
         {

@@ -327,6 +327,28 @@ shell (also appended, never shadowing system tools).
   `brew upgrade sdl2 ffmpeg mpv`, so dependency resolution works again.
   Running `brew upgrade` occasionally prevents recurrence.
 
+### Linux: Cloudflare AI Gateway usage in the Omarchy bar
+
+The stock `omarchy.agents` bar widget cannot see AI usage that goes through
+the Cloudflare AI Gateway (Pi routes Claude/Codex/Fireworks there), so a
+custom collector feeds it instead:
+
+- `nix/files/bin/omarchy-agent-usage-cloudflare` queries CF GraphQL
+  analytics and writes `~/.local/state/omarchy/agents/usage/cloudflare.json`
+  — the widget renders any record in that directory. It cannot be a stock
+  collector because `omarchy-agent-usage-update` only scans the read-only
+  `$OMARCHY_PATH/bin`, so the `cf-ai-gateway-usage` systemd user timer
+  (`linux.nix`) refreshes it every 15 minutes instead.
+- The stock `claude`/`codex`/`fireworks` providers are disabled in the
+  widget's `nix/files/omarchy/shell.json` entry, so only the gateway tab
+  shows.
+- Config (account id, gateway id, analytics token) is read from the
+  `cloudflare-ai-gateway` entry in `~/.pi/agent/auth.json` — machine-local
+  secrets, deliberately not in this repo. The gateway runtime key
+  (`cfut_…`) cannot query analytics; a separate API token with **Account
+  Analytics: Read** is required (see follow-up below). Until it exists the
+  collector writes a `ready: false` record and the widget hides itself.
+
 ### macOS Touch ID for sudo
 
 `security.pam.services.sudo_local.touchIdAuth = true` plus `reattach = true`
@@ -337,6 +359,20 @@ already includes `sudo_local`.
 
 - [ ] macOS: confirm `programs.tmux` after a `darwin-rebuild switch` (Linux is
   verified; the Mac just needs a tmux launch).
+- [ ] Linux: finish the Cloudflare AI Gateway widget setup — mint an API
+  token with **Account · Account Analytics · Read**
+  (<https://dash.cloudflare.com/profile/api-tokens>), store it, refresh:
+
+  ```sh
+  jq '."cloudflare-ai-gateway".env.CLOUDFLARE_ANALYTICS_TOKEN = "PASTE_TOKEN"' \
+    ~/.pi/agent/auth.json > /tmp/auth.json && mv /tmp/auth.json ~/.pi/agent/auth.json
+  systemctl --user start cf-ai-gateway-usage   # or wait ≤15 min
+  ```
+
+  The bar icon appears on its own once the first real record lands. If the
+  "Tokens by day" chart stays empty afterwards, check
+  `journalctl --user -u cf-ai-gateway-usage` — the GraphQL `date` dimension
+  is the one part of the query not yet exercised against the live API.
 
 ---
 

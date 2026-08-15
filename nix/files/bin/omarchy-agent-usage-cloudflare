@@ -1,0 +1,225 @@
+#!/usr/bin/env python3
+"""Cloudflare AI Gateway usage collector for the Omarchy agents widget.
+
+Writes ~/.local/state/omarchy/agents/usage/cloudflare.json in the record
+format the omarchy.agents panel draws (see the plugin README). The stock
+`omarchy-agent-usage-update` only runs collectors shipped in the read-only
+$OMARCHY_PATH/bin, so this one is driven by a systemd user timer instead
+(cf-ai-gateway-usage.timer, nix/home-manager/linux.nix).
+
+Configuration comes from Pi's auth.json ("cloudflare-ai-gateway" entry):
+  env.CLOUDFLARE_ACCOUNT_ID       account tag (required)
+  env.CLOUDFLARE_GATEWAY_ID       gateway to report on (optional: all)
+  env.CLOUDFLARE_ANALYTICS_TOKEN  API token with Account Analytics: Read
+
+The gateway runtime key (`cfut_...`) cannot query analytics, so the
+analytics token is looked up as: $CLOUDFLARE_ANALYTICS_TOKEN, then
+env.CLOUDFLARE_ANALYTICS_TOKEN in auth.json, then — as a cheap probe in
+case Cloudflare ever widens its scope — the runtime key itself.
+"""
+
+import json
+import os
+import sys
+import urllib.request
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+PI_AUTH = Path.home() / ".pi/agent/auth.json"
+STATE = Path(os.environ.get("XDG_STATE_HOME", Path.home() / ".local/state"))
+RECORD = STATE / "omarchy/agents/usage/cloudflare.json"
+GRAPHQL = "https://api.cloudflare.com/client/v4/graphql"
+DAYS = 30
+
+QUERY = """
+query($acct: String!, $dayStart: Time!, $hourStart: Time!, $end: Time!) {
+  viewer {
+    accounts(filter: {accountTag: $acct}) {
+      daily: aiGatewayRequestsAdaptiveGroups(
+        filter: {datetime_geq: $dayStart, datetime_lt: $end}, limit: 5000
+      ) {
+        count
+        dimensions { date model gateway }
+        sum { uncachedTokensIn uncachedTokensOut cachedTokensIn cachedTokensOut }
+      }
+      hourly: aiGatewayRequestsAdaptiveGroups(
+        filter: {datetime_geq: $hourStart, datetime_lt: $end}, limit: 5000
+      ) {
+        count
+        dimensions { datetimeHour model gateway }
+        sum { uncachedTokensIn uncachedTokensOut cachedTokensIn cachedTokensOut }
+      }
+    }
+  }
+}
+"""
+
+AUTH_HELP = (
+    "Create a Cloudflare API token with Account Analytics: Read "
+    "(dash.cloudflare.com → My Profile → API Tokens) and store it as "
+    'env.CLOUDFLARE_ANALYTICS_TOKEN in the "cloudflare-ai-gateway" entry '
+    "of ~/.pi/agent/auth.json."
+)
+
+
+def config():
+    entry = json.loads(PI_AUTH.read_text()).get("cloudflare-ai-gateway", {})
+    env = entry.get("env", {})
+    account = env.get("CLOUDFLARE_ACCOUNT_ID") or os.environ.get("CLOUDFLARE_ACCOUNT_ID")
+    gateway = env.get("CLOUDFLARE_GATEWAY_ID") or os.environ.get("CLOUDFLARE_GATEWAY_ID")
+    token = (
+        os.environ.get("CLOUDFLARE_ANALYTICS_TOKEN")
+        or env.get("CLOUDFLARE_ANALYTICS_TOKEN")
+        or entry.get("key")
+    )
+    return account, gateway, token
+
+
+def fetch(account, token, now):
+    day_start = (now - timedelta(days=DAYS)).strftime("%Y-%m-%dT00:00:00Z")
+    hour_start = (now - timedelta(days=8)).strftime("%Y-%m-%dT%H:00:00Z")
+    body = json.dumps({
+        "query": QUERY,
+        "variables": {
+            "acct": account,
+            "dayStart": day_start,
+            "hourStart": hour_start,
+            "end": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        },
+    }).encode()
+    req = urllib.request.Request(
+        GRAPHQL, data=body,
+        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        payload = json.load(resp)
+    if payload.get("errors"):
+        raise RuntimeError(payload["errors"][0].get("message", "GraphQL error"))
+    accounts = payload["data"]["viewer"]["accounts"]
+    if not accounts:
+        raise RuntimeError("account not found")
+    return accounts[0]
+
+
+def tokens(group):
+    s = group["sum"]
+    return (
+        s["uncachedTokensIn"] + s["uncachedTokensOut"]
+        + s["cachedTokensIn"] + s["cachedTokensOut"]
+    )
+
+
+def build(account, gateway, token, now):
+    data = fetch(account, token, now)
+    keep = lambda g: not gateway or g["dimensions"].get("gateway") == gateway
+
+    model_usage, active, prompts = {}, set(), 0
+    for g in filter(keep, data["daily"]):
+        d, s = g["dimensions"], g["sum"]
+        m = model_usage.setdefault(d["model"], {
+            "inputTokens": 0, "outputTokens": 0,
+            "cacheReadInputTokens": 0, "cacheCreationInputTokens": 0,
+        })
+        m["inputTokens"] += s["uncachedTokensIn"]
+        m["outputTokens"] += s["uncachedTokensOut"] + s["cachedTokensOut"]
+        m["cacheReadInputTokens"] += s["cachedTokensIn"]
+        prompts += g["count"]
+        if g["count"]:
+            active.add(d["date"])
+
+    # Local-day buckets for the weekly chart and today, from the hourly groups.
+    by_day, today_models, today_prompts = {}, {}, 0
+    today = now.astimezone().date()
+    for g in filter(keep, data["hourly"]):
+        d = g["dimensions"]
+        utc = datetime.strptime(d["datetimeHour"], "%Y-%m-%dT%H:%M:%SZ")
+        local_day = utc.replace(tzinfo=timezone.utc).astimezone().date()
+        by_day[local_day] = by_day.get(local_day, 0) + tokens(g)
+        if local_day == today:
+            today_models[d["model"]] = today_models.get(d["model"], 0) + tokens(g)
+            today_prompts += g["count"]
+
+    recent = [
+        {"date": day.isoformat(), "messageCount": by_day.get(day, 0)}
+        for day in (today - timedelta(days=i) for i in range(6, -1, -1))
+    ]
+
+    return {
+        "schemaVersion": 1,
+        "id": "cloudflare",
+        "name": "AI Gateway",
+        "updatedAt": now.isoformat(),
+        "ready": True,
+        "scope": "account",
+        "hasLocalStats": True,
+        "hasPromptStats": True,
+        "tierLabel": gateway or "all gateways",
+        "usageStatusText": "",
+        "authHelpText": "",
+        "limits": [],
+        "todayPrompts": today_prompts,
+        "todaySessions": 0,
+        "todayTotalTokens": sum(today_models.values()),
+        "todayTokensByModel": today_models,
+        "recentDays": recent,
+        "totalPrompts": prompts,
+        "totalSessions": 0,
+        "activeDays": len(active),
+        "activeDates": sorted(active),
+        "modelUsage": model_usage,
+    }
+
+
+def unready(gateway, now, message):
+    return {
+        "schemaVersion": 1,
+        "id": "cloudflare",
+        "name": "AI Gateway",
+        "updatedAt": now.isoformat(),
+        "ready": False,
+        "scope": "account",
+        "hasLocalStats": False,
+        "hasPromptStats": False,
+        "tierLabel": gateway or "",
+        "usageStatusText": message,
+        "authHelpText": AUTH_HELP,
+        "limits": [],
+        "todayPrompts": 0,
+        "todaySessions": 0,
+        "todayTotalTokens": 0,
+        "todayTokensByModel": {},
+        "recentDays": [],
+        "totalPrompts": 0,
+        "totalSessions": 0,
+        "activeDays": 0,
+        "activeDates": [],
+        "modelUsage": {},
+    }
+
+
+def main():
+    now = datetime.now(timezone.utc)
+    try:
+        account, gateway, token = config()
+    except (OSError, json.JSONDecodeError) as err:
+        print(f"cannot read {PI_AUTH}: {err}", file=sys.stderr)
+        return 1
+    if not account or not token:
+        record = unready(gateway if account else None, now, "Cloudflare unavailable")
+    else:
+        try:
+            record = build(account, gateway, token, now)
+        except Exception as err:  # auth, network, schema — degrade like stock collectors
+            print(f"cloudflare collector: {err}", file=sys.stderr)
+            record = unready(gateway, now, "Cloudflare unavailable")
+
+    RECORD.parent.mkdir(parents=True, exist_ok=True)
+    tmp = RECORD.with_name(f".cloudflare.{os.getpid()}.tmp")
+    tmp.write_text(json.dumps(record) + "\n")
+    tmp.replace(RECORD)
+    print(json.dumps(record))
+    return 0 if record["ready"] else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
