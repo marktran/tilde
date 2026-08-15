@@ -8,6 +8,8 @@
 o.bind("SUPER + ALT + RETURN", "Tmux", 'uwsm-app -- xdg-terminal-exec --dir="$(omarchy-cmd-terminal-cwd)" tmux new')
 
 -- Apps.
+-- Herdr launch (upstream ships this in the preinstalled block we disable).
+o.bind("SUPER + CTRL + RETURN", "Herdr", { omarchy = "terminal-herdr" })
 o.bind("SUPER + SHIFT + E", "Emacs", { focus = "^emacs$", launch = "emacs" })
 o.bind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
 o.bind("SUPER + SHIFT + T", "Activity", "uwsm-app -- xdg-terminal-exec -e btop")
