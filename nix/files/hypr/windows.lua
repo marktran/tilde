@@ -31,6 +31,9 @@ o.window("signal", { workspace = "6", group = "set" })
 o.window("chrome-discord.com__channels_@me-Default", { workspace = "6", group = "set" })
 o.window("^org\\.telegram\\.desktop$", { workspace = "6", group = "set" })
 
+-- Pin Herdr (persistent agent multiplexer) to workspace 7.
+o.window("^org\\.omarchy\\.herdr$", { workspace = "7" })
+
 -- Pin Typora to workspace 9.
 o.window("Typora", { workspace = "9" })
 

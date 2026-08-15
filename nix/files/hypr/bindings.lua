@@ -8,8 +8,10 @@
 o.bind("SUPER + ALT + RETURN", "Tmux", { omarchy = "terminal-tmux" })
 
 -- Apps.
--- Herdr launch (upstream ships this in the preinstalled block we disable).
-o.bind("SUPER + CTRL + RETURN", "Herdr", { omarchy = "terminal-herdr" })
+-- Herdr (upstream gates this behind preinstalled bindings). Launched as a
+-- TUI so it gets the org.omarchy.herdr class for the workspace-7 rule in
+-- windows.lua; focus = jump to the existing window instead of spawning more.
+o.bind("SUPER + CTRL + RETURN", "Herdr", { tui = "herdr", focus = true })
 o.bind("SUPER + SHIFT + E", "Emacs", { focus = "^emacs$", launch = "emacs" })
 o.bind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
 o.bind("SUPER + SHIFT + T", "Activity", "uwsm-app -- xdg-terminal-exec -e btop")
