@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Restore the Makima remapping daemon after an Omarchy upgrade retires it.
+#
+# Omarchy Quattro's upgrade removed makima-bin, disabled the service, and
+# deleted the MAKIMA_CONFIG drop-in; future major upgrades will likely do the
+# same. The remap configs themselves (Copilot -> Right Ctrl, Bookmarks ->
+# Compose, Ctrl+Arrows -> spotify-control) are Home Manager-managed in
+# ~/.config/makima and survive; this script restores the system-level daemon
+# that reads them. Idempotent; requires sudo.
+set -euo pipefail
+
+if ! command -v makima >/dev/null 2>&1; then
+  echo ">> Installing makima-bin"
+  sudo pacman -S --needed --noconfirm makima-bin
+fi
+
+echo ">> Writing MAKIMA_CONFIG drop-in"
+sudo mkdir -p /etc/systemd/system/makima.service.d
+sudo tee /etc/systemd/system/makima.service.d/override.conf >/dev/null <<EOF
+[Service]
+Environment=MAKIMA_CONFIG=${HOME}/.config/makima
+EOF
+
+echo ">> Enabling and starting makima.service"
+sudo systemctl daemon-reload
+sudo systemctl enable --now makima.service
+
+sleep 1
+systemctl status makima --no-pager | head -6
+echo
+echo "Test: hold the Copilot key and tap an arrow (Spotify control),"
+echo "or check that the Copilot key now acts as Right Control."

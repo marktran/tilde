@@ -228,6 +228,12 @@
     source = ../files/bin/toggle-color-scheme;
     force = true;
   };
+  # One-shot (idempotent) restore of the system-level makima daemon that
+  # Omarchy major upgrades retire; see the makima config entries above.
+  home.file."bin/restore-makima" = {
+    source = ../files/bin/restore-makima;
+    force = true;
+  };
 
   # Linux-only agent skill provided by Omarchy. Layered into the shared skill
   # dirs alongside the per-skill links from common.nix. Points directly at the
