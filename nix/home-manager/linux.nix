@@ -214,7 +214,8 @@
     force = forceLinks;
   };
 
-  # Linux/Omarchy-only ~/bin scripts: spotify-control uses swayosd/keyd;
+  # Linux/Omarchy-only ~/bin scripts: spotify-control uses playerctl and the
+  # Omarchy OSD, and is run by the makima Ctrl+Arrow bindings;
   # toggle-color-scheme uses gsettings/omarchy and is run by the ThinkPad
   # acpid Mode-key event.
   home.file."bin/spotify-control" = {

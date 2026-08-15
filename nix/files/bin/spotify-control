@@ -1,11 +1,27 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 # Control Spotify via playerctl. Invoked by makima [commands] (running as the
 # session user) or any non-interactive launcher, so bootstrap the session bus
 # instead of assuming it. Shows the Omarchy OSD as best-effort feedback.
-# Usage: spotify-control <previous|next|play-pause|stop>
 
 export DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-unix:path=/run/user/$(id -u)/bus}"
 
-playerctl --player=spotify "$1" || exit 1
+osd() {
+  command -v omarchy-osd >/dev/null 2>&1 && omarchy-osd --icon "$1" -m "$2" || true
+}
 
-command -v omarchy-osd >/dev/null 2>&1 && omarchy-osd -m "Spotify: $1" || true
+cmd="${1:-}"
+case "$cmd" in
+  previous)   label="Previous"    icon="media-skip-backward-symbolic" ;;
+  next)       label="Next"        icon="media-skip-forward-symbolic" ;;
+  play-pause) label="Play/Pause"  icon="media-playback-start-symbolic" ;;
+  stop)       label="Stop"        icon="media-playback-stop-symbolic" ;;
+  *) echo "Usage: ${0##*/} <previous|next|play-pause|stop>" >&2; exit 2 ;;
+esac
+
+if ! playerctl --player=spotify "$cmd"; then
+  osd dialog-error-symbolic "Spotify not running"
+  exit 1
+fi
+
+osd "$icon" "Spotify: $label"
