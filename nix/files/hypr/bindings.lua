@@ -4,8 +4,8 @@
 -- 3.x setup and are kept. SUPER+RETURN opens in the active terminal's cwd
 -- by default now.
 
--- Tmux session in the current directory (plain `tmux new`, no attach).
-o.bind("SUPER + ALT + RETURN", "Tmux", 'uwsm-app -- xdg-terminal-exec --dir="$(omarchy-cmd-terminal-cwd)" tmux new')
+-- Tmux, upstream behavior: attach to (or create) the "Work" session.
+o.bind("SUPER + ALT + RETURN", "Tmux", { omarchy = "terminal-tmux" })
 
 -- Apps.
 -- Herdr launch (upstream ships this in the preinstalled block we disable).
@@ -13,8 +13,8 @@ o.bind("SUPER + CTRL + RETURN", "Herdr", { omarchy = "terminal-herdr" })
 o.bind("SUPER + SHIFT + E", "Emacs", { focus = "^emacs$", launch = "emacs" })
 o.bind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
 o.bind("SUPER + SHIFT + T", "Activity", "uwsm-app -- xdg-terminal-exec -e btop")
-o.bind("SUPER + SHIFT + D", "Docker", "uwsm-app -- xdg-terminal-exec -e lazydocker")
-o.bind("SUPER + SHIFT + S", "Signal", { focus = "signal", launch = "signal-desktop" })
+o.bind("SUPER + SHIFT + D", "Docker", { tui = "lazydocker" })
+-- Signal launches manually (menu); its workspace-6 rules live in windows.lua.
 o.bind("SUPER + SHIFT + SLASH", "Passwords", "uwsm-app -- 1password")
 
 -- Web apps.
@@ -22,6 +22,8 @@ o.bind("SUPER + SHIFT + A", "ChatGPT", 'omarchy-launch-or-focus-webapp chrome-ch
 o.bind("SUPER + SHIFT + R", "Reflect", 'omarchy-launch-or-focus-webapp chrome-reflect "https://reflect.app"')
 o.bind("SUPER + SHIFT + P", "Google Photos", 'omarchy-launch-or-focus-webapp "Google Photos" "https://photos.google.com/"')
 o.bind("SUPER + SHIFT + X", "X", 'omarchy-launch-or-focus-webapp X "https://x.com/"')
+-- Superhuman has no public compose deep-link; open the app, `c` composes.
+o.bind("SUPER + SHIFT + ALT + E", "New email", { webapp = "https://mail.superhuman.com/" })
 
 -- ThinkPad Copilot key emits SUPER+SHIFT+code:201; Makima remaps that chord
 -- to Right Control. Keep it from falling through to the Omarchy menu when
