@@ -1,7 +1,9 @@
 set -gx PATH ./node_modules/.bin $HOME/.opencode/bin $HOME/.cargo/bin $HOME/bin $HOME/.local/bin /opt/homebrew/bin /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/sbin
 
-if test (uname) = Linux; and test -d $HOME/.local/share/omarchy/bin
-    set -gx OMARCHY_PATH $HOME/.local/share/omarchy
+# Omarchy Quattro is package-backed; ~/.local/share/omarchy is only a
+# compat symlink now. Keep the export for SSH/non-graphical shells.
+if test (uname) = Linux; and test -d /usr/share/omarchy/bin
+    set -gx OMARCHY_PATH /usr/share/omarchy
     set -gx PATH $OMARCHY_PATH/bin $PATH
 end
 
