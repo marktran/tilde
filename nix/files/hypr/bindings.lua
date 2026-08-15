@@ -21,7 +21,6 @@ o.bind("SUPER + SHIFT + SLASH", "Passwords", "uwsm-app -- 1password")
 
 -- Web apps.
 o.bind("SUPER + SHIFT + A", "ChatGPT", 'omarchy-launch-or-focus-webapp chrome-chatgpt "https://chatgpt.com"')
-o.bind("SUPER + SHIFT + R", "Reflect", 'omarchy-launch-or-focus-webapp chrome-reflect "https://reflect.app"')
 o.bind("SUPER + SHIFT + P", "Google Photos", 'omarchy-launch-or-focus-webapp "Google Photos" "https://photos.google.com/"')
 o.bind("SUPER + SHIFT + X", "X", 'omarchy-launch-or-focus-webapp X "https://x.com/"')
 -- Superhuman has no public compose deep-link; open the app, `c` composes.
@@ -40,8 +39,8 @@ o.bind("XF86AudioMicMute", "Toggle dictation", "voxtype record toggle")
 hl.unbind("SUPER + CTRL + X")
 
 -- Reorder tabs/windows within a Hyprland group.
-o.bind("SUPER + CTRL + SHIFT + LEFT", "Move grouped window left", "hyprctl dispatch movegroupwindow b")
-o.bind("SUPER + CTRL + SHIFT + RIGHT", "Move grouped window right", "hyprctl dispatch movegroupwindow f")
+o.bind("SUPER + CTRL + SHIFT + LEFT", "Move grouped window left", hl.dsp.group.move_window({ forward = false }))
+o.bind("SUPER + CTRL + SHIFT + RIGHT", "Move grouped window right", hl.dsp.group.move_window({ forward = true }))
 
 -- HHKB media keys.
 local hhkb = { device = { inclusive = true, list = { "pfu-limited-hhkb-hybrid" } } }
