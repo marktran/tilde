@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.local/share/omarchy/bin:/usr/local/bin:/usr/bin:/bin:${PATH:-}"
+export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.local/share/omarchy/bin:/usr/local/bin:/usr/bin:/bin${PATH:+:$PATH}"
 
 # Makima/acpid-style launchers may run outside the interactive shell but still
 # need to talk to the logged-in user's D-Bus session for gsettings/OSD/notify.
 if [[ -z ${XDG_RUNTIME_DIR:-} ]]; then
-  export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+  XDG_RUNTIME_DIR="/run/user/$(id -u)"
+  export XDG_RUNTIME_DIR
 fi
 if [[ -z ${DBUS_SESSION_BUS_ADDRESS:-} && -S "$XDG_RUNTIME_DIR/bus" ]]; then
   export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
 fi
 
 usage() {
-  echo "Usage: ${0##*/} [toggle|light|dark|status]" >&2
+  echo "Usage: ${0##*/} [toggle|light|dark|status]"
 }
 
 current_color_scheme() {
@@ -26,7 +27,7 @@ notify_scheme() {
 
   # Omarchy Quattro's Quickshell OSD (swayosd retired with Omarchy 3.x).
   if command -v omarchy-osd >/dev/null 2>&1 && \
-    omarchy-osd --message "$label mode" >/dev/null 2>&1; then
+    omarchy-osd --icon "$icon" --message "$label mode" >/dev/null 2>&1; then
     return
   fi
 
@@ -66,6 +67,11 @@ debounce_toggle() {
   fi
 
   printf '%s\n' "$now" >"$stamp"
+
+  # Release the lock now that the stamp is written. Holding it through the
+  # apply phase would stall a duplicate invocation past the debounce window
+  # and let it re-toggle.
+  exec 9>&-
 }
 
 case "$cmd" in
@@ -82,10 +88,11 @@ case "$cmd" in
     mode="dark"
     ;;
   status)
-    case "$(current_color_scheme)" in
+    scheme="$(current_color_scheme)"
+    case "$scheme" in
       prefer-light) echo "light" ;;
       prefer-dark) echo "dark" ;;
-      *) current_color_scheme ;;
+      *) echo "$scheme" ;;
     esac
     exit 0
     ;;
@@ -94,7 +101,7 @@ case "$cmd" in
     exit 0
     ;;
   *)
-    usage
+    usage >&2
     exit 2
     ;;
 esac
@@ -138,18 +145,24 @@ elif [[ -x $HOME/.local/share/omarchy/bin/omarchy-theme-set-browser ]]; then
   "$HOME/.local/share/omarchy/bin/omarchy-theme-set-browser" >/dev/null 2>&1 || true
 fi
 
-# Some existing Chromium profiles can retain an explicit light/dark appearance
-# in Preferences. Keep the profile set to "system/device" so browser policy and
-# OS preference can drive prefers-color-scheme. This is Omarchy's upstream fix
-# for Chrome's current theme prefs: color_scheme2 is the field Chromium now reads.
-CHROMIUM_PREFS="$HOME/.config/chromium/Default/Preferences"
-if [[ -f $CHROMIUM_PREFS && -w $CHROMIUM_PREFS ]] && command -v jq >/dev/null 2>&1; then
-  tmp=$(mktemp)
-  if jq '.browser.theme.color_scheme = 0 | .browser.theme.color_scheme2 = 0' "$CHROMIUM_PREFS" >"$tmp"; then
-    mv "$tmp" "$CHROMIUM_PREFS"
-  else
-    rm -f "$tmp"
-  fi
+# Some existing Chromium/Brave profiles can retain an explicit light/dark
+# appearance in Preferences. Keep profiles set to "system/device" so browser
+# policy and OS preference can drive prefers-color-scheme. This is Omarchy's
+# upstream fix for Chrome's current theme prefs: color_scheme2 is the field
+# Chromium now reads. The temp file lives next to the target so the rename is
+# atomic; a running browser rewrites Preferences on exit anyway, so this is
+# inherently best-effort.
+if command -v jq >/dev/null 2>&1; then
+  for prefs in "$HOME"/.config/chromium/*/Preferences \
+    "$HOME"/.config/BraveSoftware/Brave-Browser/*/Preferences; do
+    [[ -f $prefs && -w $prefs ]] || continue
+    tmp=$(mktemp "$prefs.XXXXXX")
+    if jq '.browser.theme.color_scheme = 0 | .browser.theme.color_scheme2 = 0' "$prefs" >"$tmp"; then
+      mv "$tmp" "$prefs"
+    else
+      rm -f "$tmp"
+    fi
+  done
 fi
 
 notify_scheme "$label" "$icon"
