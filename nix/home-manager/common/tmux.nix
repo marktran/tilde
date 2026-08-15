@@ -50,6 +50,11 @@
       # Re-number windows with 1-based indexing
       set-option -g renumber-windows on
 
+      # Advertise OSC 52 clipboard support for all terminals so remote (SSH)
+      # Neovim yanks reach the local clipboard. Satisfies the guard in Omarchy
+      # migration 1781587663, which otherwise appends this line itself.
+      set -as terminal-features ",*:clipboard"
+
       # Keybindings
       unbind %
       unbind '"'
