@@ -171,18 +171,6 @@
       force = forceLinks;
     };
 
-    # Omarchy shell (bar layout, widgets, idle/lock). Nix-owned on purpose:
-    # `omarchy bar ...`, `omarchy refresh shell`, and update migrations rewrite
-    # this file; they now fail loudly instead of mutating it silently
-    # (fix: materialize -> mutate/migrate -> re-adopt). The shell's hot-reload
-    # does NOT fire on rebuilds: activation swaps the symlink while the store
-    # file it resolves to never changes, so inotify sees nothing. After a
-    # `make switch` that touches this file, run `omarchy restart shell`.
-    "omarchy/shell.json" = {
-      source = ../files/omarchy/shell.json;
-      force = forceLinks;
-    };
-
     # Omarchy's stock Vantablack/White themes point icons.theme at Yaru-gray/
     # Yaru-grey, variants that no longer exist in the yaru-icon-theme package
     # (basecamp/omarchy#5257; the Yaru-dark fix PR #4872 was closed unmerged).
@@ -238,6 +226,24 @@
       force = forceLinks;
     };
   };
+
+  # Omarchy shell config (bar layout, widgets, idle/lock). App-owned, seeded
+  # from the repo copy on first activation only (same pattern as Pi's
+  # settings.json in common/agents.nix). The shell's double-click transparency
+  # toggle and `omarchy bar ...` persist by rewriting/replacing this file; the
+  # earlier Nix-owned store link made the QML write fail silently and let the
+  # CLI `mv` silently replace the link with drift that the next switch
+  # clobbered. Once seeded, rebuilds never touch the live file. To track an
+  # evolved layout in the repo again, re-adopt deliberately:
+  #   cp ~/.config/omarchy/shell.json nix/files/omarchy/shell.json  (+ commit)
+  home.activation.seedOmarchyShellConfig = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    shellConfig="$HOME/.config/omarchy/shell.json"
+    if [ ! -e "$shellConfig" ]; then
+      $DRY_RUN_CMD mkdir -p "$(dirname "$shellConfig")"
+      $DRY_RUN_CMD cp ${../files/omarchy/shell.json} "$shellConfig"
+      $DRY_RUN_CMD chmod u+w "$shellConfig"
+    fi
+  '';
 
   home.file.".XCompose" = {
     source = ../files/xcompose/XCompose;
