@@ -16,6 +16,21 @@ o.bind("SUPER + CTRL + RETURN", "Herdr", { tui = "herdr", focus = true })
 -- --alternate-editor= starts a daemon if it is somehow not running.
 o.bind("SUPER + SHIFT + E", "Emacs", { focus = "^emacs$", launch = "emacsclient -c --alternate-editor=" })
 o.bind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
+
+-- Org bookmarks (~/Dropbox/org/bookmarks.org), in the spirit of
+-- https://joshblais.com/blog/how-i-am-deeply-integrating-emacs/#bookmarks.
+-- Captures the clipboard URL — page title auto-fetched — into a floating
+-- popup frame that closes on C-c C-c (save) or C-c C-k (abort). Elisp lives
+-- in emacs.d/settings/org-extras.el; the popup float rule and its
+-- workspace-2 exclusion live in windows.lua. Inside Emacs, SPC n b visits
+-- the file.
+o.bind(
+  "SUPER + ALT + B",
+  "Capture bookmark",
+  -- The title parameter (not name) pins the window title: beframe renames
+  -- frame names, and the windows.lua rules match on title "org-capture".
+  [[emacsclient -c --alternate-editor= -F '((title . "org-capture") (org-capture-popup . t))' -e '(m/org-capture-bookmark-popup)']]
+)
 o.bind("SUPER + SHIFT + T", "Activity", "uwsm-app -- xdg-terminal-exec -e btop")
 o.bind("SUPER + SHIFT + D", "Docker", { tui = "lazydocker" })
 -- Signal launches manually (menu); its workspace-6 rules live in windows.lua.

@@ -12,8 +12,10 @@ o.window({ class = "^system-config-printer$", title = "^Print Settings.*$" }, { 
 -- Pin main browser window to workspace 1.
 o.window("^(chromium|brave-origin-beta|brave-browser)$", { workspace = "1" })
 
--- Pin Emacs to workspace 2.
-o.window("emacs", { workspace = "2" })
+-- Pin Emacs to workspace 2 — except org-capture popup frames (SUPER+ALT+B
+-- in bindings.lua), which float centered on the current workspace.
+o.window({ class = "emacs", title = "negative:^org-capture$" }, { workspace = "2" })
+o.window({ class = "emacs", title = "^org-capture$" }, { float = true, center = true, size = "1000 400" })
 
 -- Pin ChatGPT, Todoist, and Obsidian to workspace 3.
 o.window("^(chrome|brave)-chatgpt\\.com__-Default$", { workspace = "3" })
