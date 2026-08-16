@@ -27,12 +27,12 @@ A `Makefile` wraps the platform-specific workflow and auto-detects the host.
 Run targets from the repo root:
 
 ```sh
-make            # list targets
+make            # = make dry-run (default): build + dry-run, applies nothing
 make switch     # build + activate this machine's config
-make dry-run    # build + dry-run activation (applies nothing)
 make check      # sanity-check both hosts
 make update     # update flake inputs (flake.lock)
 make rollback   # roll back to the previous generation
+make help       # list all targets
 ```
 
 Underneath, `make switch` runs the right command per platform:

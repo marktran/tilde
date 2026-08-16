@@ -1,10 +1,9 @@
-# Nix and Home Manager Migration
+# Nix and Home Manager
 
-This is the first migration layer from GNU Stow to Nix + Home Manager.
-
-The current repo is still arranged as Stow packages. The Home Manager modules in
-this directory deliberately preserve that shape by linking entries from the
-checkout at `~/src/mark/tilde`.
+Home Manager modules and repo-managed files for `$HOME` on both hosts. The
+GNU Stow setup this replaced is fully retired; live-editable trees are linked
+from the checkout at `~/src/mark/tilde`, everything else is store-backed or
+typed Home Manager config.
 
 ## Concepts
 
@@ -26,8 +25,8 @@ checkout at `~/src/mark/tilde`.
 
 Most examples copy files into the Nix store and link from there. That is more
 reproducible, but the store is read-only. This repo has mutable config
-directories such as `.emacs.d` and app extension trees, so the first pass uses
-Home Manager's out-of-store symlinks. That keeps behavior close to Stow:
+directories such as `.emacs.d` and app extension trees, so those use Home
+Manager's out-of-store symlinks:
 
 ```text
 ~/.pi/agent/extensions -> ~/src/mark/tilde/nix/files/pi/agent/extensions
@@ -39,12 +38,11 @@ example `programs.git`, `programs.fish`, or `programs.tmux`. Git, Fish,
 Ghostty, tmux, direnv, and zoxide now use typed Home Manager config where it is
 clearer than file links.
 
-This bridge intentionally follows the current live Stow granularity. Some
-targets are whole-directory links, while stateful directories such as
-`~/.pi/agent`, `~/.config/hypr`, and `~/.config/mpv` keep their real parent
-directories and only link selected children. Claude settings and commands are
-store-backed because they are static; app-generated Claude state stays outside
-this repo.
+Link granularity is deliberate. Some targets are whole-directory links, while
+stateful directories such as `~/.pi/agent`, `~/.config/hypr`, and
+`~/.config/mpv` keep their real parent directories and only link selected
+children. Claude settings are store-backed because they are static;
+app-generated Claude state stays outside this repo.
 
 ## Hosts
 
@@ -79,11 +77,10 @@ plugin-like trees stay linked from the checkout:
   `async-backend`).
 - `systemd.user.services.voxtype` (typed user service; binary stays
   system-installed).
-- Store-backed static files: `.XCompose`, `voxtype/config.toml`,
-  `elephant/websearch.toml`, `elephant/google-favicon.png`, the WirePlumber
-  Shure MV7 override, Typora user config, `rtorrent.rc`, Makima TOMLs,
-  `mpv/mpv.conf`, `mpv/input.conf`, mpv `script-opts/*.conf`, mpv helper
-  scripts, and Hypr/Omarchy `hypr/*.conf` + helper scripts.
+- Store-backed static files: `.XCompose`, `voxtype/config.toml`, the
+  WirePlumber Shure MV7 override, Typora user config, `rtorrent.rc`, Makima
+  TOMLs, `mpv/mpv.conf`, `mpv/input.conf`, mpv `script-opts/*.conf`, mpv helper
+  scripts, and the Hypr/Omarchy `hypr/` config + helper scripts.
 
 Shared typed config (both hosts) includes `programs.tmux`: Home Manager
 generates `~/.config/tmux/tmux.conf`, tmux itself stays native/Homebrew-owned,
@@ -212,8 +209,8 @@ This creates a `result` symlink but does not change your live home directory.
 ## Step 4: Dry Run Activation
 
 After the build succeeds, run the generated activation script in dry-run mode.
-This checks collisions and prints the activation steps without replacing your
-current Stow symlinks.
+This checks collisions and prints the activation steps without changing the
+live home directory.
 
 ThinkPad:
 
@@ -227,12 +224,9 @@ If the dry run is clean, activate Home Manager:
 ./result/activate
 ```
 
-Early bridge entries used `force = true` because Stow already owned those paths
-as symlinks. The generic Stow bridge helper is now gone: remaining live-editable
-paths are explicit Home Manager `home.file` entries using out-of-store symlinks,
-and static files are store-backed.
-
-Do not unstow `system` as part of Home Manager migration.
+Live-editable paths are explicit Home Manager `home.file` entries using
+out-of-store symlinks; static files are store-backed. `force = true` entries
+overwrite pre-existing files at those paths instead of aborting activation.
 
 ## Step 5: Verify Ownership
 
@@ -255,11 +249,8 @@ Future Linux switches can use:
 home-manager switch --flake ~/src/mark/tilde#linux
 ```
 
-Do not run `stow -D` after Home Manager owns the links; Stow can remove links
-that Home Manager just created because both point to the same checkout files.
-At that point "no Stow" means stop using Stow for `$HOME` and let Home Manager
-own future changes. GNU Stow is no longer used anywhere; privileged Linux
-`/etc` files are deployed by `linux/install.sh` (see below).
+GNU Stow is no longer used anywhere; privileged Linux `/etc` files are
+deployed by `linux/install.sh` (see below).
 
 ## Step 6: Roll Back If Needed
 

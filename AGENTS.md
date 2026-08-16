@@ -20,7 +20,7 @@
   evaluation/rollback; do not run `home-manager switch ...#mac` while
   nix-darwin owns the Home Manager profile.
 - Repo-managed config files live under `nix/files/` and Home Manager links them
-  into `$HOME`; `emacs/` is the remaining top-level live out-of-store tree. Do
+  into `$HOME`; `emacs.d/` is the remaining top-level live out-of-store tree. Do
   not use GNU Stow for home-directory config.
 - Many programs are configured through Home Manager modules in
   `nix/home-manager/` (e.g. `programs.ghostty.settings`), not via standalone
