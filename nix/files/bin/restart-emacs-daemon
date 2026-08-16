@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Restart the Emacs daemon (systemd user unit `emacs`, defined in
+# nix/home-manager/linux.nix).
+#
+# Not just `systemctl --user restart emacs`: emacsclient's ALTERNATE_EDITOR=""
+# fallback can leave an orphan daemon running outside the unit, which
+# systemctl cannot see and which would keep the new daemon from claiming the
+# server socket. Ask whatever daemon holds the socket to quit, then start the
+# unit fresh.
+#
+# kill-emacs discards unsaved changes without prompting, so refuse to proceed
+# while modified file buffers exist unless --force is given.
+
+set -euo pipefail
+
+force=0
+case "${1:-}" in
+-f | --force) force=1 ;;
+"") ;;
+*)
+  echo "Usage: ${0##*/} [-f|--force]" >&2
+  exit 64
+  ;;
+esac
+
+# Anything answering on the server socket? (Sees orphans too.)
+if emacsclient --eval t >/dev/null 2>&1; then
+  if ((!force)); then
+    unsaved=$(emacsclient --eval \
+      '(mapconcat (function buffer-name) (delq nil (mapcar (lambda (b) (and (buffer-file-name b) (buffer-modified-p b) b)) (buffer-list))) " ")' \
+      2>/dev/null)
+    if [[ -n $unsaved && $unsaved != '""' ]]; then
+      echo "${0##*/}: unsaved file buffers: ${unsaved//\"/}" >&2
+      echo "Save them first, or rerun with --force to discard them." >&2
+      exit 1
+    fi
+  fi
+  emacsclient --eval '(kill-emacs)' >/dev/null 2>&1 || true
+fi
+
+# Wait for the old daemon to release the socket so the new one can bind it.
+sock="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/emacs/server"
+for _ in {1..50}; do
+  [[ -S $sock ]] || break
+  sleep 0.1
+done
+
+systemctl --user restart emacs.service
+echo "Emacs daemon restarted (pid $(emacsclient --eval '(emacs-pid)'))"

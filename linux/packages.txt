@@ -13,3 +13,6 @@ pam-u2f
 fprintd
 
 acpid
+
+# pgtk Emacs; the daemon runs as a Home Manager user service (linux.nix).
+emacs-wayland

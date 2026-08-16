@@ -12,7 +12,9 @@ o.bind("SUPER + ALT + RETURN", "Tmux", { omarchy = "terminal-tmux" })
 -- TUI so it gets the org.omarchy.herdr class for the workspace-7 rule in
 -- windows.lua; focus = jump to the existing window instead of spawning more.
 o.bind("SUPER + CTRL + RETURN", "Herdr", { tui = "herdr", focus = true })
-o.bind("SUPER + SHIFT + E", "Emacs", { focus = "^emacs$", launch = "emacs" })
+-- Emacs frames attach to the systemd-managed daemon (linux.nix);
+-- --alternate-editor= starts a daemon if it is somehow not running.
+o.bind("SUPER + SHIFT + E", "Emacs", { focus = "^emacs$", launch = "emacsclient -c --alternate-editor=" })
 o.bind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
 o.bind("SUPER + SHIFT + T", "Activity", "uwsm-app -- xdg-terminal-exec -e btop")
 o.bind("SUPER + SHIFT + D", "Docker", { tui = "lazydocker" })

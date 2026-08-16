@@ -44,6 +44,32 @@
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  # Emacs daemon (pgtk build from the emacs-wayland pacman package). Mirrors
+  # the packaged unit (/usr/lib/systemd/user/emacs.service, left disabled) but
+  # is tied to graphical-session.target instead of default.target: pgtk Emacs
+  # reads WAYLAND_DISPLAY from its own environment when the first graphical
+  # frame is created, and UWSM only imports the session env into the systemd
+  # user manager once the graphical session is up. Open frames with
+  # `emacsclient -c` (SUPER+SHIFT+E in nix/files/hypr/bindings.lua).
+  systemd.user.services.emacs = {
+    Unit = {
+      Description = "Emacs text editor daemon";
+      Documentation = "info:emacs man:emacs(1) https://gnu.org/software/emacs/";
+      PartOf = "graphical-session.target";
+      After = "graphical-session.target";
+    };
+
+    Service = {
+      Type = "notify";
+      ExecStart = "/usr/bin/emacs --fg-daemon";
+      # Emacs exits 15 on SIGTERM, systemd's default stop signal.
+      SuccessExitStatus = 15;
+      Restart = "on-failure";
+    };
+
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   # Skip scheduled Gmail syncs until the one-time OAuth flow has written its
   # machine-local credentials.
   services.lieer.enable = true;
@@ -260,6 +286,13 @@
   };
   home.file."bin/toggle-color-scheme" = {
     source = ../files/bin/toggle-color-scheme;
+    force = true;
+  };
+  # Safe restart of the Emacs daemon defined above: reaps orphan daemons
+  # spawned by emacsclient's ALTERNATE_EDITOR="" fallback and refuses to
+  # discard unsaved buffers without --force.
+  home.file."bin/restart-emacs-daemon" = {
+    source = ../files/bin/restart-emacs-daemon;
     force = true;
   };
   # One-shot (idempotent) restore of the system-level makima daemon that
