@@ -33,7 +33,7 @@ enabled = true
 
 # "default" (soft chime up/down), "subtle" (quieter taps), "mechanical"
 # (sharp clicks), or a path to a directory of .wav files.
-theme = "default"
+theme = "subtle"
 
 # Cue volume, 0.0-1.0. Independent of system volume.
 volume = 0.7
