@@ -1,6 +1,5 @@
 # Voxtype Configuration
-# Managed from ~/src/mark/tilde via GNU Stow.
-# Link with: stow -t ~ voxtype
+# Managed from ~/src/mark/tilde (Home Manager, store-backed).
 
 # Use the ONNX Parakeet engine for English dictation.
 # Requires ONNX backend enabled: sudo voxtype setup onnx --enable

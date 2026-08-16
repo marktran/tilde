@@ -1,9 +1,8 @@
 # Nix and Home Manager
 
-Home Manager modules and repo-managed files for `$HOME` on both hosts. The
-GNU Stow setup this replaced is fully retired; live-editable trees are linked
-from the checkout at `~/src/mark/tilde`, everything else is store-backed or
-typed Home Manager config.
+Home Manager modules and repo-managed files for `$HOME` on both hosts.
+Live-editable trees are linked from the checkout at `~/src/mark/tilde`;
+everything else is store-backed or typed Home Manager config.
 
 ## Concepts
 
@@ -249,9 +248,6 @@ Future Linux switches can use:
 home-manager switch --flake ~/src/mark/tilde#linux
 ```
 
-GNU Stow is no longer used anywhere; privileged Linux `/etc` files are
-deployed by `linux/install.sh` (see below).
-
 ## Step 6: Roll Back If Needed
 
 ```sh
@@ -328,7 +324,3 @@ already includes `sudo_local`.
 
 - [ ] macOS: confirm `programs.tmux` after a `darwin-rebuild switch` (Linux is
   verified; the Mac just needs a tmux launch).
----
-
-The full historical GNU Stow -> Nix migration plan lived in `PLAN.md`; the
-migration is complete, so it was removed (see git history for the record).

@@ -46,8 +46,6 @@ The script deploys each file by the right mechanism for when it is read:
   overwrites it (a broken PAM config can lock out sudo); it prints a diff +
   apply command when it drifts.
 
-GNU Stow is no longer used anywhere in this repo.
-
 ### Contents
 
 ThinkPad F8 / "Mode" key → light/dark toggle (handled in userspace via acpid):

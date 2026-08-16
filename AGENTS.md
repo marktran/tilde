@@ -20,8 +20,7 @@
   evaluation/rollback; do not run `home-manager switch ...#mac` while
   nix-darwin owns the Home Manager profile.
 - Repo-managed config files live under `nix/files/` and Home Manager links them
-  into `$HOME`; `emacs.d/` is the remaining top-level live out-of-store tree. Do
-  not use GNU Stow for home-directory config.
+  into `$HOME`; `emacs.d/` is the remaining top-level live out-of-store tree.
 - Many programs are configured through Home Manager modules in
   `nix/home-manager/` (e.g. `programs.ghostty.settings`), not via standalone
   dotfiles. Check there first before assuming a config is missing or editing a
@@ -30,12 +29,11 @@
 - `linux/` holds Linux/Omarchy host provisioning kept outside Nix: native
   package inventories (`packages.txt`/`aur.txt`, via `make pkgs`) and
   privileged `/etc` files (`linux/etc/`, deployed with `make system` which
-  wraps `sudo linux/install.sh`; `make system-diff` shows drift). GNU Stow is
-  no longer used anywhere in this repo.
+  wraps `sudo linux/install.sh`; `make system-diff` shows drift).
 - No platform sub-namespaces — the flake selects shared, Linux-only, and macOS-only
   modules.
 - `linux/packages.txt` (official-repo) and `linux/aur.txt` (AUR) are Linux-only
-  package inventories, not Stow packages. Use `make pkgs` to install and
+  package inventories. Use `make pkgs` to install and
   `make pkgs-diff` to spot uncurated installed packages.
 - Assume all new files and file edits should be made in this repo.
 - Do not edit generated symlinks directly in `$HOME`.

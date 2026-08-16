@@ -49,7 +49,7 @@ Do not run `home-manager switch ...#mac` while nix-darwin owns the Home Manager
 profile. Edit files here, then switch. Do not edit generated symlinks in
 `$HOME` directly.
 
-Home Manager owns the home-directory links. Do not use `stow` for `$HOME`.
+Home Manager owns the home-directory links.
 
 ## Gmail and Notmuch
 

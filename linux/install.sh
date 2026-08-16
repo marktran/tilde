@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # Deploy this machine's privileged /etc files (Lenovo ThinkPad X1 Carbon).
 #
-# Replaces the old `sudo stow -t / system` workflow. Files are deployed by the
-# right mechanism for when they are read:
+# Files are deployed by the right mechanism for when they are read:
 #   - REAL files for early-boot / security configs. A symlink into /home is
 #     unreadable in early boot (modprobe, bootloader) and unsafe for PAM.
 #   - SYMLINKS for runtime configs (acpid events), so edits are live.
