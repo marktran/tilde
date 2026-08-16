@@ -14,5 +14,8 @@ fprintd
 
 acpid
 
+# Firmware/BIOS updates via LVFS (fwupdmgr).
+fwupd
+
 # pgtk Emacs; the daemon runs as a Home Manager user service (linux.nix).
 emacs-wayland
