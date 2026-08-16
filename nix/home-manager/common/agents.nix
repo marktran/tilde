@@ -59,8 +59,16 @@ in
       source = ../../files/pi/agent/settings.default.json;
       force = true;
     };
+    # Repo themes are store-backed, but link them per-file (recursive) so the
+    # directory itself stays a real, writable dir: on Omarchy, `omarchy theme
+    # set` runs omarchy-theme-set-pi, which writes the generated
+    # omarchy-system.json (a pi theme tracking the system theme) into this
+    # dir. With the whole dir store-linked, that write failed with EACCES.
+    # omarchy-system.json is regenerated per theme change; runtime state, not
+    # repo content.
     ".pi/agent/themes" = {
       source = ../../files/pi/agent/themes;
+      recursive = true;
       force = true;
     };
 
