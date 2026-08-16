@@ -26,6 +26,18 @@ sample_rate = 16000
 # Safety limit for a single recording.
 max_duration_secs = 120
 
+[audio.feedback]
+# Short cue sounds on recording start/stop — the audible counterpart to the
+# disabled OSD below. On by default upstream; pinned here so it stays on.
+enabled = true
+
+# "default" (soft chime up/down), "subtle" (quieter taps), "mechanical"
+# (sharp clicks), or a path to a directory of .wav files.
+theme = "default"
+
+# Cue volume, 0.0-1.0. Independent of system volume.
+volume = 0.7
+
 [parakeet]
 # NVIDIA Parakeet TDT English model with punctuation.
 # Download with: voxtype setup --download --model parakeet-tdt-0.6b-v3
