@@ -10,18 +10,32 @@ osd() {
   command -v omarchy-osd >/dev/null 2>&1 && omarchy-osd --icon "$1" -m "$2" || true
 }
 
+# Icon names come from the Omarchy OSD's fixed vocabulary (see iconFor in
+# /usr/share/omarchy/shell/plugins/osd/OsdModel.js); unknown names render as
+# literal text, which also lets us pass raw Nerd Font glyphs where no name
+# exists (stop, alert).
 cmd="${1:-}"
 case "$cmd" in
-  previous)   label="Previous"    icon="media-skip-backward-symbolic" ;;
-  next)       label="Next"        icon="media-skip-forward-symbolic" ;;
-  play-pause) label="Play/Pause"  icon="media-playback-start-symbolic" ;;
-  stop)       label="Stop"        icon="media-playback-stop-symbolic" ;;
+  previous)   label="Previous"    icon="media-previous" ;;
+  next)       label="Next"        icon="media-next" ;;
+  play-pause) label="Play/Pause"  icon="media-play" ;;
+  stop)       label="Stop"        icon="󰓛" ;;
   *) echo "Usage: ${0##*/} <previous|next|play-pause|stop>" >&2; exit 2 ;;
 esac
 
+# Report the state a toggle will produce. Spotify's MPRIS status updates
+# asynchronously, so querying after the toggle races and reports the old
+# state; read it before and invert instead.
+if [[ $cmd == play-pause ]]; then
+  case "$(playerctl --player=spotify status 2>/dev/null || true)" in
+    Playing)        label="Paused"  icon="media-pause" ;;
+    Paused|Stopped) label="Playing" icon="media-play" ;;
+  esac
+fi
+
 if ! playerctl --player=spotify "$cmd"; then
-  osd dialog-error-symbolic "Spotify not running"
+  osd "󰀦" "Spotify not running"
   exit 1
 fi
 
-osd "$icon" "Spotify: $label"
+osd "$icon" "$label"
