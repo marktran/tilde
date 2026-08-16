@@ -1,7 +1,7 @@
 # Official-repo packages for bootstrapping (curated list, not a full snapshot).
 #
-# Install all:   sudo pacman -S --needed - < linux/packages.txt
-#                (or: make pkgs)
+# Install all:   make pkgs
+#   (strips comments; plain `pacman -S - < file` would choke on them)
 # AUR packages live in linux/aur.txt (install those with an AUR helper).
 #
 # Regenerate from this machine's explicitly-installed repo packages:

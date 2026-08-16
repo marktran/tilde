@@ -84,9 +84,9 @@ generations: ## List Home Manager generations
 
 pkgs: ## (Linux) Install curated official-repo + AUR bootstrap packages
 ifeq ($(PLATFORM),linux)
-	sudo pacman -S --needed - < linux/packages.txt
-	@command -v paru >/dev/null 2>&1 && paru -S --needed - < linux/aur.txt \
-		|| { command -v yay >/dev/null 2>&1 && yay -S --needed - < linux/aur.txt; } \
+	grep -v '^#' linux/packages.txt | grep -v '^$$' | sudo pacman -S --needed -
+	@command -v paru >/dev/null 2>&1 && { grep -v '^#' linux/aur.txt | grep -v '^$$' | paru -S --needed -; } \
+		|| { command -v yay >/dev/null 2>&1 && grep -v '^#' linux/aur.txt | grep -v '^$$' | yay -S --needed -; } \
 		|| echo "No AUR helper (paru/yay) found; skipping linux/aur.txt"
 else
 	@echo "pkgs: Linux-only (macOS packages are declared via nix-darwin Homebrew)"
