@@ -33,6 +33,12 @@ o.bind("SUPER + ALT + B", "Capture bookmark", capture_bookmark)
 -- as XF86Favorites: Makima's old Bookmarks->Compose remap never caught it,
 -- so that remap has been dropped from the Makima config.
 o.bind("XF86Favorites", "Capture bookmark", capture_bookmark)
+-- Full org-capture — template picked in the popup's minibuffer — in the
+-- same floating frame as the bookmark capture (shared "org-capture"
+-- title, so the windows.lua float rules apply as-is).
+local capture_org =
+  [[emacsclient -c --alternate-editor= -F '((title . "org-capture") (org-capture-popup . t))' -e '(m/org-capture-popup)']]
+o.bind("SUPER + ALT + C", "Org capture", capture_org)
 o.bind("SUPER + SHIFT + T", "Activity", "uwsm-app -- xdg-terminal-exec -e btop")
 o.bind("SUPER + SHIFT + D", "Docker", { tui = "lazydocker" })
 -- Signal launches manually (menu); its workspace-6 rules live in windows.lua.
