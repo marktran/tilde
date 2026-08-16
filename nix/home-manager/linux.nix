@@ -199,6 +199,24 @@
       force = forceLinks;
     };
 
+    # Omarchy's stock Vantablack/White themes point icons.theme at Yaru-gray/
+    # Yaru-grey, variants that no longer exist in the yaru-icon-theme package
+    # (basecamp/omarchy#5257; the Yaru-dark fix PR #4872 was closed unmerged).
+    # With a nonexistent theme name, GTK4 falls back to its tiny builtin icon
+    # set, which lacks starred-symbolic and user-trash-full-symbolic, so
+    # Nautilus renders broken-image triangles for Starred and non-empty Trash.
+    # `omarchy-theme-set` overlays ~/.config/omarchy/themes/<name>/* onto the
+    # stock theme, so these one-liners override only the icon theme. They take
+    # effect the next time the theme is applied: `omarchy theme set vantablack`.
+    "omarchy/themes/vantablack/icons.theme" = {
+      source = ../files/omarchy/themes/vantablack/icons.theme;
+      force = forceLinks;
+    };
+    "omarchy/themes/white/icons.theme" = {
+      source = ../files/omarchy/themes/white/icons.theme;
+      force = forceLinks;
+    };
+
     # System monospace = Berkeley Mono (read by the omarchy shell, Qt, and
     # anything resolving "monospace"). Nix-owned: `omarchy font set` would
     # rewrite this file; it now fails loudly instead.
