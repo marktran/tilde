@@ -24,13 +24,15 @@ o.bind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
 -- in emacs.d/settings/org-extras.el; the popup float rule and its
 -- workspace-2 exclusion live in windows.lua. Inside Emacs, SPC n b visits
 -- the file.
-o.bind(
-  "SUPER + ALT + B",
-  "Capture bookmark",
-  -- The title parameter (not name) pins the window title: beframe renames
-  -- frame names, and the windows.lua rules match on title "org-capture".
+-- The title parameter (not name) pins the window title: beframe renames
+-- frame names, and the windows.lua rules match on title "org-capture".
+local capture_bookmark =
   [[emacsclient -c --alternate-editor= -F '((title . "org-capture") (org-capture-popup . t))' -e '(m/org-capture-bookmark-popup)']]
-)
+o.bind("SUPER + ALT + B", "Capture bookmark", capture_bookmark)
+-- ThinkPad star/favorites key (evdev KEY_BOOKMARKS). It reaches Hyprland
+-- as XF86Favorites: Makima's old Bookmarks->Compose remap never caught it,
+-- so that remap has been dropped from the Makima config.
+o.bind("XF86Favorites", "Capture bookmark", capture_bookmark)
 o.bind("SUPER + SHIFT + T", "Activity", "uwsm-app -- xdg-terminal-exec -e btop")
 o.bind("SUPER + SHIFT + D", "Docker", { tui = "lazydocker" })
 -- Signal launches manually (menu); its workspace-6 rules live in windows.lua.
