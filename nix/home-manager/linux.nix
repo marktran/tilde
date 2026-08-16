@@ -44,22 +44,6 @@
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  systemd.user.services.cf-ai-gateway-usage = {
-    Unit.Description = "Cloudflare AI Gateway usage record for the omarchy.agents widget";
-    Service = {
-      Type = "oneshot";
-      ExecStart = "%h/bin/omarchy-agent-usage-cloudflare";
-    };
-  };
-  systemd.user.timers.cf-ai-gateway-usage = {
-    Unit.Description = "Refresh Cloudflare AI Gateway usage every 15 minutes";
-    Timer = {
-      OnStartupSec = "2m";
-      OnUnitActiveSec = "15m";
-    };
-    Install.WantedBy = [ "timers.target" ];
-  };
-
   # Skip scheduled Gmail syncs until the one-time OAuth flow has written its
   # machine-local credentials.
   services.lieer.enable = true;
@@ -272,16 +256,6 @@
     source = ../files/bin/toggle-color-scheme;
     force = true;
   };
-  # Cloudflare AI Gateway usage collector for the omarchy.agents bar widget.
-  # Stock collectors can't see gateway traffic (Pi talks to the CF gateway),
-  # so this writes ~/.local/state/omarchy/agents/usage/cloudflare.json from
-  # the CF GraphQL analytics API; the timer below keeps it fresh. Reads its
-  # account/gateway/token config from Pi's auth.json.
-  home.file."bin/omarchy-agent-usage-cloudflare" = {
-    source = ../files/bin/omarchy-agent-usage-cloudflare;
-    force = true;
-  };
-
   # One-shot (idempotent) restore of the system-level makima daemon that
   # Omarchy major upgrades retire; see the makima config entries above.
   home.file."bin/restore-makima" = {
