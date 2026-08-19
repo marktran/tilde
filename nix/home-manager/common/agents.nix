@@ -35,6 +35,27 @@ in
     };
 
     # pi: static config (store-backed).
+    ".pi/agent/AGENTS.md" = {
+      text = ''
+        # Global agent instructions
+
+        ## Workflow proportionality
+
+        - Do not automatically invoke Compound Engineering skills (`ce-*` or `lfg`)
+          from an ordinary request to add, change, fix, debug, review, or implement
+          something. Such a request does not count as an invocation of `ce-work`,
+          regardless of how broadly that skill's description is written.
+        - Use a Compound Engineering skill only when I explicitly name or invoke that
+          skill, or explicitly say to use Compound Engineering.
+        - For small, well-scoped tasks, work inline: inspect, edit, run focused
+          verification, and stop. Do not spawn subagents or reviewers.
+        - Do not create branches or worktrees, commit, push, or open pull requests
+          unless I explicitly ask for that action.
+        - When unsure, default to the smallest proportional workflow; do not escalate
+          to Compound Engineering.
+      '';
+      force = true;
+    };
     ".pi/agent/keybindings.json" = {
       source = ../../files/pi/agent/keybindings.json;
       force = true;
