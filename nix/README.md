@@ -105,7 +105,8 @@ formula and cask, the declared third-party packages must be trusted once per
 machine or the switch fails:
 
 ```sh
-brew trust --formula d12frosted/emacs-plus/emacs-plus@30 oven-sh/bun/bun
+brew trust --formula \
+  d12frosted/emacs-plus/emacs-plus@30 depot/tap/depot oven-sh/bun/bun
 brew trust --cask dopplerhq/doppler/doppler
 ```
 
@@ -304,8 +305,9 @@ shell (also appended, never shadowing system tools).
   (`~/.homebrew/trust.json`). With `homebrew.onActivation.cleanup =
   "uninstall"`, the declared third-party formulae and casks must be trusted
   once per machine or `darwin-rebuild switch` fails/warns:
-  `brew trust --formula d12frosted/emacs-plus/emacs-plus@30 oven-sh/bun/bun`
-  and `brew trust --cask dopplerhq/doppler/doppler`.
+  `brew trust --formula d12frosted/emacs-plus/emacs-plus@30 depot/tap/depot
+  oven-sh/bun/bun` and
+  `brew trust --cask dopplerhq/doppler/doppler`.
 - **Renamed formulae + outdated kegs can make cleanup uninstall needed
   dependencies.** nix-darwin runs `brew bundle --no-upgrade --force-cleanup`;
   brew bundle skips outdated formulae when computing which dependencies to
