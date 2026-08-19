@@ -101,16 +101,16 @@
     # NOTE: Homebrew's trust security model is machine-local state that
     # nix-darwin cannot manage (~/.homebrew/trust.json). `cleanup =
     # "uninstall"` runs `brew bundle --cleanup`, which loads every declared
-    # formula and will FAIL on an untrusted third-party tap; the outdated
-    # check also warns per formula. On a new machine, trust the third-party
-    # formulae below once:
-    #   brew trust --formula d12frosted/emacs-plus/emacs-plus@30 \
-    #     dopplerhq/doppler/doppler oven-sh/bun/bun
+    # formula or cask and will FAIL on an untrusted third-party tap; the
+    # outdated check also warns per package. On a new machine, trust the
+    # third-party packages below once:
+    #   brew trust --formula d12frosted/emacs-plus/emacs-plus@30 oven-sh/bun/bun
+    #   brew trust --cask dopplerhq/doppler/doppler
     taps = [
       "d12frosted/emacs-plus"
-      # Upstream renamed homebrew-cli -> homebrew-doppler; the old
-      # dopplerhq/cli name resolves but leaves an undeclared local tap that
-      # `cleanup = "uninstall"` then removes, uninstalling doppler each run.
+      # Upstream renamed homebrew-cli -> homebrew-doppler, then migrated
+      # Doppler from a formula to a cask. The old dopplerhq/cli name resolves
+      # but leaves an undeclared local tap that cleanup removes.
       "dopplerhq/doppler"
       "oven-sh/bun"
     ];
@@ -122,7 +122,6 @@
       "awscli"
       "coreutils"
       "d12frosted/emacs-plus/emacs-plus@30"
-      "dopplerhq/doppler/doppler"
       "enchant" # jinx (Emacs) compiles jinx-mod.dylib against enchant-2
       "fish"
       "fortune"
@@ -152,6 +151,7 @@
       "1password-cli"
       "betterdisplay"
       "codex"
+      "dopplerhq/doppler/doppler"
       "dropbox"
       "gcloud-cli"
       "ghostty"

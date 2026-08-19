@@ -101,11 +101,12 @@ login shell.
 
 Homebrew's tap-trust is machine-local state nix-darwin cannot manage. Because
 `cleanup = "uninstall"` makes `brew bundle --cleanup` load every declared
-formula, the declared third-party taps must be trusted once per machine or the
-switch fails:
+formula and cask, the declared third-party packages must be trusted once per
+machine or the switch fails:
 
 ```sh
-brew trust d12frosted/emacs-plus dopplerhq/cli oven-sh/bun
+brew trust --formula d12frosted/emacs-plus/emacs-plus@30 oven-sh/bun/bun
+brew trust --cask dopplerhq/doppler/doppler
 ```
 
 To preview what a switch would uninstall before activating:
@@ -301,9 +302,10 @@ shell (also appended, never shadowing system tools).
 
 - **Trust is machine-local** and not managed by nix-darwin
   (`~/.homebrew/trust.json`). With `homebrew.onActivation.cleanup =
-  "uninstall"`, the declared third-party formulae must be trusted once per
-  machine or `darwin-rebuild switch` fails/warns:
-  `brew trust --formula d12frosted/emacs-plus/emacs-plus@30 dopplerhq/doppler/doppler oven-sh/bun/bun`.
+  "uninstall"`, the declared third-party formulae and casks must be trusted
+  once per machine or `darwin-rebuild switch` fails/warns:
+  `brew trust --formula d12frosted/emacs-plus/emacs-plus@30 oven-sh/bun/bun`
+  and `brew trust --cask dopplerhq/doppler/doppler`.
 - **Renamed formulae + outdated kegs can make cleanup uninstall needed
   dependencies.** nix-darwin runs `brew bundle --no-upgrade --force-cleanup`;
   brew bundle skips outdated formulae when computing which dependencies to
