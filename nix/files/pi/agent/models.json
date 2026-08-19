@@ -155,8 +155,8 @@
           }
         },
         {
-          "id": "accounts/fireworks/models/qwen3p7-max",
-          "name": "qwen3.7 max",
+          "id": "accounts/fireworks/models/qwen3p8-max",
+          "name": "qwen3.8 max",
           "api": "anthropic-messages",
           "baseUrl": "https://gateway.ai.cloudflare.com/v1/{CLOUDFLARE_ACCOUNT_ID}/{CLOUDFLARE_GATEWAY_ID}/custom-fireworks-ai",
           "reasoning": true,
@@ -167,9 +167,9 @@
             "xhigh": null
           },
           "input": ["text"],
-          "cost": { "input": 1.2, "output": 6, "cacheRead": 0.24, "cacheWrite": 0 },
+          "cost": { "input": 2, "output": 6, "cacheRead": 0.25, "cacheWrite": 0 },
           "contextWindow": 262144,
-          "maxTokens": 65536,
+          "maxTokens": 131072,
           "compat": {
             "sendSessionAffinityHeaders": true,
             "supportsEagerToolInputStreaming": false,
