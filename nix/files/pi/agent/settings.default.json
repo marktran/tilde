@@ -32,6 +32,9 @@
     "skills/github"
   ],
   "packages": [
+    "git:github.com/EveryInc/compound-engineering-plugin",
+    "npm:pi-subagents",
+    "npm:pi-ask-user",
     "npm:@ogulcancelik/pi-auto-permissions",
     "npm:@ogulcancelik/pi-codex-subagents",
     "npm:@ogulcancelik/pi-herdr"
