@@ -1,5 +1,47 @@
-{ config, inputs, pkgs, username, homeDirectory, stateVersion, checkoutPath, ... }:
+{ config, pkgs, username, homeDirectory, stateVersion, checkoutPath, ... }:
 
+let
+  # Herdr's upstream Nix flake builds from source. Package the official release
+  # binaries instead so both managed hosts get fast, reproducible upgrades.
+  # To update, bump the version and refresh each hash with
+  # `nix store prefetch-file --json <release-asset-url>`.
+  herdrVersion = "0.8.2";
+  herdrRelease = {
+    aarch64-darwin = {
+      asset = "herdr-macos-aarch64";
+      hash = "sha256-pdT01QTYswnJH4EQUFWTAPq6MSWEJfU8UIUvyW9q5XQ=";
+    };
+    x86_64-linux = {
+      asset = "herdr-linux-x86_64";
+      hash = "sha256-l2FQoU1JDJSyQ+ouGn6y37Z/EuNrGC25CTb2co5q7PQ=";
+    };
+  }.${pkgs.stdenv.hostPlatform.system} or
+    (throw "Herdr has no pinned binary for ${pkgs.stdenv.hostPlatform.system}");
+
+  herdr = pkgs.stdenvNoCC.mkDerivation {
+    pname = "herdr";
+    version = herdrVersion;
+    src = pkgs.fetchurl {
+      url = "https://github.com/herdrdev/herdr/releases/download/v${herdrVersion}/${herdrRelease.asset}";
+      hash = herdrRelease.hash;
+    };
+    dontUnpack = true;
+    dontStrip = true;
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 "$src" "$out/bin/herdr"
+      runHook postInstall
+    '';
+    meta = {
+      description = "Terminal workspace manager for AI coding agents";
+      homepage = "https://herdr.dev";
+      license = pkgs.lib.licenses.asl20;
+      mainProgram = "herdr";
+      platforms = [ "aarch64-darwin" "x86_64-linux" ];
+      sourceProvenance = [ pkgs.lib.sourceTypes.binaryNativeCode ];
+    };
+  };
+in
 {
   imports = [
     ./common/fish.nix
@@ -44,7 +86,7 @@
     enchant
     fd
     fzf
-    inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.herdr
+    herdr
     jq
     pwgen
     ripgrep

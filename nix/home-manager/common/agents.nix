@@ -4,8 +4,8 @@ let
   # Agent skills shared across harnesses. Linked per-skill into each harness's
   # skill dir so the Linux-only Omarchy skill (see linux.nix) can be layered
   # into the same dirs. Each skill stays live-editable from the checkout.
-  # herdr is the release-matched output of `herdr --skill` from v0.8.0
-  # (Apache-2.0), matching the Herdr flake input.
+  # herdr is the release-matched output of `herdr --skill` from v0.8.2
+  # (Apache-2.0), matching the packaged Herdr binary release.
   # open-prose is vendored third-party content (MIT): skills/open-prose from
   # github.com/openprose/prose, v0.15.0 at aad1b43fd373d3cce3fea2109b413c4cd0673f51.
   # Keep the tree pristine so refreshes are a clean re-extract + diff.
