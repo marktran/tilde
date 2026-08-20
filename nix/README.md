@@ -286,11 +286,9 @@ runtime-only state. Home Manager overlays the tracked defaults onto the live
 file during activation, replacing tracked arrays such as `packages` while
 preserving keys that exist only in the live file.
 
-`~/bin/pi` shadows the installed Pi executable and runs
-`pi update --extensions` before each top-level session. This keeps unpinned npm
-and git packages current before Pi loads them, avoiding the later update
-notification. It skips explicit package commands, offline launches, and nested
-Pi/subagent processes. Set `PI_AUTO_UPDATE_EXTENSIONS=0` for a one-off bypass.
+Pi's native startup check reports when an unpinned npm or git package has a
+newer version. Package updates stay explicit: run `pi update --extensions` when
+Pi displays the notification.
 
 ### PATH ordering: Nix profile pinned last
 
