@@ -278,6 +278,20 @@ NixOS. Until then, keep them explicit and privileged.
 
 Durable decisions worth keeping in mind when changing this config.
 
+### Pi settings and package updates
+
+`nix/files/pi/agent/settings.default.json` is the declarative source for Pi
+settings, but `~/.pi/agent/settings.json` remains writable so Pi can persist
+runtime-only state. Home Manager overlays the tracked defaults onto the live
+file during activation, replacing tracked arrays such as `packages` while
+preserving keys that exist only in the live file.
+
+`~/bin/pi` shadows the installed Pi executable and runs
+`pi update --extensions` before each top-level session. This keeps unpinned npm
+and git packages current before Pi loads them, avoiding the later update
+notification. It skips explicit package commands, offline launches, and nested
+Pi/subagent processes. Set `PI_AUTO_UPDATE_EXTENSIONS=0` for a one-off bypass.
+
 ### PATH ordering: Nix profile pinned last
 
 Native PATH ordering is asymmetric:

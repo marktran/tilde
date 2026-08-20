@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+#
+# Keep Pi's unpinned npm/git packages current before each top-level session.
+# Pi itself only checks for package updates and prints a notification; this
+# wrapper performs that update before Pi loads extensions, then starts the real
+# executable. Nested Pi/subagent processes inherit PI_CODING_AGENT and skip the
+# update so they neither race the parent nor pay the startup cost again.
+#
+# Set PI_AUTO_UPDATE_EXTENSIONS=0 or use --offline to bypass the update.
+
+set -uo pipefail
+
+warn() {
+  printf 'pi (auto-update wrapper): %s\n' "$1" >&2
+}
+
+die() {
+  warn "$1"
+  exit 1
+}
+
+find_real_pi() {
+  local self candidate resolved dir
+  self="$(realpath "${BASH_SOURCE[0]}" 2>/dev/null || printf '%s' "${BASH_SOURCE[0]}")"
+
+  while IFS= read -r -d ':' dir || [[ -n "$dir" ]]; do
+    [[ -n "$dir" ]] || continue
+    candidate="$dir/pi"
+    [[ -x "$candidate" && ! -d "$candidate" ]] || continue
+    resolved="$(realpath "$candidate" 2>/dev/null || printf '%s' "$candidate")"
+    [[ "$resolved" == "$self" ]] && continue
+    printf '%s' "$candidate"
+    return 0
+  done <<<"$PATH:"
+
+  return 1
+}
+
+should_auto_update() {
+  local arg
+
+  case "${PI_AUTO_UPDATE_EXTENSIONS:-1}" in
+    0|false|no) return 1 ;;
+  esac
+
+  # Match Pi's own offline startup behavior and never mutate packages while a
+  # parent Pi process is using them.
+  [[ -z "${PI_OFFLINE:-}" ]] || return 1
+  [[ "${PI_CODING_AGENT:-}" != "true" ]] || return 1
+  [[ "${PI_SUBAGENT_CHILD:-}" != "1" ]] || return 1
+
+  # Package-management commands already express exactly what should happen.
+  case "${1:-}" in
+    install|remove|uninstall|update|list|config) return 1 ;;
+  esac
+
+  for arg in "$@"; do
+    case "$arg" in
+      --offline|--no-extensions|-h|--help|-v|--version) return 1 ;;
+    esac
+  done
+
+  return 0
+}
+
+AUTO_UPDATE_LOCK_DIR=""
+
+release_update_lock() {
+  if [[ -n "$AUTO_UPDATE_LOCK_DIR" ]]; then
+    rm -rf "$AUTO_UPDATE_LOCK_DIR"
+    AUTO_UPDATE_LOCK_DIR=""
+  fi
+}
+
+update_extensions() {
+  local real_pi="$1"
+  local agent_dir lock_dir stamp started completed owner deadline
+  local missing_owner_checks=0
+
+  agent_dir="${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}"
+  lock_dir="$agent_dir/.auto-update-extensions.lock"
+  stamp="$agent_dir/.auto-update-extensions.last"
+  started="$(date +%s)"
+  deadline=$((SECONDS + 300))
+
+  if ! mkdir -p "$agent_dir"; then
+    warn "cannot create $agent_dir; starting without updating packages"
+    return 0
+  fi
+
+  # npm and git installs are shared mutable state. Serialize concurrent
+  # top-level launches rather than letting them modify that state together.
+  while ! mkdir "$lock_dir" 2>/dev/null; do
+    owner=""
+    if [[ -r "$lock_dir/pid" ]]; then
+      IFS= read -r owner < "$lock_dir/pid" || true
+    fi
+
+    if [[ "$owner" =~ ^[0-9]+$ ]]; then
+      missing_owner_checks=0
+      if ! kill -0 "$owner" 2>/dev/null; then
+        rm -rf "$lock_dir"
+        continue
+      fi
+    else
+      missing_owner_checks=$((missing_owner_checks + 1))
+      if ((missing_owner_checks >= 25)); then
+        rm -rf "$lock_dir"
+        missing_owner_checks=0
+        continue
+      fi
+    fi
+
+    if ((SECONDS >= deadline)); then
+      warn "timed out waiting for another package update; starting with the installed versions"
+      return 0
+    fi
+    sleep 0.2
+  done
+
+  AUTO_UPDATE_LOCK_DIR="$lock_dir"
+  printf '%s\n' "$$" > "$lock_dir/pid"
+  trap release_update_lock EXIT
+  trap 'release_update_lock; trap - EXIT; exit 129' HUP
+  trap 'release_update_lock; trap - EXIT; exit 130' INT
+  trap 'release_update_lock; trap - EXIT; exit 143' TERM
+
+  # If this launch waited for another updater that started after it, that
+  # updater already established the latest package state.
+  completed=""
+  if [[ -r "$stamp" ]]; then
+    IFS= read -r completed < "$stamp" || true
+  fi
+  if [[ "$completed" =~ ^[0-9]+$ ]] && ((completed >= started)); then
+    release_update_lock
+    trap - EXIT HUP INT TERM
+    return 0
+  fi
+
+  if PI_AUTO_UPDATE_EXTENSIONS=0 "$real_pi" update --extensions; then
+    completed="$(date +%s)"
+    printf '%s\n' "$completed" > "$stamp.tmp.$$"
+    mv "$stamp.tmp.$$" "$stamp"
+  else
+    warn "package update failed; starting with the installed versions"
+  fi
+
+  release_update_lock
+  trap - EXIT HUP INT TERM
+}
+
+real_pi="$(find_real_pi)" || die "no pi executable found on PATH besides this wrapper"
+
+if should_auto_update "$@"; then
+  update_extensions "$real_pi"
+fi
+
+# Prevent package lifecycle scripts and nested Pi launches from recursively
+# entering this wrapper's update path.
+export PI_AUTO_UPDATE_EXTENSIONS=0
+exec "$real_pi" "$@"

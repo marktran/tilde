@@ -37,6 +37,14 @@
       force = true;
     };
 
+    # Pi reports available package updates but does not apply them. Keep
+    # unpinned npm/git packages current before each top-level Pi session;
+    # nested agents and explicit package-management commands bypass this.
+    "bin/pi" = {
+      source = ../../files/bin/pi;
+      force = true;
+    };
+
     ".hunspell_default" = {
       source = ../../files/hunspell/default;
       force = true;

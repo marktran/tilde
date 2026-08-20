@@ -1,6 +1,44 @@
-{ lib, outOfStore, forceLinks, ... }:
+{ lib, outOfStore, forceLinks, pkgs, ... }:
 
 let
+  # Keep repo-managed Pi settings authoritative without making settings.json
+  # read-only: Pi may continue writing runtime-only keys such as the selected
+  # model, thinking level, and changelog state.
+  syncPiSettings = pkgs.writeShellApplication {
+    name = "sync-pi-settings";
+    runtimeInputs = [ pkgs.coreutils pkgs.jq ];
+    text = ''
+      set -euo pipefail
+
+      defaults="''${1:?defaults path required}"
+      settings="''${2:?settings path required}"
+      [ -e "$defaults" ] || exit 0
+
+      mkdir -p "$(dirname "$settings")"
+      tmp="$(mktemp "$settings.tmp.XXXXXX")"
+      trap 'rm -f "$tmp"' EXIT
+
+      if [ -e "$settings" ]; then
+        # Existing-only keys are Pi-owned runtime state. For keys present in
+        # both files, the tracked defaults win; arrays are replaced rather
+        # than accumulated, so removed packages/resources stay removed.
+        jq --slurp '.[0] * .[1]' "$settings" "$defaults" > "$tmp"
+      else
+        cp "$defaults" "$tmp"
+      fi
+      chmod 600 "$tmp"
+
+      if [ -e "$settings" ] && cmp -s "$tmp" "$settings"; then
+        chmod 600 "$settings"
+        exit 0
+      fi
+
+      printf 'Synchronizing Pi settings from %s\n' "$defaults"
+      mv "$tmp" "$settings"
+      trap - EXIT
+    '';
+  };
+
   # Agent skills shared across harnesses. Linked per-skill into each harness's
   # skill dir so the Linux-only Omarchy skill (see linux.nix) can be layered
   # into the same dirs. Each skill stays live-editable from the checkout.
@@ -94,9 +132,9 @@ in
     };
 
     # pi: mutable/app-written resources (live-editable bridge links).
-    # settings.json is intentionally not managed: Pi rewrites model defaults,
-    # thinking level, changelog state, etc. Keep settings.default.json above as
-    # a repo-tracked bootstrap reference and let the live settings file flap.
+    # settings.json remains a real writable file. The activation hook below
+    # overlays settings.default.json onto it while preserving Pi's live-only
+    # model, thinking-level, changelog, and other runtime keys.
     # Herdr installs its Pi lifecycle integration into this linked directory as
     # herdr-agent-state.ts, so upgrades update the repo-managed source directly.
     ".pi/agent/extensions" = {
@@ -113,13 +151,10 @@ in
   // agentSkillLinks ".codex/skills"
   // agentSkillLinks ".claude/skills";
 
-  home.activation.initPiSettings = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-    settings="$HOME/.pi/agent/settings.json"
-    defaults="$HOME/.pi/agent/settings.default.json"
-    if [ ! -e "$settings" ] && [ -e "$defaults" ]; then
-      $DRY_RUN_CMD cp "$defaults" "$settings"
-      $DRY_RUN_CMD chmod u+w "$settings"
-    fi
+  home.activation.syncPiSettings = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    $DRY_RUN_CMD ${syncPiSettings}/bin/sync-pi-settings \
+      "$HOME/.pi/agent/settings.default.json" \
+      "$HOME/.pi/agent/settings.json"
   '';
 
 }
