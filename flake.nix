@@ -26,7 +26,7 @@
       # forceLinks: when true, Home Manager overwrites pre-existing files at a
       # link target instead of erroring. Enabled on Linux (the targets were
       # audited); kept conservative (false) on macOS.
-      homeExtraArgs = { homeDirectory, forceLinks }: {
+      homeExtraArgs = { homeDirectory, forceLinks, username }: {
         inherit inputs username homeDirectory stateVersion forceLinks;
         checkoutPath = "${homeDirectory}/src/mark/tilde";
       };
@@ -38,18 +38,22 @@
         ./nix/hosts/macbook-air/home.nix
       ];
 
-      mkHome = { system, homeDirectory, forceLinks ? false, modules ? [ ] }:
+      # Module lists are fully explicit: workstation hosts start from
+      # common.nix (which imports the headless core.nix), the museum VM
+      # starts from core.nix directly.
+      mkHome = { system, homeDirectory, forceLinks ? false, user ? username, modules }:
         home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             inherit system;
             config.allowUnfree = true;
           };
 
-          extraSpecialArgs = homeExtraArgs { inherit homeDirectory forceLinks; };
+          extraSpecialArgs = homeExtraArgs {
+            inherit homeDirectory forceLinks;
+            username = user;
+          };
 
-          modules = [
-            ./nix/home-manager/common.nix
-          ] ++ modules;
+          inherit modules;
         };
 
       linuxConfig = mkHome {
@@ -57,8 +61,25 @@
         homeDirectory = "/home/mark";
         forceLinks = true;
         modules = [
+          ./nix/home-manager/common.nix
           ./nix/home-manager/linux.nix
           ./nix/hosts/x1-carbon/home.nix
+        ];
+      };
+
+      # Headless exe.dev VM for Museum development (museum.exe.xyz). Core
+      # profile only -- fish, git, neovim, Herdr, Pi/agents -- no workstation
+      # extras. Provisioned by script/exe-setup.sh in the museum repo, which
+      # clones this repo to ~/src/mark/tilde (the out-of-store links require
+      # that exact path) and activates this configuration.
+      museumConfig = mkHome {
+        system = "x86_64-linux";
+        user = "exedev";
+        homeDirectory = "/home/exedev";
+        forceLinks = true;
+        modules = [
+          ./nix/home-manager/core.nix
+          ./nix/hosts/museum/home.nix
         ];
       };
 
@@ -69,10 +90,7 @@
       macConfig = mkHome {
         system = "aarch64-darwin";
         homeDirectory = "/Users/mark";
-        modules = [
-          ./nix/home-manager/darwin.nix
-          ./nix/hosts/macbook-air/home.nix
-        ];
+        modules = macHomeModules;
       };
 
       # nix-darwin system config for macOS, with Home Manager folded in so a
@@ -91,6 +109,7 @@
             # include (it would drop direnv off PATH).
             home-manager.useUserPackages = false;
             home-manager.extraSpecialArgs = homeExtraArgs {
+              inherit username;
               homeDirectory = "/Users/mark";
               forceLinks = false;
             };
@@ -106,6 +125,10 @@
 
         # macOS standalone Home Manager kept for evaluation/rollback only.
         mac = macConfig;
+
+        # Headless exe.dev VM (user `exedev`); activated remotely, never by
+        # `make switch` on a laptop.
+        museum = museumConfig;
 
         # Host-specific aliases. Identical to linux/mac; provided so the
         # actual machines can be referenced by name.

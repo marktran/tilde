@@ -64,6 +64,16 @@ Host-specific aliases are also provided and are identical to the primaries, so
 each machine can be referenced by name (`#x1-carbon` == `#linux`,
 `#macbook-air` == `#mac`).
 
+- **museum** (`#museum`) is the headless exe.dev VM for Museum development
+  (user `exedev`, `/home/exedev`). It imports only
+  `nix/home-manager/core.nix` — the fish/git/neovim/Herdr/Pi core that
+  `common.nix` layers workstation extras on top of — plus
+  `nix/hosts/museum/home.nix` (signing off; no 1Password there). It is
+  provisioned and updated remotely by `script/exe-setup.sh` in the museum
+  repo, which clones this repo to `~/src/mark/tilde` (the out-of-store links
+  require that exact path) and activates the flake output; never activate it
+  from a laptop. `nix/check.sh` builds it natively on Linux.
+
 The `homeConfigurations.mac` / `#macbook-air` standalone entries are kept for
 flake evaluation and as a rollback path. Do not run them with
 `home-manager switch` while nix-darwin owns the Home Manager profile.

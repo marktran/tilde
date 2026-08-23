@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 # Quick sanity check for the Home Manager flake.
 #
-# - Builds the activation package for the *native* host (Linux or macOS).
-# - Evaluates the other host's activation package (eval-only; this catches
+# - Builds the activation package for hosts *native* to this platform
+#   (linux + museum on Linux, mac on macOS).
+# - Evaluates the other hosts' activation packages (eval-only; this catches
 #   evaluation/type errors without needing a cross-platform builder).
-# - Prints home.stateVersion for both hosts.
+# - Prints home.stateVersion for each host.
 #
 # Usage:
-#   nix/check.sh [linux|mac|both]   (default: both)
+#   nix/check.sh [linux|mac|museum|all]   (default: all; `both` is an alias)
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -22,13 +23,20 @@ case "$(uname -s)" in
   *) echo "Unsupported platform: $(uname -s)" >&2; exit 1 ;;
 esac
 
-want="${1:-both}"
+want="${1:-all}"
 case "$want" in
-  linux) HOSTS=(linux) ;;
-  mac) HOSTS=(mac) ;;
-  both) HOSTS=(linux mac) ;;
-  *) echo "Usage: $0 [linux|mac|both]" >&2; exit 1 ;;
+  linux|mac|museum) HOSTS=("$want") ;;
+  all|both) HOSTS=(linux mac museum) ;;
+  *) echo "Usage: $0 [linux|mac|museum|all]" >&2; exit 1 ;;
 esac
+
+# museum is a headless x86_64-linux profile, so it is native on Linux.
+host_platform() {
+  case "$1" in
+    mac) echo mac ;;
+    *) echo linux ;;
+  esac
+}
 
 fail=0
 
@@ -43,7 +51,7 @@ for host in "${HOSTS[@]}"; do
   fi
   echo
 
-  if [ "$host" = "$NATIVE" ]; then
+  if [ "$(host_platform "$host")" = "$NATIVE" ]; then
     echo "building activation package (native)..."
     if nix build "${NIX_FLAGS[@]}" --no-link \
         ".#homeConfigurations.${host}.activationPackage"; then
