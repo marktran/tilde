@@ -98,8 +98,23 @@
           }
         ];
       };
+      # NixOS guest for exe.dev VMs. exe.dev supplies the kernel and boots the
+      # image's CMD as PID 1, so this is a container-profile system: no
+      # bootloader, no initrd, and /init is the stage-2 init that
+      # nixos-rebuild re-points on every switch.
+      #
+      #   nixos-rebuild switch --flake .#exe-dev \
+      #     --target-host <vm>.exe.xyz --use-remote-sudo
+      exeDev = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [ ./nix/hosts/exe-dev/configuration.nix ];
+      };
     in
     {
+      nixosConfigurations = {
+        exe-dev = exeDev;
+      };
+
       homeConfigurations = {
         # Primary, stable public names used in the daily workflow.
         linux = linuxConfig;

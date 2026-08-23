@@ -72,3 +72,27 @@ coding-agent distributions, and the VS Code Remote-SSH server. With
 `programs.nix-ld.enable = true`, official upstream Node and a GitHub-released
 `fd` both run unmodified. Same tool from nixpkgs installs in ~16s, so prefer
 that where it exists.
+
+## Deploying
+
+The flake exposes this host as `nixosConfigurations.exe-dev`, and `make check`
+evaluates it (eval-only -- it is a remote VM, so building the closure locally
+is more than a sanity check needs):
+
+```sh
+nixos-rebuild switch --flake .#exe-dev \
+  --target-host <vm>.exe.xyz --use-remote-sudo
+```
+
+Note the flake tracks nixpkgs-unstable while the running VMs were built from
+the `nixos-26.05` channel, so the first flake deploy moves a VM onto the
+flake's nixpkgs. `configuration.nix.pre-fix` on each VM is the pre-PATH-fix
+rollback copy.
+
+## Museum development
+
+`museum-setup.sh` provisions a VM for the Museum Rails app. The repo itself
+needs no exe.dev-specific code: Rails takes `RAILS_DEVELOPMENT_HOSTS` and
+`BINDING` from the environment, and vite_ruby takes `VITE_RUBY_SKIP_PROXY`, so
+the script writes them to `~/.config/exe-dev/museum-env.sh` and sources that
+from `~/.bashrc`.
