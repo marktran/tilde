@@ -85,4 +85,8 @@ in
     ln -sfn exe-shell /bin/bash
     ln -sfn exe-shell /bin/sh
   '';
+
+  # Let prebuilt, dynamically linked binaries run (agent installers, the
+  # VS Code Remote-SSH server): they expect a glibc loader at /lib64.
+  programs.nix-ld.enable = true;
 }

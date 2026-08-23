@@ -64,3 +64,11 @@ default `SHELL=/bin/exe-shell`.
 Note when debugging this: a failed process-compose stays alive in a restart
 loop and is reused by later runs, so it reproduces the old failure after the
 fix is applied. Kill it (`pkill -f process-compose`) before re-testing.
+
+**nix-ld makes prebuilt binaries work.** Without it there is no
+`/lib64/ld-linux-x86-64.so.2`, so anything shipped as a prebuilt glibc binary
+dies with `cannot execute: required file not found` -- `curl | sh` installers,
+coding-agent distributions, and the VS Code Remote-SSH server. With
+`programs.nix-ld.enable = true`, official upstream Node and a GitHub-released
+`fd` both run unmodified. Same tool from nixpkgs installs in ~16s, so prefer
+that where it exists.
