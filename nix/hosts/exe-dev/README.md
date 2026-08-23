@@ -48,3 +48,19 @@ exists as a warm spare of `jacquie`.
 The alternative, if image ownership is ever wanted, is building
 `config.system.build.tarball` from this configuration and pushing it to a
 registry, then `ssh exe.dev new --image=… --registry-auth=…`.
+
+## Validated behavior (2026-08-23)
+
+Tested on `nixos-lab`, a throwaway `cp` of `jacquie`.
+
+**The PATH wrapper must prepend, not replace.** As rescued, `exe-shell`
+assigned `PATH` unconditionally. Because `/bin/sh` and `/bin/bash` are symlinks
+to it, every `sh -c`, every `#!/bin/sh` script, and every process supervisor
+lost the caller's environment. Devbox's process-compose failed with
+`sh: line 1: exec: postgres: not found` on a loop. After switching to a
+prepend, `devbox run setup` for a Rails app completes end to end with the
+default `SHELL=/bin/exe-shell`.
+
+Note when debugging this: a failed process-compose stays alive in a restart
+loop and is reused by later runs, so it reproduces the old failure after the
+fix is applied. Kill it (`pkill -f process-compose`) before re-testing.

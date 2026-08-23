@@ -8,7 +8,12 @@ let
       shell=/sw/bin/bash
     fi
 
-    export PATH="$HOME/.nix-profile/bin:/run/current-system/sw/bin:/sw/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+    # Prepend the NixOS profile to whatever PATH the caller already set,
+    # instead of replacing it. /bin/sh and /bin/bash are symlinks to this
+    # wrapper, so an unconditional assignment strips the caller's environment
+    # from every `sh -c`, shebang script, Makefile recipe, and process
+    # supervisor -- devbox's process-compose loses `postgres` that way.
+    export PATH="$HOME/.nix-profile/bin:/run/current-system/sw/bin:/sw/bin:/usr/local/bin''${PATH:+:$PATH}"
     exec "$shell" "$@"
   '';
 in
