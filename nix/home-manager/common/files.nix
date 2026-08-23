@@ -1,14 +1,9 @@
 { outOfStore, forceLinks, ... }:
 
-{
-  # Herdr edits this file from its settings UI, so keep it as a writable
-  # out-of-store link rather than a read-only Nix store copy. Runtime state,
-  # sockets, and logs remain unmanaged in ~/.config/herdr.
-  xdg.configFile."herdr/config.toml" = {
-    source = outOfStore "nix/files/herdr/config.toml";
-    force = forceLinks;
-  };
+# Workstation-only $HOME files. The Herdr config link lives in core.nix so the
+# headless museum profile gets it too.
 
+{
   home.file = {
     # Emacs config submodule; Emacs writes elpa/, var/, eln-cache/, etc., so it
     # stays a live out-of-store link to the checkout (emacs.d submodule).

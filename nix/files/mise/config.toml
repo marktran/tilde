@@ -1,0 +1,8 @@
+[tools]
+claude = "latest"
+codex = "latest"
+gh = "latest"
+node = "25.2.1"
+"npm:@googleworkspace/cli" = "latest"
+"npm:defuddle" = "latest"
+pi = "latest"
