@@ -97,6 +97,7 @@ in
     fd
     fzf
     herdr
+    hunk
     jq
     pwgen
     ripgrep
