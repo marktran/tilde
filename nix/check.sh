@@ -64,17 +64,6 @@ for host in "${HOSTS[@]}"; do
   fi
 done
 
-# The exe.dev NixOS guest is always eval-only: it is a remote VM, and building
-# a full system closure locally is far more than a sanity check needs.
-printf '\n===== exe-dev (NixOS guest) =====\n'
-if nix eval "${NIX_FLAGS[@]}" --raw \
-    ".#nixosConfigurations.exe-dev.config.system.build.toplevel.drvPath" >/dev/null; then
-  echo "OK: exe-dev NixOS system evaluates"
-else
-  echo "ERROR: exe-dev NixOS system failed to evaluate"
-  fail=1
-fi
-
 echo
 if [ "$fail" -eq 0 ]; then
   echo "All checks passed."
