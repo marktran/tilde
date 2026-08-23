@@ -96,3 +96,33 @@ needs no exe.dev-specific code: Rails takes `RAILS_DEVELOPMENT_HOSTS` and
 `BINDING` from the environment, and vite_ruby takes `VITE_RUBY_SKIP_PROXY`, so
 the script writes them to `~/.config/exe-dev/museum-env.sh` and sources that
 from `~/.bashrc`.
+
+## Bootstrap gap: the flake cannot yet create a VM
+
+`nixos-rebuild --flake` reconfigures a machine that already exists. exe.dev only
+creates VMs from container images, so a *new* NixOS VM needs either an image or
+`cp` of an existing VM. The image path was tried and does not work yet:
+
+```sh
+nix build .#nixosConfigurations.exe-dev.config.system.build.tarball  # 332M, builds fine
+docker import --change 'CMD ["/init"]' \
+  --change 'LABEL exe.dev/login-user=exedev' <tarball> <registry>/nixos-exe:v1
+ssh exe.dev new --image <registry>/nixos-exe:v1                      # VM runs, SSH never works
+```
+
+The VM reports `running`, but every SSH attempt over five minutes returns
+`Connection closed by remote host`.
+
+Leading hypothesis: `profiles/docker-container.nix` ships an image with an
+**empty `/etc`** (its `extraCommands` does `rm etc; mkdir etc`), and NixOS only
+populates `/etc` during activation. exe.dev's SSH ingress runs *outside* NixOS
+and resolves the login user and its shell from the guest's `/etc/passwd`, so
+there is nothing for it to log in as. The image that originally produced
+`jacquie` presumably came from a system whose `/etc` was already on disk.
+
+Worth trying next: boot the image once under `docker run --privileged` to let
+activation populate `/etc`, commit that container as the image, and create a VM
+from it; or inspect the boot output at `https://<vm>.xterm.exe.xyz`.
+
+Until this is closed, `ssh exe.dev cp <live-vm> <name>` is the only way to
+create a NixOS VM here, which is why a spare exists.
