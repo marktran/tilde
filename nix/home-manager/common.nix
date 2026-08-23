@@ -5,6 +5,16 @@ let
   # binaries instead so both managed hosts get fast, reproducible upgrades.
   # To update, bump the version and refresh each hash with
   # `nix store prefetch-file --json <release-asset-url>`.
+  #
+  # Keep the `herdr` package from the `omarchy` pacman repo UNINSTALLED on
+  # Linux. It is a rebuild of an upstream snapshot (no Omarchy-specific
+  # commits), lands in /usr/bin, and therefore shadows this derivation because
+  # Fish pins ~/.nix-profile/bin last (see "PATH ordering" in nix/README.md).
+  # The shadowing is silent -- the only symptom is `herdr --version` drifting
+  # below herdrVersion and the herdr skill in common/agents.nix no longer
+  # matching the running binary. If an omarchy-update reinstalls it, remove it
+  # again with `sudo pacman -Rns herdr`; `make pkgs-diff` lists it as drift
+  # while it is present.
   herdrVersion = "0.8.2";
   herdrRelease = {
     aarch64-darwin = {
