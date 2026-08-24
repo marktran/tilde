@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Test whether the Apple Studio Display XDR still needs the limited-range
+# compensation shader (see monitors.lua, apple_xdr_range_fix).
+#
+# Usage: hypr-xdr-range-test
+# Read the on-image instructions. To test the raw driver behavior, first set
+# apple_xdr_range_fix = false in monitors.lua and run `hyprctl reload`.
+set -euo pipefail
+out=$(mktemp --suffix=.png)
+python3 - "$out" <<'PYEOF'
+import sys
+from PIL import Image, ImageDraw, ImageFont
+W, H = 1600, 760
+img = Image.new("RGB", (W, H), (90, 90, 90))
+d = ImageDraw.Draw(img)
+try:
+    font = ImageFont.truetype("/usr/share/fonts/TTF/DejaVuSans-Bold.ttf", 24)
+except Exception:
+    font = ImageFont.load_default()
+d.text((40, 12), "WHITE TEST on 255: healthy = all squares visible (253 is subtle)", fill=(0, 0, 0), font=font)
+d.rectangle([40, 50, W - 40, 250], fill=(255, 255, 255))
+for i, v in enumerate([253, 250, 247, 244, 241, 238, 235, 230, 225, 220]):
+    x = 70 + i * 150
+    d.rectangle([x, 70, x + 110, 190], fill=(v, v, v))
+    d.text((x + 25, 200), str(v), fill=(128, 128, 128), font=font)
+d.text((40, 280), "BLACK TEST on 0: healthy = squares from ~5 up are visible", fill=(0, 0, 0), font=font)
+d.rectangle([40, 320, W - 40, 520], fill=(0, 0, 0))
+for i, v in enumerate([2, 5, 8, 12, 16, 20, 26, 32, 40, 48]):
+    x = 70 + i * 150
+    d.rectangle([x, 340, x + 110, 460], fill=(v, v, v))
+    d.text((x + 25, 470), str(v), fill=(90, 90, 90), font=font)
+d.text((40, 550), "GRADIENT 0-255: healthy = smooth, no flat zone at either end", fill=(0, 0, 0), font=font)
+for x in range(W - 120):
+    v = int(x * 255 / (W - 121))
+    d.rectangle([60 + x, 590, 61 + x, 720], fill=(v, v, v))
+img.save(sys.argv[1])
+PYEOF
+imv "$out"
+rm -f "$out"

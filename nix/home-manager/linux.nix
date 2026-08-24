@@ -196,6 +196,15 @@
       source = ../files/hypr/scripts/hypr-reapply-monitors;
       force = forceLinks;
     };
+    # Range-fix shader for the Apple Studio Display XDR (see monitors.lua).
+    "hypr/shaders/limited-range-fix.frag" = {
+      source = ../files/hypr/shaders/limited-range-fix.frag;
+      force = forceLinks;
+    };
+    "hypr/scripts/hypr-xdr-range-test" = {
+      source = ../files/hypr/scripts/hypr-xdr-range-test;
+      force = forceLinks;
+    };
 
     # Omarchy's stock Vantablack/White themes point icons.theme at Yaru-gray/
     # Yaru-grey, variants that no longer exist in the yaru-icon-theme package
