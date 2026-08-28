@@ -62,6 +62,14 @@
     Service = {
       Type = "notify";
       ExecStart = "/usr/bin/emacs --fg-daemon";
+      # Pin pgtk Emacs to the Wayland GDK backend. Any emacsclient invoked
+      # from an environment with DISPLAY but no WAYLAND_DISPLAY (sudo, ssh,
+      # sanitized script envs) makes the daemon open that X display — even
+      # for frameless `emacsclient -e` evals (server-select-display) — which
+      # pops pgtk's "pure-GTK under X" warning dialog and risks daemon-wide
+      # crashes on large selection transfers. With the backend pinned, such
+      # clients fail with a clean "cannot open display" error instead.
+      Environment = "GDK_BACKEND=wayland";
       # Emacs exits 15 on SIGTERM, systemd's default stop signal.
       SuccessExitStatus = 15;
       Restart = "on-failure";
