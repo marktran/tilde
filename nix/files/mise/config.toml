@@ -2,6 +2,7 @@
 claude = "latest"
 codex = "latest"
 gh = "latest"
+"github:basecamp/hey-cli" = "latest"
 node = "25.2.1"
 "npm:@googleworkspace/cli" = "latest"
 "npm:defuddle" = "latest"
