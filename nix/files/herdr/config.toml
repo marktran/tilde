@@ -8,7 +8,6 @@ prefix = "backtick"
 previous_tab = "prefix+,"
 next_tab = "prefix+."
 open_worktree = "prefix+shift+o"
-remove_worktree = "prefix+shift+r"
 
 [theme]
 name = "rose-pine"
