@@ -46,7 +46,9 @@ let
   # (Apache-2.0), matching the packaged Herdr binary release.
   # open-prose is vendored third-party content (MIT): skills/open-prose from
   # github.com/openprose/prose, v0.15.0 at aad1b43fd373d3cce3fea2109b413c4cd0673f51.
-  # Keep the tree pristine so refreshes are a clean re-extract + diff.
+  # shadcn is vendored third-party content (MIT): skills/shadcn from
+  # github.com/shadcn-ui/ui at 683a5a9b370acdb7785a0529434e6a3b8c7e0441.
+  # Keep the trees pristine so refreshes are a clean re-extract + diff.
   sharedAgentSkills = [
     "defuddle"
     "herdr"
@@ -55,6 +57,7 @@ let
     "obsidian-cli"
     "obsidian-markdown"
     "open-prose"
+    "shadcn"
   ];
   agentSkillLinks = dir: lib.listToAttrs (map (skill: {
     name = "${dir}/${skill}";
