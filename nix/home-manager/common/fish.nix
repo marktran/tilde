@@ -53,6 +53,8 @@ in
     "fish/config.d/local-loader.fish" = fishFile "config.d/local-loader.fish";
     "fish/config.d/post-integrations.fish" = fishFile "config.d/post-integrations.fish";
 
+    "fish/conf.d/cloudflare-ai-gateway.fish" = fishFile "conf.d/cloudflare-ai-gateway.fish";
+
     "fish/completions/docker.fish" = fishFile "completions/docker.fish";
     "fish/completions/kubectl.fish" = fishFile "completions/kubectl.fish";
     "fish/completions/orbctl.fish" = fishFile "completions/orbctl.fish";
@@ -67,6 +69,7 @@ in
     "fish/functions/fish_prompt.fish" = fishFile "functions/fish_prompt.fish";
     "fish/functions/l..fish" = fishFile "functions/l..fish";
     "fish/functions/ls.fish" = fishFile "functions/ls.fish";
+    "fish/functions/pi.fish" = fishFile "functions/pi.fish";
     "fish/functions/set_pwd_color.fish" = fishFile "functions/set_pwd_color.fish";
   };
 }
