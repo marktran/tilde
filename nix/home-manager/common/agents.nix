@@ -90,8 +90,6 @@ in
           skill, or explicitly say to use Compound Engineering.
         - For small, well-scoped tasks, work inline: inspect, edit, run focused
           verification, and stop. Do not spawn subagents or reviewers.
-        - Do not create branches or worktrees, commit, push, or open pull requests
-          unless I explicitly ask for that action.
         - When unsure, default to the smallest proportional workflow; do not escalate
           to Compound Engineering.
       '';
