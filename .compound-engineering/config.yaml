@@ -1,0 +1,25 @@
+# Compound Engineering per-checkout config. CE skills read this from
+# <repo-root>/.compound-engineering/config.yaml (then config.local.yaml wins
+# per-key). There is no user-global CE config: copy this file into other
+# repos where the same routing should apply.
+
+# ce-plan model elevation: author plans on Fable 5. Pi serves it natively via
+# the subagent per-child model override (cloudflare-ai-gateway/claude-fable-5);
+# fallback routes are the gateway-wrapped claude CLI, then inline. When the
+# session model already is Fable 5, elevation is moot and skipped.
+plan_model: claude-fable-5
+
+# ce-work cross-model execution: implement with Opus 5 through the claude
+# harness. `claude` on PATH is the repo's gateway wrapper (nix/files/bin/claude),
+# so no Anthropic login is used. `prefer` falls back to native execution on the
+# session model when the route is unavailable (e.g. the museum VM, which gets
+# the core profile without the wrapper).
+work_engine_mode: prefer
+work_engine_preferences:
+  - harness: claude
+    model: claude-opus-5
+
+# Cross-model adversarial review peer (ce-code-review / ce-doc-review): codex,
+# whose default model_provider is the same Cloudflare AI Gateway (no ChatGPT
+# login needed non-interactively; interactive codex uses --profile chatgpt).
+cross_model_peer: codex
