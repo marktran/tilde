@@ -1,0 +1,44 @@
+# Codex CLI user config, repo-managed as a writable out-of-store link
+# (see nix/home-manager/common/agents.nix): codex itself rewrites this file
+# (project trust, TUI state, notices), so runtime writes land in the checkout
+# and show up as ordinary git drift.
+#
+# Default provider: the same Cloudflare AI Gateway Pi uses. The gateway token
+# arrives as CLOUDFLARE_API_KEY, exported from Pi's auth.json by
+# nix/files/fish/conf.d/cloudflare-ai-gateway.fish. Nothing here is a secret:
+# the URL carries only the account id and gateway name.
+#
+# Interactive ChatGPT-auth usage: `codex --profile chatgpt` (fish abbr:
+# codex), which layers chatgpt.config.toml on top of this file.
+
+personality = "pragmatic"
+model = "gpt-5.5"
+model_reasoning_effort = "xhigh"
+model_provider = "cloudflare-ai-gateway"
+
+[projects."/home/mark"]
+trust_level = "trusted"
+
+[projects."/home/mark/src/mark/tilde"]
+trust_level = "trusted"
+
+[projects."/home/mark/src/mark/tilde/.git/modules/emacs"]
+trust_level = "trusted"
+
+[tui]
+status_line = ["model-with-reasoning", "context-remaining"]
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+
+[notice.model_migrations]
+"gpt-5.3-codex" = "gpt-5.4"
+
+[plugins."notion@openai-curated"]
+enabled = true
+
+[model_providers.cloudflare-ai-gateway]
+name = "Cloudflare AI Gateway"
+base_url = "https://gateway.ai.cloudflare.com/v1/472017f2a442123c9f8f9da2bb39e5e8/workos/openai"
+env_key = "CLOUDFLARE_API_KEY"
+wire_api = "responses"

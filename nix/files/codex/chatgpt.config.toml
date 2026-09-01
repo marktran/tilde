@@ -1,0 +1,6 @@
+# Codex `chatgpt` profile layer (`codex --profile chatgpt`): overlays
+# config.toml with the built-in OpenAI provider and ChatGPT login for
+# interactive use. Profile files use top-level keys, not [profiles.*].
+model_provider = "openai"
+model = "gpt-5.5"
+model_reasoning_effort = "xhigh"

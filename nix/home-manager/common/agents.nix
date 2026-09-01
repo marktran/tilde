@@ -75,6 +75,23 @@ in
       force = true;
     };
 
+    # Codex CLI: the default model_provider is the same Cloudflare AI Gateway
+    # Pi uses (token exported by fish/conf.d/cloudflare-ai-gateway.fish), so
+    # non-interactive shell-outs — e.g. Compound Engineering cross-model review
+    # — need no ChatGPT login. Codex rewrites config.toml (project trust, TUI
+    # state), so keep it a writable out-of-store link; runtime writes surface
+    # as git drift in the checkout.
+    ".codex/config.toml" = {
+      source = outOfStore "nix/files/codex/config.toml";
+      force = forceLinks;
+    };
+    # The `chatgpt` profile layer (`codex --profile chatgpt`) keeps ChatGPT
+    # auth for interactive use. Codex never writes profile files: store-backed.
+    ".codex/chatgpt.config.toml" = {
+      source = ../../files/codex/chatgpt.config.toml;
+      force = true;
+    };
+
     # pi: static config (store-backed).
     ".pi/agent/AGENTS.md" = {
       text = ''
