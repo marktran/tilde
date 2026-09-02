@@ -1,0 +1,182 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Control a Belkin Wemo smart plug over its local UPnP/SOAP API. Works without
+# the (discontinued) Wemo app or cloud: the plug serves HTTP on port 49153
+# (sometimes 49152/49154/49155 after a reboot) and toggles via the
+# urn:Belkin:service:basicevent:1 SetBinaryState action.
+#
+# Usage: wemo [on|off|toggle|status|discover]   (default: toggle)
+#
+# The plug's address defaults to $WEMO_HOST (host or host:port). If unset, or
+# if the plug does not answer there, the /24 of the default route is scanned
+# for the Wemo ports and the first Belkin device found is used. Set WEMO_HOST
+# to skip the scan if the plug has a DHCP reservation.
+
+require "net/http"
+require "socket"
+
+module Wemo
+  module_function
+
+  DEFAULT_HOST = "10.0.0.8"
+  PORTS = [49_153, 49_152, 49_154, 49_155].freeze
+  SERVICE = "urn:Belkin:service:basicevent:1"
+  COMMANDS = %w[on off toggle status discover].freeze
+  SCAN_THREADS = 128
+
+  # Network errors that just mean "nothing (Wemo) is listening there".
+  NET_ERRORS = [SystemCallError, Timeout::Error, SocketError, IOError, EOFError].freeze
+
+  Target = Struct.new(:host, :port) do
+    def to_s = "#{host}:#{port}"
+  end
+
+  def usage
+    warn "usage: #{File.basename($PROGRAM_NAME)} [#{COMMANDS.join('|')}]"
+    exit 2
+  end
+
+  def http(target, timeout)
+    Net::HTTP.start(target.host, target.port, open_timeout: timeout, read_timeout: timeout) { yield _1 }
+  end
+
+  # POST a SOAP action to the plug and return the response body.
+  def soap(target, action, binary_state: nil)
+    arg = binary_state.nil? ? "" : "<BinaryState>#{binary_state}</BinaryState>"
+    body = <<~XML.delete("\n")
+      <?xml version="1.0" encoding="utf-8"?>
+      <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
+       s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
+      <u:#{action} xmlns:u="#{SERVICE}">#{arg}</u:#{action}>
+      </s:Body></s:Envelope>
+    XML
+    headers = {
+      "Content-Type" => 'text/xml; charset="utf-8"',
+      "SOAPACTION" => "\"#{SERVICE}##{action}\"",
+    }
+    http(target, 5) { _1.post("/upnp/control/basicevent1", body, headers) }.body
+  end
+
+  # Extract <BinaryState> from a SOAP response as 0/1, or nil if absent.
+  # Insight plugs return "1|timestamp|..." so keep only the leading field.
+  # Some firmwares report 8 (on, standby); treat anything non-zero as on.
+  def binary_state(xml)
+    state = xml[%r{<BinaryState>([^<|]*)}, 1]
+    return nil if state.nil? || state.empty?
+
+    state == "0" ? 0 : 1
+  end
+
+  # Fetch /setup.xml if a Belkin device answers at target, else nil.
+  def setup_xml(target, timeout: 2)
+    res = http(target, timeout) { _1.get("/setup.xml") }
+    res.is_a?(Net::HTTPSuccess) && res.body.include?("Belkin") ? res.body : nil
+  rescue *NET_ERRORS
+    nil
+  end
+
+  def alive?(target, timeout: 2) = !setup_xml(target, timeout: timeout).nil?
+
+  # First Wemo port on host that answers, as a Target, or nil.
+  def find_port(host)
+    PORTS.each do |port|
+      target = Target.new(host, port)
+      return target if alive?(target)
+    end
+    nil
+  end
+
+  # Source IP of the default route (connecting a UDP socket sends nothing).
+  def local_ip
+    UDPSocket.open do |s|
+      s.connect("1.1.1.1", 53)
+      s.addr.last
+    end
+  rescue *NET_ERRORS
+    nil
+  end
+
+  # Scan the local /24 for any Wemo and return the first one that answers.
+  # Every host:port pair is its own work item so dead hosts (which just time
+  # out) don't serialise; the queue is drained as soon as something is found.
+  def discover
+    ip = local_ip or abort "wemo: cannot determine local network"
+    prefix = ip.rpartition(".").first
+    warn "wemo: scanning #{prefix}.0/24 for a Wemo..."
+
+    queue = Queue.new
+    (1..254).each { |i| PORTS.each { |port| queue << Target.new("#{prefix}.#{i}", port) } }
+    queue.close
+    lock = Mutex.new
+    found = nil
+    Array.new(SCAN_THREADS) do
+      Thread.new do
+        while (target = queue.pop)
+          next unless alive?(target, timeout: 1)
+
+          lock.synchronize { found ||= target }
+          queue.clear
+        end
+      end
+    end.each(&:join)
+
+    found or abort "wemo: no Wemo found on #{prefix}.0/24"
+  end
+
+  def resolve_target
+    spec = ENV.fetch("WEMO_HOST", DEFAULT_HOST)
+    host, port = spec.split(":", 2)
+    target = nil
+    if port
+      explicit = Target.new(host, Integer(port))
+      target = explicit if alive?(explicit)
+    end
+    target ||= find_port(host)
+    return target if target
+
+    warn "wemo: no response from #{spec}, discovering..."
+    discover
+  end
+
+  def run(cmd)
+    usage unless COMMANDS.include?(cmd)
+    target = resolve_target
+
+    if cmd == "discover"
+      name = setup_xml(target)&.[](%r{<friendlyName>(.*?)</friendlyName>}, 1) || "Wemo"
+      puts "#{target}  #{name}"
+      return
+    end
+
+    current = binary_state(soap(target, "GetBinaryState")) or
+      abort "wemo: bad reply from #{target}"
+
+    want =
+      case cmd
+      when "status"
+        puts(current == 1 ? "on" : "off")
+        return
+      when "on" then 1
+      when "off" then 0
+      when "toggle" then 1 - current
+      end
+
+    if want == current
+      puts(want == 1 ? "already on" : "already off")
+      return
+    end
+
+    # SetBinaryState answers <BinaryState>Error</BinaryState> if the plug was
+    # already in that state, so we short-circuit above and only check the HTTP
+    # call itself here.
+    soap(target, "SetBinaryState", binary_state: want)
+    puts(want == 1 ? "on" : "off")
+  end
+end
+
+begin
+  Wemo.run(ARGV.fetch(0, "toggle"))
+rescue *Wemo::NET_ERRORS => e
+  abort "wemo: #{e.message}"
+end

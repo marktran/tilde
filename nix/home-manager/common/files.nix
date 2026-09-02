@@ -32,6 +32,13 @@
       force = true;
     };
 
+    # Local control of the (discontinued, app-less) Belkin Wemo plug on the
+    # lamp via its UPnP/SOAP API. Only needs curl, so shared across platforms.
+    "bin/wemo" = {
+      source = ../../files/bin/wemo;
+      force = true;
+    };
+
     ".hunspell_default" = {
       source = ../../files/hunspell/default;
       force = true;
