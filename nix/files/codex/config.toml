@@ -1,7 +1,8 @@
-# Codex CLI user config, repo-managed as a writable out-of-store link
-# (see nix/home-manager/common/agents.nix): codex itself rewrites this file
-# (project trust, TUI state, notices), so runtime writes land in the checkout
-# and show up as ordinary git drift.
+# Codex CLI user config, repo-managed as a writable out-of-store link on
+# non-macOS machines only (see nix/home-manager/common/agents.nix): codex
+# itself rewrites this file (project trust, TUI state, notices), so runtime
+# writes land in the checkout and show up as ordinary git drift. On macOS the
+# ChatGPT desktop app owns ~/.codex/config.toml, so it stays unmanaged there.
 #
 # Default provider: the same Cloudflare AI Gateway Pi uses. The gateway token
 # arrives as CLOUDFLARE_API_KEY, exported from Pi's auth.json by

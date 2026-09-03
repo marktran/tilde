@@ -75,17 +75,7 @@ in
       force = true;
     };
 
-    # Codex CLI: the default model_provider is the same Cloudflare AI Gateway
-    # Pi uses (token exported by fish/conf.d/cloudflare-ai-gateway.fish), so
-    # non-interactive shell-outs — e.g. Compound Engineering cross-model review
-    # — need no ChatGPT login. Codex rewrites config.toml (project trust, TUI
-    # state), so keep it a writable out-of-store link; runtime writes surface
-    # as git drift in the checkout.
-    ".codex/config.toml" = {
-      source = outOfStore "nix/files/codex/config.toml";
-      force = forceLinks;
-    };
-    # The `chatgpt` profile layer (`codex --profile chatgpt`) keeps ChatGPT
+    # Codex `chatgpt` profile layer (`codex --profile chatgpt`) keeps ChatGPT
     # auth for interactive use. Codex never writes profile files: store-backed.
     ".codex/chatgpt.config.toml" = {
       source = ../../files/codex/chatgpt.config.toml;
@@ -161,6 +151,21 @@ in
     };
     ".pi/agent/skills" = {
       source = outOfStore "nix/files/pi/agent/skills";
+      force = forceLinks;
+    };
+  }
+  # Codex CLI (non-macOS only): the default model_provider is the same
+  # Cloudflare AI Gateway Pi uses (token exported by
+  # fish/conf.d/cloudflare-ai-gateway.fish), so non-interactive shell-outs —
+  # e.g. Compound Engineering cross-model review — need no ChatGPT login.
+  # Codex rewrites config.toml (project trust, TUI state), so keep it a
+  # writable out-of-store link; runtime writes surface as git drift in the
+  # checkout. On macOS the ChatGPT desktop app owns ~/.codex/config.toml
+  # (plugins, MCP servers, desktop prefs, trusted projects), and none of that
+  # machine-local state belongs in this public repo: leave it unmanaged there.
+  // lib.optionalAttrs (!pkgs.stdenv.hostPlatform.isDarwin) {
+    ".codex/config.toml" = {
+      source = outOfStore "nix/files/codex/config.toml";
       force = forceLinks;
     };
   }
