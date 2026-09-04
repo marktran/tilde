@@ -1,39 +1,23 @@
-# Codex CLI user config, repo-managed as a writable out-of-store link on
-# non-macOS machines only (see nix/home-manager/common/agents.nix): codex
-# itself rewrites this file (project trust, TUI state, notices), so runtime
-# writes land in the checkout and show up as ordinary git drift. On macOS the
-# ChatGPT desktop app owns ~/.codex/config.toml, so it stays unmanaged there.
+# Codex CLI starter config. Home Manager copies this to ~/.codex/config.toml
+# only when missing (see nix/home-manager/common/agents.nix). Codex owns the
+# live file; model choices, project trust, and TUI state stay local. Edits here
+# affect new setups only, not existing configs.
 #
 # Default provider: the same Cloudflare AI Gateway Pi uses. The gateway token
 # arrives as CLOUDFLARE_API_KEY, exported from Pi's auth.json by
 # nix/files/fish/conf.d/cloudflare-ai-gateway.fish. Nothing here is a secret:
 # the URL carries only the account id and gateway name.
 #
-# Interactive ChatGPT-auth usage: `codex --profile chatgpt` (fish abbr:
-# codex), which layers chatgpt.config.toml on top of this file.
+# Interactive and non-interactive Codex both use Cloudflare AI Gateway.
+# No separate ChatGPT profile or login is needed.
 
 personality = "pragmatic"
-model = "gpt-5.5"
-model_reasoning_effort = "xhigh"
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
 model_provider = "cloudflare-ai-gateway"
-
-[projects."/home/mark"]
-trust_level = "trusted"
-
-[projects."/home/mark/src/mark/tilde"]
-trust_level = "trusted"
-
-[projects."/home/mark/src/mark/tilde/.git/modules/emacs"]
-trust_level = "trusted"
 
 [tui]
 status_line = ["model-with-reasoning", "context-remaining"]
-
-[tui.model_availability_nux]
-"gpt-5.5" = 4
-
-[notice.model_migrations]
-"gpt-5.3-codex" = "gpt-5.4"
 
 [plugins."notion@openai-curated"]
 enabled = true

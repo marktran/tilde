@@ -9,10 +9,8 @@ if status is-login; or not set -q CLOUDFLARE_API_KEY
     end
 end
 
-# Interactive codex keeps ChatGPT auth, but only where a ChatGPT login exists
-# (the laptops). Hosts without ~/.codex/auth.json (e.g. the museum VM) stay on
-# the Gateway default provider, which needs no login. Scripts and CE
-# shell-outs (non-interactive) always use the Gateway default provider.
-if status is-interactive; and test -r ~/.codex/auth.json
-    abbr -a codex 'codex --profile chatgpt'
+# Codex uses the Gateway for interactive and non-interactive sessions alike.
+# Also clear the retired profile abbreviation when this file is re-sourced.
+if status is-interactive
+    abbr --erase codex
 end

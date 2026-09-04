@@ -2,7 +2,8 @@
 
 Home Manager modules and repo-managed files for `$HOME` on both hosts.
 Live-editable trees are linked from the checkout at `~/src/mark/tilde`;
-everything else is store-backed or typed Home Manager config.
+other managed files are store-backed or typed Home Manager config. App-owned
+configs such as Codex's are seeded as writable local files instead.
 
 ## Concepts
 
@@ -287,6 +288,43 @@ NixOS. Until then, keep them explicit and privileged.
 ## Design Notes
 
 Durable decisions worth keeping in mind when changing this config.
+
+### Codex: one gateway config, local preferences
+
+`nix/files/codex/config.toml` is the only starter config. Home Manager copies it
+to `~/.codex/config.toml` only if missing. The live config is an ordinary
+writable file owned by Codex, not a link into the store or this checkout.
+Model/thinking choices, project trust, notices, and other runtime settings
+stay local and do not create Git changes.
+
+Interactive and non-interactive Codex both use Cloudflare AI Gateway. Fish
+exports `CLOUDFLARE_API_KEY` from the existing gateway credentials and does not
+select a ChatGPT profile. New shells clear the retired `codex` abbreviation;
+run `abbr --erase codex` in an already-open Fish shell, then restart Codex.
+Other launch environments must also supply `CLOUDFLARE_API_KEY`.
+
+Activation retires an existing `chatgpt.config.toml` once: it copies both
+original configs to a private `~/.codex/backups/gateway-migration-*/` directory,
+transfers the profile's model/thinking choices into the main config, selects
+the gateway provider, and removes the active profile file. Other base settings
+are preserved. Model availability still depends on the gateway's upstream API.
+Once migrated, subsequent switches leave existing regular configs untouched.
+ChatGPT credentials are not deleted; they no longer select the model provider.
+
+The starter omits machine-specific trust and generated notices. Edit it to
+change defaults for future setups; existing machines need those changes
+applied separately to their local config. Legacy main-config symlinks are
+copied to private writable files **before** Home Manager's orphan cleanup.
+Broken links fail activation instead of silently resetting settings. Old
+generations may reinstate links on rollback, so back up local configs before
+rolling back across this migration.
+
+Seeding and migration regression tests run during the native helper build
+(`make check`). They can also run directly with Python and `tomlkit` installed:
+
+```sh
+python3 nix/tests/seed-codex-config.py
+```
 
 ### Pi settings and package updates
 

@@ -1,6 +1,17 @@
 { lib, outOfStore, forceLinks, pkgs, ... }:
 
 let
+  codexPython = pkgs.python3.withPackages (ps: [ ps.tomlkit ]);
+  seedCodexConfig = pkgs.writeShellApplication {
+    name = "seed-codex-config";
+    runtimeInputs = [ codexPython ];
+    text = ''exec python3 ${./seed-codex-config.py} "$@"'';
+    checkPhase = ''
+      ${pkgs.runtimeShell} -n "$target"
+      ${codexPython}/bin/python3 ${../../tests/seed-codex-config.py} "$target"
+    '';
+  };
+
   # Keep repo-managed Pi settings authoritative without making settings.json
   # read-only: Pi may continue writing runtime-only keys such as the selected
   # model, thinking level, and changelog state.
@@ -72,13 +83,6 @@ in
     # Claude Code user settings (static).
     ".claude/settings.json" = {
       source = ../../files/claude/settings.json;
-      force = true;
-    };
-
-    # Codex `chatgpt` profile layer (`codex --profile chatgpt`) keeps ChatGPT
-    # auth for interactive use. Codex never writes profile files: store-backed.
-    ".codex/chatgpt.config.toml" = {
-      source = ../../files/codex/chatgpt.config.toml;
       force = true;
     };
 
@@ -154,25 +158,19 @@ in
       force = forceLinks;
     };
   }
-  # Codex CLI (non-macOS only): the default model_provider is the same
-  # Cloudflare AI Gateway Pi uses (token exported by
-  # fish/conf.d/cloudflare-ai-gateway.fish), so non-interactive shell-outs —
-  # e.g. Compound Engineering cross-model review — need no ChatGPT login.
-  # Codex rewrites config.toml (project trust, TUI state), so keep it a
-  # writable out-of-store link; runtime writes surface as git drift in the
-  # checkout. On macOS the ChatGPT desktop app owns ~/.codex/config.toml
-  # (plugins, MCP servers, desktop prefs, trusted projects), and none of that
-  # machine-local state belongs in this public repo: leave it unmanaged there.
-  // lib.optionalAttrs (!pkgs.stdenv.hostPlatform.isDarwin) {
-    ".codex/config.toml" = {
-      source = outOfStore "nix/files/codex/config.toml";
-      force = forceLinks;
-    };
-  }
   # Shared agent skills, layered into pi, Codex, and Claude Code skill dirs.
   // agentSkillLinks ".agents/skills"
   // agentSkillLinks ".codex/skills"
   // agentSkillLinks ".claude/skills";
+
+  # Codex owns one local gateway config. Seed only if missing; migrate the
+  # retired ChatGPT profile once, backing up both originals and retaining its
+  # model/thinking choices. Detach legacy links before HM's orphan cleanup.
+  # Keep this after writeBoundary so dry-run activation remains read-only.
+  home.activation.seedCodexConfig = lib.hm.dag.entryBetween [ "linkGeneration" ] [ "writeBoundary" ] ''
+    $DRY_RUN_CMD ${seedCodexConfig}/bin/seed-codex-config \
+      "${../../files/codex}" "$HOME/.codex"
+  '';
 
   home.activation.syncPiSettings = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
     $DRY_RUN_CMD ${syncPiSettings}/bin/sync-pi-settings \
