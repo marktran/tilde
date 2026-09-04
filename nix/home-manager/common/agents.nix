@@ -1,14 +1,18 @@
 { lib, outOfStore, forceLinks, pkgs, ... }:
 
 let
-  codexPython = pkgs.python3.withPackages (ps: [ ps.tomlkit ]);
+  agentPreferences = builtins.readFile ../../files/agents/preferences.md;
+  globalAgentPreferences = "# Global agent instructions\n\n" + agentPreferences;
+
+  codexTestRuby = pkgs.ruby.withPackages (ps: [ ps.minitest ]);
   seedCodexConfig = pkgs.writeShellApplication {
     name = "seed-codex-config";
-    runtimeInputs = [ codexPython ];
-    text = ''exec python3 ${./seed-codex-config.py} "$@"'';
+    runtimeInputs = [ pkgs.ruby pkgs.toml-cli ];
+    text = ''exec ruby ${./seed-codex-config.rb} "$@"'';
     checkPhase = ''
       ${pkgs.runtimeShell} -n "$target"
-      ${codexPython}/bin/python3 ${../../tests/seed-codex-config.py} "$target"
+      export PATH="${pkgs.toml-cli}/bin:$PATH"
+      ${codexTestRuby}/bin/ruby ${../../tests/seed-codex-config.rb} "$target"
     '';
   };
 
@@ -86,6 +90,12 @@ in
       force = true;
     };
 
+    # Shared personal preferences, without spreading Pi-specific workflow rules.
+    # Leave force off for new instruction files so existing local guidance on
+    # other hosts must be merged explicitly rather than silently overwritten.
+    ".codex/AGENTS.md".text = globalAgentPreferences;
+    ".claude/CLAUDE.md".text = globalAgentPreferences;
+
     # pi: static config (store-backed).
     ".pi/agent/AGENTS.md" = {
       text = ''
@@ -103,7 +113,7 @@ in
           verification, and stop. Do not spawn subagents or reviewers.
         - When unsure, default to the smallest proportional workflow; do not escalate
           to Compound Engineering.
-      '';
+      '' + "\n" + agentPreferences;
       force = true;
     };
     ".pi/agent/keybindings.json" = {

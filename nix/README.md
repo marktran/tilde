@@ -289,6 +289,18 @@ NixOS. Until then, keep them explicit and privileged.
 
 Durable decisions worth keeping in mind when changing this config.
 
+### Global agent preferences
+
+`nix/files/agents/preferences.md` is shared personal guidance for Pi, Codex,
+and Claude Code. It prefers Ruby over Python for new standalone scripts and
+tests while respecting existing project languages and simple shell glue.
+Home Manager includes it in `~/.pi/agent/AGENTS.md`, `~/.codex/AGENTS.md`, and
+`~/.claude/CLAUDE.md`. Pi's existing workflow-proportionality rules remain
+Pi-specific. Restart agent sessions to load updated instructions.
+
+Existing unmanaged Codex/Claude instruction files are not forcibly replaced;
+merge their contents into the managed instructions before switching that host.
+
 ### Codex: one gateway config, local preferences
 
 `nix/files/codex/config.toml` is the only starter config. Home Manager copies it
@@ -319,11 +331,12 @@ Broken links fail activation instead of silently resetting settings. Old
 generations may reinstate links on rollback, so back up local configs before
 rolling back across this migration.
 
-Seeding and migration regression tests run during the native helper build
-(`make check`). They can also run directly with Python and `tomlkit` installed:
+The helper is Ruby, using `toml-cli` for comment-preserving TOML edits.
+Minitest regression tests run during the native helper build (`make check`).
+They can also run directly with Ruby, Minitest, and `toml-cli` installed:
 
 ```sh
-python3 nix/tests/seed-codex-config.py
+ruby nix/tests/seed-codex-config.rb
 ```
 
 ### Pi settings and package updates
