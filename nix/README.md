@@ -293,7 +293,11 @@ Durable decisions worth keeping in mind when changing this config.
 
 `nix/files/agents/preferences.md` is shared personal guidance for Pi, Codex,
 and Claude Code. It prefers Ruby over Python for new standalone scripts and
-tests while respecting existing project languages and simple shell glue.
+tests while respecting existing project languages and simple shell glue. Its
+Git policy requires explicit permission for direct pushes to default branches,
+while allowing signed commits and topic-branch PRs at tested, reviewable
+milestones. Explicit commit-only requests still prohibit publishing, and PR
+merges or force-pushes require permission. The commit skill follows this policy.
 Home Manager includes it in `~/.pi/agent/AGENTS.md`, `~/.codex/AGENTS.md`, and
 `~/.claude/CLAUDE.md`. Pi's existing workflow-proportionality rules remain
 Pi-specific. Restart agent sessions to load updated instructions.
