@@ -22,7 +22,6 @@
     "extensions/minimal.ts",
     "extensions/openai-server-compaction/index.ts",
     "extensions/peon-ping.ts",
-    "extensions/plan-mode.ts",
     "extensions/preset.ts",
     "extensions/protected-paths.ts",
     "extensions/review.ts",
@@ -40,7 +39,8 @@
     "npm:pi-ask-user",
     "npm:@ogulcancelik/pi-auto-permissions",
     "npm:@ogulcancelik/pi-codex-subagents",
-    "npm:@ogulcancelik/pi-herdr"
+    "npm:@ogulcancelik/pi-herdr",
+    "npm:@plannotator/pi-extension"
   ],
   "hideThinkingBlock": false,
   "quietStartup": true,
