@@ -13,4 +13,3 @@
 #   comm -23 <(pacman -Qqem | sort) <(grep -v '^#' linux/aur.txt | sort -u)
 
 brave-origin-beta-bin
-google-cloud-cli
