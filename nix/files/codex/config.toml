@@ -12,8 +12,8 @@
 # No separate ChatGPT profile or login is needed.
 
 personality = "pragmatic"
-model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model = "gpt-6-astra"
+model_reasoning_effort = "low"
 model_provider = "cloudflare-ai-gateway"
 
 [tui]
