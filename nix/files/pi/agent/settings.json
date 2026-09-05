@@ -43,6 +43,6 @@
   },
   "lastChangelogVersion": "0.85.0",
   "defaultProvider": "cloudflare-ai-gateway",
-  "defaultModel": "claude-fable-5-1",
-  "defaultThinkingLevel": "xhigh"
+  "defaultModel": "gpt-6-astra",
+  "defaultThinkingLevel": "medium"
 }
