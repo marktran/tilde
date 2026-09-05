@@ -1,18 +1,5 @@
-{ lib, pkgs, ... }:
+{ lib, outOfStore, ... }:
 
-let
-  # The exeuntu image ships a Pi extension (exe-dev) that routes Pi through
-  # the VM's LLM integration endpoints (reflection.int.exe.xyz). The managed
-  # ~/.pi/agent/extensions link replaces the directory Pi would auto-discover
-  # it in, so script/exe-setup.sh relocates it to ~/.pi/exe-dev and the Pi
-  # settings defaults here gain that path. Derived from the laptop defaults so
-  # the lists cannot drift.
-  laptopPiDefaults = builtins.fromJSON
-    (builtins.readFile ../../files/pi/agent/settings.default.json);
-  museumPiDefaults = laptopPiDefaults // {
-    extensions = laptopPiDefaults.extensions ++ [ "/home/exedev/.pi/exe-dev" ];
-  };
-in
 {
   # Host-specific user config for the museum exe.dev VM (museum.exe.xyz), a
   # headless Ubuntu 24.04 machine for cloud agent development on the Museum
@@ -28,6 +15,9 @@ in
   # Commits made on the VM are therefore unsigned rather than broken.
   programs.git.signing.signByDefault = lib.mkForce false;
 
-  home.file.".pi/agent/settings.default.json".source = lib.mkForce
-    (pkgs.writeText "settings.default.json" (builtins.toJSON museumPiDefaults));
+  # The exeuntu image's exe-dev extension is relocated to ~/.pi/exe-dev by
+  # script/exe-setup.sh. Keep that extra path in a host-specific, writable
+  # settings file without imposing the laptops' saved model preferences.
+  home.file.".pi/agent/settings.json".source = lib.mkForce
+    (outOfStore "nix/hosts/museum/pi-settings.json");
 }

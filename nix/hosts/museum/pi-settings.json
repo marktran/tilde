@@ -1,0 +1,50 @@
+{
+  "theme": "modern-dark",
+  "enabledModels": [
+    "cloudflare-ai-gateway/gpt-6-astra",
+    "cloudflare-ai-gateway/gpt-5.6-sol",
+    "cloudflare-ai-gateway/gpt-5.6-terra",
+    "cloudflare-ai-gateway/claude-fable-5-1",
+    "cloudflare-ai-gateway/claude-opus-5",
+    "cloudflare-ai-gateway/claude-sonnet-5",
+    "cloudflare-ai-gateway/grok-4.6",
+    "cloudflare-ai-gateway/accounts/fireworks/models/kimi-k3",
+    "cloudflare-ai-gateway/accounts/fireworks/models/glm-5p2",
+    "cloudflare-ai-gateway/accounts/fireworks/models/deepseek-v4-pro",
+    "cloudflare-ai-gateway/accounts/fireworks/models/qwen3p8-max",
+    "cloudflare-ai-gateway/accounts/fireworks/models/minimax-m3"
+  ],
+  "extensions": [
+    "extensions/answer.ts",
+    "extensions/confirm-destructive.ts",
+    "extensions/files.ts",
+    "extensions/notify.ts",
+    "extensions/minimal.ts",
+    "extensions/openai-server-compaction/index.ts",
+    "extensions/peon-ping.ts",
+    "extensions/plan-mode.ts",
+    "extensions/preset.ts",
+    "extensions/protected-paths.ts",
+    "extensions/review.ts",
+    "extensions/web-search.ts",
+    "extensions/whimsical.ts",
+    "/home/exedev/.pi/exe-dev"
+  ],
+  "skills": [
+    "skills/commit",
+    "skills/github"
+  ],
+  "packages": [
+    "git:github.com/EveryInc/compound-engineering-plugin",
+    "npm:pi-subagents",
+    "npm:pi-ask-user",
+    "npm:@ogulcancelik/pi-auto-permissions",
+    "npm:@ogulcancelik/pi-codex-subagents",
+    "npm:@ogulcancelik/pi-herdr"
+  ],
+  "hideThinkingBlock": false,
+  "quietStartup": true,
+  "warnings": {
+    "anthropicExtraUsage": false
+  }
+}

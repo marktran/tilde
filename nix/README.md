@@ -345,11 +345,22 @@ ruby nix/tests/seed-codex-config.rb
 
 ### Pi settings and package updates
 
-`nix/files/pi/agent/settings.default.json` is the declarative source for Pi
-settings, but `~/.pi/agent/settings.json` remains writable so Pi can persist
-runtime-only state. Home Manager overlays the tracked defaults onto the live
-file during activation, replacing tracked arrays such as `packages` while
-preserving keys that exist only in the live file.
+`~/.pi/agent/settings.json` is a writable out-of-store link to
+`nix/files/pi/agent/settings.json`. There is one tracked file and no activation
+merge. Pi 0.84.3+ keeps model and thinking selections session-local; Ctrl+S in
+`/model` or `/thinking` explicitly saves a startup default. Saved preferences,
+package changes, and `lastChangelogVersion` updates appear directly in Git.
+
+Museum links `nix/hosts/museum/pi-settings.json` instead. It has its own saved
+preferences and includes the VM's relocated `/home/exedev/.pi/exe-dev`
+extension. Shared package/resource changes should be made in both files.
+
+Before switching another host from the old defaults/live-file layout, back up
+its existing `~/.pi/agent/settings.json` and merge any preferences worth keeping
+into the appropriate tracked file. Move the old live file aside after merging
+so Home Manager installs the link: identical files are otherwise left as-is,
+and macOS also refuses to replace differing files because forced links are
+disabled there. Home Manager removes the retired `settings.default.json` link.
 
 Pi's native startup check reports when an unpinned npm or git package has a
 newer version. Package updates stay explicit: run `pi update --extensions` when
