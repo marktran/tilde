@@ -15,14 +15,9 @@
     "cloudflare-ai-gateway/accounts/fireworks/models/minimax-m3"
   ],
   "extensions": [
-    "extensions/answer.ts",
-    "extensions/confirm-destructive.ts",
-    "extensions/files.ts",
     "extensions/notify.ts",
     "extensions/minimal.ts",
     "extensions/openai-server-compaction/index.ts",
-    "extensions/peon-ping.ts",
-    "extensions/preset.ts",
     "extensions/protected-paths.ts",
     "extensions/review.ts",
     "extensions/web-search.ts",

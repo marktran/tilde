@@ -94,10 +94,6 @@ in
       source = ../../files/pi/agent/pi-auto-permissions/config.json;
       force = true;
     };
-    ".pi/agent/presets.json" = {
-      source = ../../files/pi/agent/presets.json;
-      force = true;
-    };
     # Repo themes are store-backed, but link them per-file (recursive) so the
     # directory itself stays a real, writable dir: on Omarchy, `omarchy theme
     # set` runs omarchy-theme-set-pi, which writes the generated
