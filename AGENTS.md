@@ -46,8 +46,14 @@
 - This is a solo-maintained repo. Prefer working and committing directly on the
   default branch rather than using topic branches or pull requests.
 - Do not create branches, worktrees, or PRs unless I explicitly ask for them.
-- When I ask to push, push the current branch directly, including the default
-  branch; do not introduce a branch/PR workflow. Do not push unless asked.
+- Commits are local-only by default, on every branch. Requests to "commit",
+  "save", "get it onto master", or "put it on main" are not permission to push
+  or otherwise publish changes.
+- Push only when I explicitly request a push to a remote. If publishing intent
+  is ambiguous, leave the commits local and ask before pushing. Never infer
+  push permission from a commit request, branch name, or completed checks.
+- When I explicitly ask to push, push the requested branch directly, including
+  the default branch; do not introduce a branch/PR workflow.
 - Never force-push unless I explicitly ask. Include only intended changes in
   commits and run relevant checks first.
 - Never create commits with signing disabled. Do not use `--no-gpg-sign`.
