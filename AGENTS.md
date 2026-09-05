@@ -42,6 +42,13 @@
   macOS). Use `make dry-run` first for risky changes. See `README.md` and
   `nix/README.md`.
 
-## Git commits
+## Git workflow
+- This is a solo-maintained repo. Prefer working and committing directly on the
+  default branch rather than using topic branches or pull requests.
+- Do not create branches, worktrees, or PRs unless I explicitly ask for them.
+- When I ask to push, push the current branch directly, including the default
+  branch; do not introduce a branch/PR workflow. Do not push unless asked.
+- Never force-push unless I explicitly ask. Include only intended changes in
+  commits and run relevant checks first.
 - Never create commits with signing disabled. Do not use `--no-gpg-sign`.
 - If signing fails, stop and ask me to fix signing rather than bypassing it.
