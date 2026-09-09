@@ -8,3 +8,6 @@ node = "lts"
 "npm:@xai-official/grok" = "latest"
 "npm:defuddle" = "latest"
 pi = "latest"
+
+[settings.upgrade]
+auto_prune = false
