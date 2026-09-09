@@ -30,6 +30,7 @@
   ],
   "packages": [
     "git:github.com/EveryInc/compound-engineering-plugin",
+    "git:github.com/cathrynlavery/diagram-design",
     "npm:pi-subagents",
     "npm:pi-ask-user",
     "npm:@ogulcancelik/pi-auto-permissions",
