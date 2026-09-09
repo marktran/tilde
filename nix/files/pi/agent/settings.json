@@ -42,7 +42,7 @@
   "warnings": {
     "anthropicExtraUsage": false
   },
-  "lastChangelogVersion": "0.85.0",
+  "lastChangelogVersion": "0.85.1",
   "defaultProvider": "cloudflare-ai-gateway",
   "defaultModel": "gpt-6-astra",
   "defaultThinkingLevel": "medium"
