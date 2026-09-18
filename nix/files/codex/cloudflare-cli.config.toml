@@ -1,0 +1,11 @@
+# CLI-only profile, selected by ~/bin/codex. Never select this globally in
+# config.toml: Desktop shares that file. Seeded once, then locally writable.
+model = "gpt-6-astra"
+model_reasoning_effort = "low"
+model_provider = "cloudflare-ai-gateway"
+
+[model_providers.cloudflare-ai-gateway]
+name = "Cloudflare AI Gateway"
+base_url = "https://gateway.ai.cloudflare.com/v1/472017f2a442123c9f8f9da2bb39e5e8/workos/openai"
+env_key = "CLOUDFLARE_API_KEY"
+wire_api = "responses"

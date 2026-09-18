@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Seed a local Codex config; migrate the retired ChatGPT profile once.
+# Seed local Codex configs; move the global gateway default into a CLI profile.
 
 require "fileutils"
 require "json"
@@ -66,67 +66,62 @@ module CodexConfig
     updated.sub(assignment) { "#{Regexp.last_match(1)}#{comment}#{Regexp.last_match(2)}" }
   end
 
-  def migrate(contents, profile, starter)
-    expected = parse(contents)
-    overrides = parse(profile)
-    changes = overrides.slice("model", "model_reasoning_effort")
-    changes["model_provider"] = GATEWAY
-    changes.each do |key, value|
+  def cli_profile(defaults, base, base_contents)
+    contents = File.binread(File.join(defaults, "cloudflare-cli.config.toml"))
+    # Preserve the existing CLI model and provider definition during migration.
+    return contents unless base["model_provider"] == GATEWAY
+
+    base.slice("model", "model_reasoning_effort").each do |key, value|
       raise "Expected a string for #{key}" unless value.is_a?(String)
 
-      contents = set_string(contents, key, value, existing: expected.key?(key))
-      expected[key] = value
+      contents = set_string(contents, key, value, existing: parse(contents).key?(key))
     end
-    providers = expected["model_providers"] ||= {}
-    unless providers.key?(GATEWAY)
-      defaults = File.binread(starter)
-      providers[GATEWAY] = parse(defaults).fetch("model_providers").fetch(GATEWAY)
-      contents += "\n" + toml("get", defaults, "model_providers.#{GATEWAY}", "--output-toml")
+    if base.fetch("model_providers", {}).key?(GATEWAY)
+      entries = %w[model model_reasoning_effort model_provider].map do |key|
+        toml("get", contents, key, "--output-toml")
+      end
+      entries << toml("get", base_contents, "model_providers.#{GATEWAY}", "--output-toml")
+      contents = "# CLI-only gateway profile, selected by ~/bin/codex.\n" + entries.join("\n")
     end
-    raise "Migration changed unrelated Codex settings" unless parse(contents) == expected
-
-    # Retire the old repo-generated comments as well as the profile.
-    legacy_header = <<~TEXT
-      # Codex CLI user config, repo-managed as a writable out-of-store link
-      # (see nix/home-manager/common/agents.nix): codex itself rewrites this file
-      # (project trust, TUI state, notices), so runtime writes land in the checkout
-      # and show up as ordinary git drift.
-    TEXT
-    legacy_profile_note = <<~TEXT
-      # Interactive ChatGPT-auth usage: `codex --profile chatgpt` (fish abbr:
-      # codex), which layers chatgpt.config.toml on top of this file.
-    TEXT
-    contents.sub(legacy_header, "# Codex-owned local config. Settings changes stay local, not in Git.\n")
-            .sub(legacy_profile_note, "# Interactive and non-interactive Codex both use Cloudflare AI Gateway.\n")
+    contents
   end
 
   def seed(defaults, settings)
     target = File.join(settings, "config.toml")
-    profile = File.join(settings, "chatgpt.config.toml")
+    profile = File.join(settings, "cloudflare-cli.config.toml")
     original = read_existing(target)
-    profile_contents = read_existing(profile)
-    starter = File.join(defaults, "config.toml")
-    contents = original || File.binread(starter)
+    original_profile = read_existing(profile)
+    contents = original || File.binread(File.join(defaults, "config.toml"))
+    base = parse(contents)
+    profile_contents = original_profile || cli_profile(defaults, base, contents)
+    parse(profile_contents) # Validate both files before making any changes.
 
-    if profile_contents
-      contents = migrate(contents, profile_contents, starter)
-      # Snapshot resolved contents, not links into a mutable checkout or old
-      # Nix generation. Keep both originals before changing either live file.
+    migrating = base["model_provider"] == GATEWAY
+    if migrating
+      contents = set_string(contents, "model_provider", "openai", existing: true)
+      raise "Migration changed unrelated Codex settings" unless parse(contents) == base.merge("model_provider" => "openai")
+    end
+
+    FileUtils.mkdir_p(settings)
+    if migrating
       backups = File.join(settings, "backups")
       FileUtils.mkdir_p(backups, mode: 0o700)
-      backup = Dir.mktmpdir("gateway-migration-", backups)
+      backup = Dir.mktmpdir("cli-only-gateway-", backups)
       atomic_write(File.join(backup, "config.toml"), original) if original
-      atomic_write(File.join(backup, "chatgpt.config.toml"), profile_contents)
-      atomic_write(target, contents)
-      File.unlink(profile)
-      puts "Migrated Codex to Cloudflare AI Gateway; originals: #{backup}"
-    elsif original.nil? || File.symlink?(target)
-      # Seed only if missing; detach legacy main-config links before HM's
-      # orphan cleanup. Existing regular files stay completely untouched.
-      FileUtils.mkdir_p(settings)
+      atomic_write(File.join(backup, "cloudflare-cli.config.toml"), original_profile) if original_profile
+      puts "Separating Codex CLI routing from Desktop; originals: #{backup}"
+    end
+    # Write the profile first so a failed write cannot discard CLI choices.
+    # Preserve existing regular files; detach links before HM orphan cleanup.
+    if original_profile.nil? || File.symlink?(profile)
+      atomic_write(profile, profile_contents)
+      puts "Initialized CLI-only Codex profile: #{profile}"
+    end
+    if migrating || original.nil? || File.symlink?(target)
       atomic_write(target, contents)
       puts "Initialized app-owned Codex config: #{target}"
     end
+    # Legacy chatgpt.config.toml and auth.json are deliberately left untouched.
   end
 end
 

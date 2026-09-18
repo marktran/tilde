@@ -16,14 +16,10 @@ else
 end
 
 class SeedCodexConfigTest < Minitest::Test
-  STARTER = <<~TOML
-    model = "starter"
-    model_provider = "cloudflare-ai-gateway"
-    [model_providers.cloudflare-ai-gateway]
-    base_url = "https://gateway.example/openai"
-    env_key = "CLOUDFLARE_API_KEY"
-  TOML
-  LOCAL = STARTER.sub('"starter"', '"local"') + <<~TOML
+  DEFAULTS = ENV.fetch("CODEX_TEST_DEFAULTS") { File.expand_path("../files/codex", __dir__) }
+  STARTER = File.read(File.join(DEFAULTS, "config.toml"))
+  PROFILE = File.read(File.join(DEFAULTS, "cloudflare-cli.config.toml"))
+  LOCAL = STARTER + <<~TOML
 
     # Preserve local trust and plugin choices.
     [projects."/local"]
@@ -31,20 +27,29 @@ class SeedCodexConfigTest < Minitest::Test
     [plugins.example]
     enabled = true
   TOML
-  PROFILE = <<~TOML
-    model = "gpt-5.6-sol"
+  GATEWAY = <<~TOML
+    # My café preferences.
+    'model' = 'local-model' # Keep this note.
     model_reasoning_effort = "high"
-    model_provider = "openai"
+    model_provider = 'cloudflare-ai-gateway' # Keep routing note.
+    notes = """
+    model_provider = "not-a-setting"
+    [not_a_table]
+    """
+    [model_providers.cloudflare-ai-gateway]
+    base_url = "https://custom.example/openai"
+    env_key = "CUSTOM_TOKEN"
+    wire_api = "responses"
+    [plugins."example.with.dots"]
+    enabled = false # Keep this too.
   TOML
 
   def setup
     @root = Dir.mktmpdir
-    @defaults = File.join(@root, "defaults")
     @settings = File.join(@root, ".codex")
-    FileUtils.mkdir_p([@defaults, @settings])
-    File.write(File.join(@defaults, "config.toml"), STARTER)
+    FileUtils.mkdir_p(@settings)
     @config = File.join(@settings, "config.toml")
-    @profile = File.join(@settings, "chatgpt.config.toml")
+    @profile = File.join(@settings, "cloudflare-cli.config.toml")
     @backups = File.join(@settings, "backups")
   end
 
@@ -53,7 +58,7 @@ class SeedCodexConfigTest < Minitest::Test
   end
 
   def run_helper(success: true)
-    output, error, status = Open3.capture3(*HELPER, @defaults, @settings)
+    output, error, status = Open3.capture3(*HELPER, DEFAULTS, @settings)
     assert_equal success, status.success?, "#{output}\n#{error}"
   end
 
@@ -67,122 +72,146 @@ class SeedCodexConfigTest < Minitest::Test
     end
   end
 
-  def test_seed_single_config_and_preserve_existing
+  def test_seed_desktop_base_and_cli_profile
     Dir.rmdir(@settings)
     run_helper
     assert_equal STARTER, File.read(@config)
-    refute File.symlink?(@config)
-    assert_equal 0o600, File.stat(@config).mode & 0o777
-    refute File.exist?(@profile)
-    File.write(@config, LOCAL)
-    File.chmod(0o400, @config)
-    before = File.stat(@config)
-    run_helper
-    assert_equal LOCAL, File.read(@config)
-    after = File.stat(@config)
-    %i[mode ino mtime].each { |field| assert_equal before.public_send(field), after.public_send(field) }
+    assert_equal PROFILE, File.read(@profile)
+    assert_equal "openai", parse(File.read(@config))["model_provider"]
+    assert_equal "cloudflare-ai-gateway", parse(File.read(@profile))["model_provider"]
+    [@config, @profile].each do |path|
+      refute File.symlink?(path)
+      assert_equal 0o600, File.stat(path).mode & 0o777
+    end
+    refute File.exist?(@backups)
   end
 
-  def test_detach_legacy_main_links
-    source = File.join(@root, "store.toml")
-    intermediate = File.join(@root, "intermediate")
-    File.write(source, LOCAL)
-    File.chmod(0o444, source)
-    File.symlink(source, intermediate)
-    File.symlink(intermediate, @config)
+  def test_preserve_existing_regular_files_and_legacy_chatgpt_profile
+    File.write(@config, LOCAL)
+    File.write(@profile, PROFILE.sub('"low"', '"medium"'))
+    legacy = File.join(@settings, "chatgpt.config.toml")
+    File.write(legacy, 'model_provider = "openai"')
+    [@config, @profile, legacy].each { |path| File.chmod(0o400, path) }
+    before = [@config, @profile, legacy].map { |path| [File.read(path), File.stat(path)] }
     run_helper
-    refute File.symlink?(@config)
-    assert_equal LOCAL, File.read(@config)
-    assert_equal 0o600, File.stat(@config).mode & 0o777
-    assert_equal LOCAL, File.read(source)
+    [@config, @profile, legacy].zip(before).each do |path, (contents, stat)|
+      assert_equal contents, File.read(path)
+      %i[mode ino mtime].each { |field| assert_equal stat.public_send(field), File.stat(path).public_send(field) }
+    end
+    refute File.exist?(@backups)
   end
 
-  def test_profile_migration_and_idempotence
-    File.write(@config, LOCAL)
-    File.write(@profile, PROFILE)
+  def test_detach_legacy_links_without_mutating_source
+    [@config, @profile].zip([LOCAL, PROFILE]).each_with_index do |(path, contents), index|
+      source = File.join(@root, "store-#{index}.toml")
+      File.write(source, contents)
+      File.chmod(0o444, source)
+      File.symlink(source, path)
+    end
     run_helper
-    expected = parse(LOCAL).merge("model" => "gpt-5.6-sol", "model_reasoning_effort" => "high")
-    assert_equal expected, parse(File.read(@config))
-    assert_includes File.read(@config), "# Preserve local trust"
-    refute File.exist?(@profile)
+    [@config, @profile].zip([LOCAL, PROFILE]).each_with_index do |(path, contents), index|
+      refute File.symlink?(path)
+      assert_equal contents, File.read(path)
+      assert_equal contents, File.read(File.join(@root, "store-#{index}.toml"))
+      assert_equal 0o600, File.stat(path).mode & 0o777
+    end
+  end
+
+  def test_gateway_migration_preserves_settings_and_is_idempotent
+    File.write(@config, GATEWAY)
+    run_helper
+    actual = File.read(@config, encoding: Encoding::UTF_8)
+    assert_equal parse(GATEWAY).merge("model_provider" => "openai"), parse(actual)
+    ["# My café preferences.", "# Keep this note.", "# Keep routing note.", "# Keep this too."].each do |comment|
+      assert_includes actual, comment
+    end
+    profile = parse(File.read(@profile))
+    assert_equal "cloudflare-ai-gateway", profile["model_provider"]
+    assert_equal "local-model", profile["model"]
+    assert_equal "high", profile["model_reasoning_effort"]
+    assert_equal parse(GATEWAY)["model_providers"], profile["model_providers"]
     backups = Dir.children(@backups)
     assert_equal 1, backups.size
     backup = File.join(@backups, backups.first)
-    assert_equal LOCAL, File.read(File.join(backup, "config.toml"))
-    assert_equal PROFILE, File.read(File.join(backup, "chatgpt.config.toml"))
+    assert_equal GATEWAY.b, File.binread(File.join(backup, "config.toml"))
     assert_equal 0o700, File.stat(backup).mode & 0o777
     assert_equal 0o600, File.stat(File.join(backup, "config.toml")).mode & 0o777
-    # Later local choices must not be reset by another switch.
-    contents = File.read(@config).sub('"gpt-5.6-sol"', '"later"')
-    File.write(@config, contents)
+    File.write(@config, actual.sub("local-model", "desktop-choice"))
+    contents = File.read(@config)
     run_helper
     assert_equal contents, File.read(@config)
+    assert_equal profile, parse(File.read(@profile))
     assert_equal backups, Dir.children(@backups)
   end
 
-  def test_migrate_linked_profile_with_missing_main
-    source = File.join(@root, "profile.toml")
-    File.write(source, PROFILE)
-    File.chmod(0o444, source)
-    File.symlink(source, @profile)
-    run_helper
-    assert_equal PROFILE, File.read(source)
-    refute File.symlink?(@profile)
-    config = parse(File.read(@config))
-    assert_equal "cloudflare-ai-gateway", config["model_provider"]
-    assert_equal "gpt-5.6-sol", config["model"]
-  end
-
-  def test_add_missing_gateway_definition_during_migration
-    File.write(@config, "model_provider = \"openai\"\n")
-    File.write(@profile, PROFILE)
-    run_helper
-    config = parse(File.read(@config))
-    assert_equal "cloudflare-ai-gateway", config["model_provider"]
-    assert_equal parse(STARTER)["model_providers"], config["model_providers"]
-  end
-
-  def test_preserve_multiline_strings_quoted_keys_and_comments
-    contents = <<~'TOML'
-      # My café preferences.
-      'model' = 'old-model' # Keep this note.
-      model_provider = 'openai'
-      notes = """
-      model = "not-a-setting"
-      [not_a_table]
-      """
-      [plugins."example.with.dots"]
-      enabled = false # Keep this too.
+  def test_migrate_legacy_linux_gateway_link_without_changing_checkout
+    contents = GATEWAY + <<~TOML
+      [projects."/home/mark/src/mark/tilde"]
+      trust_level = "trusted"
     TOML
-    File.write(@config, contents)
-    File.write(@profile, PROFILE)
+    source = File.join(@root, "checkout-config.toml")
+    intermediate = File.join(@root, "home-manager-link")
+    File.write(source, contents)
+    File.symlink(source, intermediate)
+    File.symlink(intermediate, @config)
+
     run_helper
-    actual = File.read(@config, encoding: Encoding::UTF_8)
-    expected = parse(contents).merge(parse(PROFILE))
-    expected["model_provider"] = "cloudflare-ai-gateway"
-    expected["model_providers"] = parse(STARTER)["model_providers"]
-    assert_equal expected, parse(actual)
-    ["# My café preferences.", "# Keep this note.", "# Keep this too."].each do |comment|
-      assert_includes actual, comment
-    end
+
+    refute File.symlink?(@config)
+    assert_equal 0o600, File.stat(@config).mode & 0o777
+    assert_equal contents.b, File.binread(source)
+    assert_equal parse(contents).merge("model_provider" => "openai"), parse(File.read(@config))
+    profile = parse(File.read(@profile))
+    assert_equal "cloudflare-ai-gateway", profile["model_provider"]
+    assert_equal "local-model", profile["model"]
+    assert_equal "high", profile["model_reasoning_effort"]
+    assert_equal parse(contents)["model_providers"], profile["model_providers"]
+    backup = Dir.glob(File.join(@backups, "*", "config.toml")).fetch(0)
+    assert_equal contents.b, File.binread(backup)
   end
 
-  def test_invalid_paths_or_profile_leave_main_untouched
-    File.write(@config, LOCAL)
-    %i[broken directory invalid_toml].each do |bad_profile|
-      case bad_profile
-      when :broken then File.symlink(File.join(@root, "missing"), @profile)
-      when :directory then Dir.mkdir(@profile)
-      else File.write(@profile, "not valid toml [")
+  def test_migration_preserves_existing_cli_profile
+    File.write(@config, GATEWAY)
+    File.write(@profile, PROFILE)
+    run_helper
+    assert_equal PROFILE, File.read(@profile)
+    backup = Dir.glob(File.join(@backups, "*", "cloudflare-cli.config.toml")).fetch(0)
+    assert_equal PROFILE, File.read(backup)
+  end
+
+  def test_gateway_without_provider_definition_gets_starter_definition
+    File.write(@config, "model_provider = \"cloudflare-ai-gateway\"\n")
+    run_helper
+    assert_equal PROFILE, File.read(@profile)
+    assert_equal "openai", parse(File.read(@config))["model_provider"]
+  end
+
+  def test_custom_non_gateway_provider_is_untouched
+    contents = LOCAL.sub('"openai"', '"custom"')
+    File.write(@config, contents)
+    run_helper
+    assert_equal contents, File.read(@config)
+    refute File.exist?(@backups)
+  end
+
+  def test_invalid_inputs_fail_before_any_changes
+    [@config, @profile].each do |bad_path|
+      %i[broken directory invalid_toml].each do |kind|
+        File.write(@config, GATEWAY)
+        File.write(@profile, PROFILE)
+        File.unlink(bad_path)
+        case kind
+        when :broken then File.symlink(File.join(@root, "missing"), bad_path)
+        when :directory then Dir.mkdir(bad_path)
+        else File.write(bad_path, "not valid toml [")
+        end
+        other = bad_path == @config ? @profile : @config
+        contents = File.read(other)
+        run_helper(success: false)
+        assert_equal contents, File.read(other)
+        refute File.exist?(@backups)
+        File.directory?(bad_path) ? Dir.rmdir(bad_path) : File.unlink(bad_path)
       end
-      run_helper(success: false)
-      assert_equal LOCAL, File.read(@config)
-      refute File.exist?(@backups)
-      File.directory?(@profile) ? Dir.rmdir(@profile) : File.unlink(@profile)
     end
-    File.unlink(@config)
-    File.symlink(File.join(@root, "missing"), @config)
-    run_helper(success: false)
-    assert File.symlink?(@config)
   end
 end

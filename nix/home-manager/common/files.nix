@@ -32,6 +32,13 @@
       force = true;
     };
 
+    # Select the gateway profile only in CLI processes, never Desktop's
+    # shared ~/.codex/config.toml. Also covers non-Fish subprocesses.
+    "bin/codex" = {
+      source = ../../files/bin/codex;
+      force = true;
+    };
+
     # Local control of the (discontinued, app-less) Belkin Wemo plug on the
     # lamp via its UPnP/SOAP API. Only needs curl, so shared across platforms.
     "bin/wemo" = {

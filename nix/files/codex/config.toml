@@ -1,29 +1,13 @@
-# Codex CLI starter config. Home Manager copies this to ~/.codex/config.toml
-# only when missing (see nix/home-manager/common/agents.nix). Codex owns the
-# live file; model choices, project trust, and TUI state stay local. Edits here
-# affect new setups only, not existing configs.
-#
-# Default provider: the same Cloudflare AI Gateway Pi uses. The gateway token
-# arrives as CLOUDFLARE_API_KEY, exported from Pi's auth.json by
-# nix/files/fish/conf.d/cloudflare-ai-gateway.fish. Nothing here is a secret:
-# the URL carries only the account id and gateway name.
-#
-# Interactive and non-interactive Codex both use Cloudflare AI Gateway.
-# No separate ChatGPT profile or login is needed.
+# Shared Codex Desktop/CLI starter config. Home Manager seeds this only when
+# missing; Codex owns the writable local file and subsequent settings changes.
+# Desktop uses OpenAI/ChatGPT authentication. ~/bin/codex selects the separate
+# cloudflare-cli.config.toml profile for CLI sessions, never a global default.
 
 personality = "pragmatic"
-model = "gpt-6-astra"
-model_reasoning_effort = "low"
-model_provider = "cloudflare-ai-gateway"
+model_provider = "openai"
 
 [tui]
 status_line = ["model-with-reasoning", "context-remaining"]
 
 [plugins."notion@openai-curated"]
 enabled = true
-
-[model_providers.cloudflare-ai-gateway]
-name = "Cloudflare AI Gateway"
-base_url = "https://gateway.ai.cloudflare.com/v1/472017f2a442123c9f8f9da2bb39e5e8/workos/openai"
-env_key = "CLOUDFLARE_API_KEY"
-wire_api = "responses"

@@ -305,42 +305,47 @@ Pi-specific. Restart agent sessions to load updated instructions.
 Existing unmanaged Codex/Claude instruction files are not forcibly replaced;
 merge their contents into the managed instructions before switching that host.
 
-### Codex: one gateway config, local preferences
+### Codex: CLI-only gateway, Desktop on ChatGPT
 
-`nix/files/codex/config.toml` is the only starter config. Home Manager copies it
-to `~/.codex/config.toml` only if missing. The live config is an ordinary
-writable file owned by Codex, not a link into the store or this checkout.
-Model/thinking choices, project trust, notices, and other runtime settings
-stay local and do not create Git changes.
+Desktop and CLI share `~/.codex/config.toml`; a gateway default there affects
+both. Home Manager seeds that file with the `openai` provider and seeds
+`~/.codex/cloudflare-cli.config.toml` separately. Both are writable local
+files, not links into Git or the Nix store. Model/thinking choices, project
+trust, notices, and other runtime settings stay local.
 
-Interactive and non-interactive Codex both use Cloudflare AI Gateway. Fish
-exports `CLOUDFLARE_API_KEY` from the existing gateway credentials and does not
-select a ChatGPT profile. New shells clear the retired `codex` abbreviation;
-run `abbr --erase codex` in an already-open Fish shell, then restart Codex.
-Other launch environments must also supply `CLOUDFLARE_API_KEY`.
+`~/bin/codex` selects `--profile cloudflare-cli` for interactive and
+non-interactive CLI sessions. It loads `CLOUDFLARE_API_KEY` from Pi's auth store
+if the caller has not supplied it, including outside Fish. Desktop uses the
+base config and its ChatGPT login. The wrapper does not select the gateway for
+Desktop/server entrypoints, account/cloud management, other administrative
+commands that reject profiles, remote TUI connections, or explicit
+profiles/`--oss`. Directly invoking an underlying
+Codex binary bypasses the wrapper; pass `--profile cloudflare-cli` and supply
+the token when doing that intentionally. Do not select the gateway globally
+in Desktop settings or `config.toml`.
 
-Activation retires an existing `chatgpt.config.toml` once: it copies both
-original configs to a private `~/.codex/backups/gateway-migration-*/` directory,
-transfers the profile's model/thinking choices into the main config, selects
-the gateway provider, and removes the active profile file. Other base settings
-are preserved. Model availability still depends on the gateway's upstream API.
-Once migrated, subsequent switches leave existing regular configs untouched.
-ChatGPT credentials are not deleted; they no longer select the model provider.
+Activation backs up a global gateway config under the private
+`~/.codex/backups/cli-only-gateway-*/` directory, then changes only its default
+provider to `openai`. The new CLI profile inherits the previous model/thinking
+choices and gateway definition. An existing CLI profile is preserved. Other
+base settings (including an unused gateway provider definition), legacy
+`chatgpt.config.toml`, and authentication credentials remain untouched. Once
+the base is off the gateway, subsequent switches preserve existing regular
+files. Restart Desktop after migration; sign in with ChatGPT if needed.
 
-The starter omits machine-specific trust and generated notices. Edit it to
-change defaults for future setups; existing machines need those changes
-applied separately to their local config. Legacy main-config symlinks are
-copied to private writable files **before** Home Manager's orphan cleanup.
-Broken links fail activation instead of silently resetting settings. Old
-generations may reinstate links on rollback, so back up local configs before
-rolling back across this migration.
+The starters omit machine-specific trust and generated notices. Edits affect
+future setups only. Legacy config links are detached into private writable
+files before Home Manager's orphan cleanup; broken links fail activation
+rather than silently resetting settings. Back up local configs before rolling
+back to an older generation that may reinstate the global gateway default.
 
-The helper is Ruby, using `toml-cli` for comment-preserving TOML edits.
-Minitest regression tests run during the native helper build (`make check`).
-They can also run directly with Ruby, Minitest, and `toml-cli` installed:
+The Ruby helper uses `toml-cli` for comment-preserving edits. Migration and
+launcher tests run during the native helper build (`make check`). They also
+run directly with Ruby, Minitest, `toml-cli`, and `jq` installed:
 
 ```sh
 ruby nix/tests/seed-codex-config.rb
+ruby nix/tests/codex-wrapper.rb
 ```
 
 ### Pi settings and package updates

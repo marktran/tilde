@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Select Cloudflare only for CLI invocations. Desktop reads the shared base
+# config without this profile. ~/bin precedes the standalone CLI on PATH.
+set -euo pipefail
+
+real_codex=""
+while IFS= read -r -d ':' dir || [[ -n "$dir" ]]; do
+  [[ -n "$dir" ]] || dir=.
+  candidate="$dir/codex"
+  [[ -x "$candidate" && ! -d "$candidate" ]] || continue
+  [[ "$candidate" -ef "${BASH_SOURCE[0]}" ]] && continue
+  real_codex="$candidate"
+  break
+done <<<"$PATH:"
+[[ -n "$real_codex" ]] || { echo 'codex: no underlying CLI found on PATH' >&2; exit 1; }
+
+# Respect explicit profiles/local providers. Desktop and administrative
+# commands do not accept --profile in Codex 0.144; leave them on the base.
+# Server entrypoints also stay on the base so Desktop cannot inherit routing.
+use_gateway=true
+command_seen=false
+debug_command=false
+skip_value=false
+for arg in "$@"; do
+  if "$skip_value"; then skip_value=false; continue; fi
+  case "$arg" in
+    --) break ;;
+    -p|--profile|--profile=*|-p?*|--oss|--remote|--remote=*) use_gateway=false; break ;;
+    -c|--config|-m|--model|-i|--image|-s|--sandbox|-C|--cd|-a|--ask-for-approval|--add-dir|--enable|--disable|--local-provider|--remote-auth-token-env)
+      skip_value=true ;;
+    -*) ;;
+    *)
+      if ! "$command_seen"; then
+        case "$arg" in
+          app|app-server|remote-control|login|logout|cloud|mcp-server|exec-server|completion|update|doctor|apply|a|features|plugin|help)
+            use_gateway=false; break ;;
+          debug) debug_command=true ;;
+        esac
+        command_seen=true
+      elif "$debug_command"; then
+        [[ "$arg" == prompt-input ]] || use_gateway=false
+        debug_command=false
+      fi ;;
+  esac
+done
+
+if ! "$use_gateway"; then exec "$real_codex" "$@"; fi
+
+# Non-Fish callers (including agent subprocesses) need the token too. Keep
+# this process-scoped; no launchctl/global Desktop environment changes.
+if [[ -z "${CLOUDFLARE_API_KEY:-}" && -r "$HOME/.pi/agent/auth.json" ]]; then
+  CLOUDFLARE_API_KEY="$(jq -r '.["cloudflare-ai-gateway"].key // empty' "$HOME/.pi/agent/auth.json")"
+  export CLOUDFLARE_API_KEY
+fi
+exec "$real_codex" --profile cloudflare-cli "$@"

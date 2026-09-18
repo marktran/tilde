@@ -11,8 +11,12 @@ let
     text = ''exec ruby ${./seed-codex-config.rb} "$@"'';
     checkPhase = ''
       ${pkgs.runtimeShell} -n "$target"
-      export PATH="${pkgs.toml-cli}/bin:$PATH"
+      export PATH="${codexTestRuby}/bin:${pkgs.toml-cli}/bin:${pkgs.jq}/bin:$PATH"
+      export CODEX_TEST_DEFAULTS="${../../files/codex}"
       ${codexTestRuby}/bin/ruby ${../../tests/seed-codex-config.rb} "$target"
+      export CODEX_TEST_WRAPPER="${../../files/bin/codex}"
+      ${pkgs.runtimeShell} -n "$CODEX_TEST_WRAPPER"
+      ${codexTestRuby}/bin/ruby ${../../tests/codex-wrapper.rb}
     '';
   };
 
@@ -130,9 +134,10 @@ in
   // agentSkillLinks ".codex/skills"
   // agentSkillLinks ".claude/skills";
 
-  # Codex owns one local gateway config. Seed only if missing; migrate the
-  # retired ChatGPT profile once, backing up both originals and retaining its
-  # model/thinking choices. Detach legacy links before HM's orphan cleanup.
+  # Desktop and CLI share the base config: keep its provider on OpenAI.
+  # Seed a separate gateway profile selected only by ~/bin/codex; back up
+  # global gateway configs before migrating. Preserve other local settings
+  # and detach legacy links before HM's orphan cleanup.
   # Keep this after writeBoundary so dry-run activation remains read-only.
   home.activation.seedCodexConfig = lib.hm.dag.entryBetween [ "linkGeneration" ] [ "writeBoundary" ] ''
     $DRY_RUN_CMD ${seedCodexConfig}/bin/seed-codex-config \
