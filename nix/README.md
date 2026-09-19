@@ -371,6 +371,29 @@ Pi's native startup check reports when an unpinned npm or git package has a
 newer version. Package updates stay explicit: run `pi update --extensions` when
 Pi displays the notification.
 
+### Pi launcher: isolate Anthropic OAuth from gateway traffic
+
+The Fish `pi` function routes its Claude CLI children through Cloudflare AI
+Gateway. When gateway credentials are available, it also sets
+`ANTHROPIC_CONFIG_DIR` to a private, empty temporary directory for Pi and its
+children. Pi 0.85.1's bundled Anthropic SDK otherwise discovers the enterprise
+OAuth profile even when Pi supplies gateway-only authentication, and an expired
+local token prevents the gateway request. The launcher removes the temporary
+directory on normal return and preserves Pi's exit status.
+
+The enterprise profile and credentials are not modified; the calling shell and
+standalone `claude` retain their original configuration. Without gateway
+credentials, the launcher leaves Anthropic configuration alone. Direct binary
+invocations (including `command pi`) bypass this workaround. Restart Pi through
+the Fish function after activation; an already-loaded Fish function can be
+refreshed with `source ~/.config/fish/functions/pi.fish`.
+
+Run the offline launcher regression tests with Fish, Ruby/Minitest, and `jq`:
+
+```sh
+ruby nix/tests/pi-wrapper.rb
+```
+
 ### PATH ordering: Nix profile pinned last
 
 Native PATH ordering is asymmetric:
