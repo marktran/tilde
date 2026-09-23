@@ -44,5 +44,9 @@
   "quietStartup": true,
   "warnings": {
     "anthropicExtraUsage": false
-  }
+  },
+  "defaultProvider": "cloudflare-ai-gateway",
+  "defaultModel": "gpt-6-astra",
+  "defaultThinkingLevel": "high",
+  "lastChangelogVersion": "0.87.1"
 }
