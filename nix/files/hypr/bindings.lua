@@ -52,7 +52,7 @@ o.bind("SUPER + SHIFT + X", "X", 'omarchy-launch-or-focus-webapp X "https://x.co
 o.bind("SUPER + SHIFT + ALT + E", "New email", { webapp = "https://mail.superhuman.com/" })
 
 -- ThinkPad Copilot key emits SUPER+SHIFT+code:201; Makima remaps that chord
--- to Right Control. Keep it from falling through to the Omarchy menu when
+-- to Right Super. Keep it from falling through to the Omarchy menu when
 -- Makima is stopped.
 hl.unbind("SUPER + SHIFT + code:201")
 o.bind("XF86Tools", "Lock screen", "omarchy-system-lock")

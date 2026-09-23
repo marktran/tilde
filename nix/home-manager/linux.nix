@@ -113,7 +113,7 @@
       force = forceLinks;
     };
 
-    # Makima (evdev remapper): Copilot key -> Right Ctrl, Ctrl+Arrows ->
+    # Makima (evdev remapper): Copilot key -> Right Super, Ctrl+Arrows ->
     # spotify-control. These configs are read by a SYSTEM-level
     # service that Nix cannot manage on Arch. Setup (and recovery after any
     # Omarchy major upgrade, which retires makima): run `restore-makima`

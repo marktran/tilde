@@ -3,7 +3,7 @@
 #
 # Omarchy Quattro's upgrade removed makima-bin and playerctl, disabled the
 # service, and deleted both the makima.service.d drop-ins and the uinput udev
-# rule. The remap configs (Copilot -> Right Ctrl, Bookmarks -> Compose,
+# rule. The remap configs (Copilot -> Right Super, Bookmarks -> Compose,
 # Ctrl+Arrows -> spotify-control) are Home Manager-managed in ~/.config/makima
 # and survive; this restores everything system-level around them.
 #
@@ -48,4 +48,4 @@ sudo systemctl restart makima.service
 sleep 2
 systemctl status makima --no-pager | sed -n '1,6p'
 echo
-echo "Test: Copilot key = Right Control; Copilot(held)+arrows = Spotify."
+echo "Test: Copilot key = Right Super; Ctrl+arrows = Spotify."
