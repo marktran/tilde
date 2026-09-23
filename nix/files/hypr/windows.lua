@@ -39,8 +39,9 @@ o.window("^org\\.omarchy\\.herdr$", { workspace = "7" })
 -- Pin Typora to workspace 9.
 o.window("Typora", { workspace = "9" })
 
--- Pin 1Password to scratchpad.
-o.window("1password", { workspace = "special:scratchpad", center = true })
+-- Upstream 1Password defaults, including its new app id. Compatibility for
+-- installed Omarchy versions whose rule still matches only the old class.
+o.window("^(1[pP]assword|com\\.onepassword\\.OnePassword)$", { no_screen_share = true, tag = "+floating-window" })
 
 -- Make mpv behave like PiP overlays (float + pin across workspaces).
 -- Dedicated tag so Omarchy's fixed pip size rule does not lock dimensions.

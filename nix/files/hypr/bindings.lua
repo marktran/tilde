@@ -42,7 +42,8 @@ o.bind("SUPER + ALT + C", "Org capture", capture_org)
 o.bind("SUPER + SHIFT + T", "Activity", "uwsm-app -- xdg-terminal-exec -e btop")
 o.bind("SUPER + SHIFT + D", "Docker", { tui = "lazydocker" })
 -- Signal launches manually (menu); its workspace-6 rules live in windows.lua.
-o.bind("SUPER + SHIFT + SLASH", "Passwords", "uwsm-app -- 1password")
+hl.unbind("SUPER + SHIFT + SLASH")
+o.bind("SUPER + SHIFT + SLASH", "Passwords", { omarchy = "1password" })
 
 -- Web apps.
 o.bind("SUPER + SHIFT + A", "ChatGPT", 'omarchy-launch-or-focus-webapp chrome-chatgpt "https://chatgpt.com"')
