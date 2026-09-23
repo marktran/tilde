@@ -1,6 +1,8 @@
 { lib, outOfStore, ... }:
 
 {
+  imports = [ ./maintenance.nix ];
+
   # Host-specific user config for the museum exe.dev VM (museum.exe.xyz), a
   # headless Ubuntu 24.04 machine for cloud agent development on the Museum
   # project. It imports only nix/home-manager/core.nix; provisioning and
