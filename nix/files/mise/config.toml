@@ -7,6 +7,7 @@ node = "lts"
 "npm:@googleworkspace/cli" = "latest"
 "npm:@xai-official/grok" = "latest"
 "npm:defuddle" = "latest"
+opencode = "latest"
 pi = "latest"
 
 [settings.upgrade]

@@ -138,7 +138,6 @@
       "libffi"
       "make"
       "mpv"
-      "opencode"
       "oven-sh/bun/bun"
       "pgcli"
       "pkgconf"
