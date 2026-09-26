@@ -101,6 +101,11 @@ in
   xdg.configFile."git/ignore".force = forceLinks;
   xdg.configFile."git/allowed_signers" = {
     force = forceLinks;
-    text = "mark.tran@gmail.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK6j5pkvHqP1YRODd00yh5FM7YGuozykifYWYYuQeMuu\n";
+    # Laptops (1Password key) and the museum VM's signing-only key (see
+    # nix/hosts/museum/home.nix), so commits from either verify everywhere.
+    text = ''
+      mark.tran@gmail.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK6j5pkvHqP1YRODd00yh5FM7YGuozykifYWYYuQeMuu
+      mark.tran@gmail.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEbYjTc86ng5y40JEIHBfmXlj8BIojfI+aTaMl2oXtHi
+    '';
   };
 }
