@@ -110,16 +110,24 @@ defaults: `nix.enable = false` (the upstream installer keeps managing the
 nix-daemon and `/etc/nix/nix.conf`), and fish stays Homebrew-managed as the
 login shell.
 
-Homebrew's tap-trust is machine-local state nix-darwin cannot manage. Because
-`cleanup = "uninstall"` makes `brew bundle --cleanup` load every declared
-formula and cask, the declared third-party packages must be trusted once per
-machine or the switch fails:
+Homebrew trust is declared through nix-darwin's generated Brewfile. The pinned
+nix-darwin defaults to `trusted = true` for declared formulae and casks.
+Emacs is declared as `d12frosted/emacs-plus/emacs-plus@31` with explicit
+`trusted = true`; neither other Emacs versions nor the entire tap are trusted.
+Other third-party packages retain nix-darwin's default per-package trust.
 
-```sh
-brew trust --formula \
-  d12frosted/emacs-plus/emacs-plus@30 depot/tap/depot oven-sh/bun/bun
-brew trust --cask dopplerhq/doppler/doppler
-```
+The Homebrew activation script also grants that same Emacs formula trust as
+`homebrew.user` **before** invoking Bundle. Homebrew 7.0.6 computes install/upgrade
+labels before applying Brewfile trust; its outdated check follows the installed
+Emacs alias to `@31` and fails if that target is not yet trusted. Keeping both
+the pre-Bundle grant and the Brewfile declaration covers startup and cleanup
+without granting tap-wide trust.
+
+`cleanup = "uninstall"` runs Bundle cleanup, which resets the global trust
+store to the selected Brewfile's trust declarations. Manual `brew trust`
+grants not declared there are removed, so persistent trust changes belong in
+`nix/darwin/configuration.nix`, not a one-time shell command. See
+[Homebrew's Bundle trust documentation](https://docs.brew.sh/Brew-Bundle-and-Brewfile#trusted).
 
 To preview what a switch would uninstall before activating:
 
@@ -417,13 +425,12 @@ shell (also appended, never shadowing system tools).
 
 ### macOS Homebrew quirks
 
-- **Trust is machine-local** and not managed by nix-darwin
-  (`~/.homebrew/trust.json`). With `homebrew.onActivation.cleanup =
-  "uninstall"`, the declared third-party formulae and casks must be trusted
-  once per machine or `darwin-rebuild switch` fails/warns:
-  `brew trust --formula d12frosted/emacs-plus/emacs-plus@30 depot/tap/depot
-  oven-sh/bun/bun` and
-  `brew trust --cask dopplerhq/doppler/doppler`.
+- **Declare trust in Nix, not just with `brew trust`.** Bundle cleanup resets
+  the machine-local trust store to the generated Brewfile's declarations.
+  nix-darwin trusts declared formulae/casks by default; Emacs explicitly trusts
+  only the declared `emacs-plus@31` formula, not the entire tap. A pre-Bundle
+  activation step grants the same formula trust before Homebrew's early alias
+  checks. Manual trust grants absent from the Brewfile do not survive cleanup.
 - **Renamed formulae + outdated kegs can make cleanup uninstall needed
   dependencies.** nix-darwin runs `brew bundle --no-upgrade --force-cleanup`;
   brew bundle skips outdated formulae when computing which dependencies to

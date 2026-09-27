@@ -9,7 +9,7 @@
 
   # emacs-plus reads this at (post)install time to pick the Emacs.app icon.
   # After changing it, re-apply without a rebuild:
-  #   brew postinstall d12frosted/emacs-plus/emacs-plus@30 && killall Dock
+  #   brew postinstall d12frosted/emacs-plus/emacs-plus@31 && killall Dock
   xdg.configFile."emacs-plus/build.yml".source = ../files/emacs-plus/build.yml;
 
   # macOS-only Ghostty settings. Shared settings are in common.nix.

@@ -3,5 +3,5 @@
 # registry: https://github.com/d12frosted/homebrew-emacs-plus/tree/master/community/icons
 #
 # Apply icon changes without rebuilding Emacs:
-#   brew postinstall d12frosted/emacs-plus/emacs-plus@30 && killall Dock
+#   brew postinstall d12frosted/emacs-plus/emacs-plus@31 && killall Dock
 icon: liquid-glass

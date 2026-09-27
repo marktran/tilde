@@ -1,5 +1,8 @@
-{ ... }:
+{ config, lib, ... }:
 
+let
+  emacsFormula = "d12frosted/emacs-plus/emacs-plus@31";
+in
 {
   # nix-darwin system configuration for the MacBook Air.
   #
@@ -85,6 +88,17 @@
     };
   };
 
+  # Bundle computes install/upgrade labels before applying Brewfile trust.
+  # An installed Emacs alias can resolve to @31 during that check and abort
+  # activation. Grant the same formula-scoped trust before Bundle starts;
+  # the Brewfile declaration below preserves it through cleanup.
+  system.activationScripts.homebrew.text = lib.mkBefore ''
+    if [ -f "${config.homebrew.prefix}/bin/brew" ]; then
+      sudo --user=${lib.escapeShellArg config.homebrew.user} --set-home \
+        "${config.homebrew.prefix}/bin/brew" trust --formula ${lib.escapeShellArg emacsFormula}
+    fi
+  '';
+
   homebrew = {
     enable = true;
 
@@ -98,15 +112,8 @@
       cleanup = "uninstall";
     };
 
-    # NOTE: Homebrew's trust security model is machine-local state that
-    # nix-darwin cannot manage (~/.homebrew/trust.json). `cleanup =
-    # "uninstall"` runs `brew bundle --cleanup`, which loads every declared
-    # formula or cask and will FAIL on an untrusted third-party tap; the
-    # outdated check also warns per package. On a new machine, trust the
-    # third-party packages below once:
-    #   brew trust --formula d12frosted/emacs-plus/emacs-plus@30 \
-    #     depot/tap/depot oven-sh/bun/bun
-    #   brew trust --cask dopplerhq/doppler/doppler
+    # Bundle cleanup resets Homebrew's trust store to the generated Brewfile.
+    # Keep trust scoped to declared formulae/casks, not entire taps.
     taps = [
       "d12frosted/emacs-plus"
       "depot/tap"
@@ -123,7 +130,10 @@
       "awk"
       "awscli"
       "coreutils"
-      "d12frosted/emacs-plus/emacs-plus@30"
+      {
+        name = emacsFormula;
+        trusted = true;
+      }
       "depot/tap/depot"
       "enchant" # jinx (Emacs) compiles jinx-mod.dylib against enchant-2
       "fish"
