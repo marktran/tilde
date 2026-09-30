@@ -324,6 +324,32 @@
           }
         },
         {
+          "id": "accounts/fireworks/models/deepseek-v4p1-flash",
+          "name": "deepseek v4.1 flash",
+          "api": "anthropic-messages",
+          "baseUrl": "https://gateway.ai.cloudflare.com/v1/{CLOUDFLARE_ACCOUNT_ID}/{CLOUDFLARE_GATEWAY_ID}/custom-fireworks-ai",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "minimal": null,
+            "low": null,
+            "medium": null,
+            "high": "high",
+            "xhigh": "max",
+            "max": "max"
+          },
+          "input": ["text", "image"],
+          "cost": { "input": 0.22, "output": 0.66, "cacheRead": 0.007, "cacheWrite": 0 },
+          "contextWindow": 1040000,
+          "maxTokens": 384000,
+          "compat": {
+            "sendSessionAffinityHeaders": true,
+            "supportsEagerToolInputStreaming": false,
+            "supportsCacheControlOnTools": false,
+            "supportsLongCacheRetention": false,
+            "allowEmptySignature": true
+          }
+        },
+        {
           "id": "accounts/fireworks/models/qwen3p8-max",
           "name": "qwen3.8 max",
           "api": "anthropic-messages",
