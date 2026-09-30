@@ -1,19 +1,9 @@
 {
   "providers": {
-    "anthropic": {
-      "modelOverrides": {
-        "claude-sonnet-5": {
-          "name": "sonnet 5"
-        }
-      }
-    },
     "cloudflare-ai-gateway": {
       "modelOverrides": {
         "gpt-5.6-terra": {
           "name": "gpt 5.6 terra"
-        },
-        "claude-sonnet-5": {
-          "name": "sonnet 5"
         }
       },
       "models": [
@@ -169,6 +159,31 @@
           },
           "input": ["text", "image"],
           "cost": { "input": 4, "output": 20, "cacheRead": 0.2, "cacheWrite": 5 },
+          "contextWindow": 1000000,
+          "maxTokens": 128000,
+          "compat": {
+            "sendSessionAffinityHeaders": true,
+            "forceAdaptiveThinking": true,
+            "supportsTemperature": false
+          }
+        },
+        {
+          "id": "claude-sonnet-5-5",
+          "name": "sonnet 5.5",
+          "api": "anthropic-messages",
+          "baseUrl": "https://gateway.ai.cloudflare.com/v1/{CLOUDFLARE_ACCOUNT_ID}/{CLOUDFLARE_GATEWAY_ID}/anthropic",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": null,
+            "minimal": null,
+            "low": "low",
+            "medium": "medium",
+            "high": "high",
+            "xhigh": "xhigh",
+            "max": "max"
+          },
+          "input": ["text", "image"],
+          "cost": { "input": 2, "output": 10, "cacheRead": 0.2, "cacheWrite": 2.5 },
           "contextWindow": 1000000,
           "maxTokens": 128000,
           "compat": {
