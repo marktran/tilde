@@ -46,13 +46,13 @@
           }
         },
         {
-          "id": "gpt-6-sol",
-          "name": "gpt 6 sol",
+          "id": "gpt-6.1-sol",
+          "name": "gpt 6.1 sol",
           "api": "openai-responses",
           "baseUrl": "https://gateway.ai.cloudflare.com/v1/{CLOUDFLARE_ACCOUNT_ID}/{CLOUDFLARE_GATEWAY_ID}/openai",
           "reasoning": true,
           "thinkingLevelMap": {
-            "off": "none",
+            "off": null,
             "minimal": null,
             "low": "low",
             "medium": "medium",
@@ -64,14 +64,14 @@
           "cost": {
             "input": 2,
             "output": 10,
-            "cacheRead": 0.2,
+            "cacheRead": 0.1,
             "cacheWrite": 2.5,
             "tiers": [
               {
                 "inputTokensAbove": 272000,
                 "input": 4,
                 "output": 15,
-                "cacheRead": 0.4,
+                "cacheRead": 0.2,
                 "cacheWrite": 5
               }
             ]
