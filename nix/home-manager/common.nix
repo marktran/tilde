@@ -23,6 +23,7 @@
     pwgen
     scowl
     sesh
+    yubikey-manager # ykman
     zig_0_16 # ghostel's build.zig.zon sets minimum_zig_version
   ];
 }
