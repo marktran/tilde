@@ -29,6 +29,10 @@ let
   # github.com/openprose/prose, v0.15.0 at aad1b43fd373d3cce3fea2109b413c4cd0673f51.
   # shadcn is vendored third-party content (MIT): skills/shadcn from
   # github.com/shadcn-ui/ui at 683a5a9b370acdb7785a0529434e6a3b8c7e0441.
+  # simplified-technical-english is vendored third-party content (MIT text;
+  # ASD-STE100 word list per its NOTICE.md): the whole repo
+  # github.com/0xpili/simplified-technical-english at
+  # 1e148d670cba46685ad2b4c3f2354a637a7fdbbe.
   # Keep the trees pristine so refreshes are a clean re-extract + diff.
   sharedAgentSkills = [
     "defuddle"
@@ -39,6 +43,7 @@ let
     "obsidian-markdown"
     "open-prose"
     "shadcn"
+    "simplified-technical-english"
   ];
   agentSkillLinks = dir: lib.listToAttrs (map (skill: {
     name = "${dir}/${skill}";
