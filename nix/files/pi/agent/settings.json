@@ -45,7 +45,7 @@
   "warnings": {
     "anthropicExtraUsage": false
   },
-  "lastChangelogVersion": "1.0.1",
+  "lastChangelogVersion": "1.0.4",
   "defaultProvider": "cloudflare-ai-gateway",
   "defaultModel": "claude-opus-5-5",
   "defaultThinkingLevel": "medium"
